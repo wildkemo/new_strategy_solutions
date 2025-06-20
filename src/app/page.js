@@ -1,103 +1,299 @@
+"use client";
+
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import styles from "./page.module.css";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [showModal, setShowModal] = useState(false);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    // Fetch user data to determine if signed in
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
+          { method: "GET", credentials: "include" }
+        );
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData && userData.length > 0) {
+            setUser(userData[0]);
+          } else {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      } catch {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+    setForm({ email: "", password: "" });
+    setFormError("");
+    setFormSuccess(false);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleFormChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    // Simple validation
+    if (!form.email.trim() || !form.password.trim()) {
+      setFormError("All fields are required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(form.email)) {
+      setFormError("Invalid email address.");
+      return;
+    }
+
+    // You can add further logic here (e.g., send to backend)
+
+    if (form.email != "admin@gmail.com") {
+      const loginRequest = await fetch(
+        "http://localhost/strategy_solutions_backend/app/Controllers/login.php",
+        // "http://localhost/www/oop_project/php_backend/app/Controllers/login.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            action: "login",
+            email: form.email,
+            password: form.password,
+          }),
+          // credentials: 'include'
+        }
+      );
+
+      if (!loginRequest.ok) {
+        let errorText = await loginRequest.text();
+        throw new Error(
+          `HTTP error! Status: ${loginRequest.status}, Message: ${errorText}`
+        );
+      } else {
+        const loginResponse = await loginRequest.json();
+
+        if (loginResponse.status == "sucess-user") {
+          // alert(loginResponse.message);
+          setFormError("");
+          setFormSuccess(true);
+          window.location.href = "/services";
+        } else if (loginResponse.status == "sucess-admin") {
+          setFormError("");
+          setFormSuccess(true);
+          window.location.href = "/blank_admin";
+        } else if (loginResponse.status == "error") {
+          //alert(loginResponse.message);
+          setFormError(loginResponse.message);
+          setFormSuccess(false);
+        } else {
+          setFormError("An Unknown error occured");
+          setFormSuccess(false);
+        }
+      }
+    } else {
+      const loginRequest = await fetch(
+        "http://localhost/strategy_solutions_backend/app/Controllers/login.php",
+        // "http://localhost/www/oop_project/php_backend/app/Controllers/login.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            action: "login-as-admin",
+            email: form.email,
+            password: form.password,
+          }),
+          // credentials: 'include'
+        }
+      );
+
+      if (!loginRequest.ok) {
+        let errorText = await loginRequest.text();
+        throw new Error(
+          `HTTP error! Status: ${loginRequest.status}, Message: ${errorText}`
+        );
+      } else {
+        const loginResponse = await loginRequest.json();
+
+        if (loginResponse.status == "sucess-user") {
+          // alert(loginResponse.message);
+          setFormError("");
+          setFormSuccess(true);
+          window.location.href = "/services";
+        } else if (loginResponse.status == "sucess-admin") {
+          setFormError("");
+          setFormSuccess(true);
+          window.location.href = "/blank_admin";
+        } else if (loginResponse.status == "error") {
+          //alert(loginResponse.message);
+          setFormError(loginResponse.message);
+          setFormSuccess(false);
+        } else {
+          setFormError("An Unknown error occured");
+          setFormSuccess(false);
+        }
+      }
+    }
+  };
+
+  return (
+    <>
+      <main className={styles.main}>
+        {/* Hero Section */}
+        <section className={styles.hero}>
+          <div className={styles.heroContent}>
+            <h1>Strategy Solution</h1>
+            <p className={styles.heroSubtitle}>
+              Empowering businesses with innovative strategies and solutions
+            </p>
+            <div className={styles.ctas}>
+              {!isLoading && !user && (
+                <button onClick={handleOpenModal} className={styles.primary}>
+                  Get Started
+                </button>
+              )}
+              <a href="/services" className={styles.secondary}>
+                Learn More
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className={styles.features}>
+          <div className={styles.featuresHeader}>
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+              src="/images/server1.png"
+              alt="Server Rack"
+              width={80}
+              height={80}
+              className={styles.solutionsImage}
+              priority
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+            <h2>Our Solutions</h2>
+          </div>
+          <div className={styles.featureGrid}>
+            <div className={styles.featureCard}>
+              <h3>Strategic Planning</h3>
+              <p>
+                Comprehensive business strategy development and implementation
+              </p>
+            </div>
+            <div className={styles.featureCard}>
+              <h3>Digital Transformation</h3>
+              <p>
+                Modernize your business with cutting-edge technology solutions
+              </p>
+            </div>
+            <div className={styles.featureCard}>
+              <h3>Performance Optimization</h3>
+              <p>Enhance efficiency and productivity across your organization</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Modal Validation Form */}
+        {showModal && (
+          <div className={styles.modalOverlay} onClick={handleCloseModal}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <button
+                className={styles.closeButton}
+                onClick={handleCloseModal}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <h2>Sign In</h2>
+              {formSuccess ? (
+                <div className={styles.successMessage}>
+                  Thank you! We'll contact you soon.
+                  <br />
+                  <a href="/register" className={styles.registerLink}>
+                    Go to Register Form
+                  </a>
+                </div>
+              ) : (
+                <form
+                  onSubmit={handleFormSubmit}
+                  className={styles.validationForm}
+                >
+                  <div className={styles.formGroup}>
+                    <label>Email</label>
+                    <input
+                      name="email"
+                      value={form.email}
+                      onChange={handleFormChange}
+                      required
+                      type="email"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Password</label>
+                    <input
+                      name="password"
+                      value={form.password}
+                      onChange={handleFormChange}
+                      required
+                      type="password"
+                    />
+                  </div>
+                  {formError && (
+                    <div className={styles.formError}>{formError}</div>
+                  )}
+                  <button type="submit" className={styles.saveButton}>
+                    Submit
+                  </button>
+                  <a href="/register" className={styles.registerLink}>
+                    Go to Register Form
+                  </a>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer
+        style={{
+          width: "100vw",
+          background: "#000",
+          color: "#fff",
+          textAlign: "center",
+          padding: "1rem 0",
+          fontSize: "1.3rem",
+          fontWeight: 500,
+          boxShadow: "0 -2px 12px rgba(0,0,0,0.08)",
+          marginTop: "2.5rem",
+          left: 0,
+          right: 0
+        }}
+      >
+        Copyright © 2025 Strategy Solution - All Rights Reserved.
       </footer>
-    </div>
+    </>
   );
 }

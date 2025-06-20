@@ -1,0 +1,261 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f3f1eb;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  color: #000;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.services {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.serviceCategory {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.serviceCategory h2 {
+  font-size: 2.5rem;
+  color: #000;
+  text-align: center;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.serviceCard {
+  background: #f3f1eb;
+  color: #222;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.serviceCard:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.serviceCard h3 {
+  font-size: 1.5rem;
+  color: #000;
+  margin-bottom: 15px;
+}
+
+.serviceCard p {
+  color: #000;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.serviceCard ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.serviceCard li {
+  color: #000;
+  margin-bottom: 10px;
+  padding-left: 25px;
+  position: relative;
+}
+
+.serviceCard li:before {
+  content: "•";
+  color: #000;
+  position: absolute;
+  left: 0;
+}
+
+.ctaSection {
+  text-align: center;
+  padding: 60px 40px;
+  background: #f3f1eb;
+  color: #000;
+  border-radius: 20px;
+  margin-top: 40px;
+  border: 1px solid #e0e0e0;
+}
+
+.ctaSection h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.ctaSection p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  color: #000;
+}
+
+.primary {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 15px 30px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.primary:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.2rem;
+  }
+
+  .serviceCategory h2 {
+    font-size: 2rem;
+  }
+
+  .serviceGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    padding: 20px 8px;
+    gap: 40px;
+  }
+  .hero {
+    padding: 20px;
+  }
+  .services {
+    gap: 40px;
+  }
+  .ctaSection {
+    padding: 30px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 8px 2px;
+    gap: 18px;
+  }
+  .hero {
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .hero h1 {
+    font-size: 1.3rem;
+  }
+  .heroSubtitle {
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+  .services {
+    gap: 18px;
+  }
+  .serviceCategory h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .serviceGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .serviceCard {
+    width: 100%;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    padding: 10px 6px;
+    min-width: 0;
+    word-break: break-word;
+  }
+  .serviceCard h3 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+  .serviceCard p {
+    font-size: 0.93rem;
+    margin-bottom: 8px;
+    word-break: break-word;
+  }
+  .serviceCard ul {
+    padding-left: 10px;
+  }
+  .serviceCard li {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    padding-left: 14px;
+    word-break: break-word;
+  }
+  .ctaSection {
+    padding: 10px 2px;
+    border-radius: 10px;
+  }
+  .ctaSection h2 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  .ctaSection p {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  .primary {
+    min-height: 38px;
+    font-size: 0.98rem;
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero h1 {
+    font-size: 1rem;
+  }
+  .serviceCard h3 {
+    font-size: 0.85rem;
+  }
+  .ctaSection h2 {
+    font-size: 0.9rem;
+  }
+}
