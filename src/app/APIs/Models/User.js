@@ -1,3 +1,5 @@
+const { DatabaseHandler } = require('./DatabaseHandler');
+
 class User {
     constructor() {
         this.id = null;
@@ -38,3 +40,5 @@ class User {
         this.password = password;
     }
 }
+
+module.exports = User;

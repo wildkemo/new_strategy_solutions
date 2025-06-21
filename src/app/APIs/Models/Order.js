@@ -1,34 +1,12 @@
-class Order {
+const { DatabaseHandler } = require('./DatabaseHandler');
+const Customer = require('./Customer');
+
+class Order extends Customer {
     constructor() {
-        this.name = null;
-        this.email = null;
+        super();
         this.service_type = null;
         this.service_description = null;
-        this.company_name = null;
-    }
-
-    getCompanyName() {
-        return this.company_name;
-    }
-
-    setCompanyName(company_name) {
-        this.company_name = company_name;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    setName(name) {
-        this.name = name;
-    }
-
-    getEmail() {
-        return this.email;
-    }
-
-    setEmail(email) {
-        this.email = email;
+        this.status = null;
     }
 
     getServiceType() {
@@ -47,27 +25,34 @@ class Order {
         this.service_description = service_description;
     }
 
-    addToDB(dbHandler) {
-        const exists = dbHandler.isExisting("customers", "email", this.getEmail());
+    getStatus() {
+        return this.status;
+    }
 
-        if (exists === true) {
-            const fetchedname = dbHandler.getOneValue("customers", "name", "email", this.getEmail());
-            const fetchedCompanyName = dbHandler.getOneValue("customers", "company_name", "email", this.getEmail());
-            this.setName(fetchedname);
-            this.setCompanyName(fetchedCompanyName);
+    setStatus(status) {
+        this.status = status;
+    }
 
+    async addToDB(dbHandler) {
+        const email = this.getEmail();
+        const exists = await dbHandler.is_existing('orders', 'email', email);
+
+        if (!exists) {
             const data = {
-                name: this.getName(),
-                email: this.getEmail(),
-                service_description: this.getServiceDescription(),
-                service_type: this.getServiceType(),
-                status: 'Pending',
-                company_name: this.getCompanyName()
+                'name': this.getName(),
+                'email': this.getEmail(),
+                'password': this.getPassword(), // No hashing
+                'phone': this.getPhone(),
+                'gender': this.getGender(),
+                'company_name': this.getCompanyName(),
+                'service_type': this.getServiceType(),
+                'service_description': this.getServiceDescription(),
+                'status': this.getStatus()
             };
 
-            const op = dbHandler.insert('orders', data);
+            const op = await dbHandler.insert('orders', data);
 
-            if (op === true) {
+            if (op) {
                 return 0;
             } else {
                 return 1;
@@ -77,3 +62,5 @@ class Order {
         }
     }
 }
+
+module.exports = Order;

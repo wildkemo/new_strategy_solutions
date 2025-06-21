@@ -1,93 +1,165 @@
+const mysql = require('mysql2/promise');
+
 class DatabaseHandler {
     constructor(host, dbname, username, password) {
-        this.host = host;
-        this.dbname = dbname;
-        this.username = username;
-        this.password = password;
-        // Note: In a real implementation, you would set up a database connection here
-        // This is a simplified version to match the PHP logic
+        this.connection = null;
+        this.connect(host, dbname, username, password).catch(err => {
+            console.error("Database connection error:", err.message);
+            throw new Error("Failed to connect to the database.");
+        });
     }
 
-    insert(table, data) {
-        // Implementation would depend on your database library (e.g., mysql, pg, etc.)
-        // This is a placeholder to match the PHP logic
+    async connect(host, dbname, username, password) {
+        this.connection = await mysql.createConnection({
+            host: host,
+            user: username,
+            password: password,
+            database: dbname,
+            charset: 'utf8mb4'
+        });
+        this.connection.on('error', err => {
+            console.error("Database connection error:", err.message);
+        });
+    }
+
+    async insert(table, data) {
+        const keys = Object.keys(data);
+        const columnNames = keys.join(', ');
+        const placeholders = keys.map(() => '?').join(', ');
+        const values = keys.map(key => data[key]);
+        const sql = `INSERT INTO ${table} (${columnNames}) VALUES (${placeholders})`;
         try {
-            // Simulate database operation
-            return true;
-        } catch (error) {
-            console.error("Database insert error:", error.message);
+            const [result] = await this.connection.execute(sql, values);
+            return result.affectedRows > 0;
+        } catch (err) {
+            console.error("Database insert error:", err.message);
             return false;
         }
     }
 
-    isExisting(table, column, value) {
+    async is_existing(table, column, value) {
+        let sql;
+        let params = [];
+        if (value === null) {
+            sql = `SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${column} IS NULL)`;
+        } else {
+            sql = `SELECT EXISTS(SELECT 1 FROM ${table} WHERE ${column} = ?)`;
+            params = [value];
+        }
         try {
-            // Simulate database check
-            return false; // Default to false for this example
-        } catch (error) {
-            console.error("Database error:", error.message);
+            const [result] = await this.connection.execute(sql, params);
+            return result[0][0] === 1;
+        } catch (err) {
+            console.error("Database is_existing error:", err.message);
             return false;
         }
     }
 
-    authenticateUser(table, keyColumn, authColumn, keyValue, authValue) {
-        try {
-            // Simulate database check
-            if (keyValue === "valid@example.com" && authValue === "correctpassword") {
+    async authenticateUser(table, keyColumn, authColumn, keyValue, authValue) {
+        const sql = `SELECT ${authColumn} FROM ${table} WHERE ${keyColumn} = ?`;
+        const [result] = await this.connection.execute(sql, [keyValue]);
+        if (result.length > 0) {
+            if (result[0][authColumn] === authValue) {
                 return 0;
-            } else if (keyValue === "valid@example.com") {
-                return 1;
             } else {
-                return 2;
+                return 1;
             }
-        } catch (error) {
-            console.error("Database error:", error.message);
-            return 3;
+        } else {
+            return 2;
         }
     }
 
-    getAllRecords(tableName) {
-        // Simulate database query
-        return [];
-    }
-
-    getAllRecordsWhere(tableName, column, value) {
-        // Simulate database query
-        return [];
-    }
-
-    getOneValue(tableName, column, whereColumn, keyvalue) {
-        // Simulate database query
-        return null;
-    }
-
-    update(table, data, where) {
+    async getAllRecords(tableName) {
         try {
-            // Simulate database update
-            return 0;
-        } catch (error) {
-            console.error("Database error:", error.message);
+            const [results] = await this.connection.execute(`SELECT * FROM ${tableName}`);
+            if (tableName === "services") {
+                // Convert JSON features to PHP arrays
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].hasOwnProperty('features') && results[i].features) {
+                        results[i].features = JSON.parse(results[i].features);
+                    }
+                }
+            }
+            return results;
+        } catch (err) {
+            console.error("Database getAllRecords error:", err.message);
+            return [];
+        }
+    }
+
+    async getAllRecordsWhere(tableName, column, value) {
+        try {
+            const [results] = await this.connection.execute(`SELECT * FROM ${tableName} WHERE ${column} = ?`, [value]);
+            if (tableName === "services") {
+                // Convert JSON features to PHP arrays
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].hasOwnProperty('features') && results[i].features) {
+                        results[i].features = JSON.parse(results[i].features);
+                    }
+                }
+            }
+            return results;
+        } catch (err) {
+            console.error("Database getAllRecordsWhere error:", err.message);
+            return [];
+        }
+    }
+
+    async getOneValue(tableName, column, whereColumn, keyvalue) {
+        try {
+            const [result] = await this.connection.execute(`SELECT ${column} FROM ${tableName} WHERE ${whereColumn} = ? LIMIT 1`, [keyvalue]);
+            return result.length > 0 ? result[0][column] : null;
+        } catch (err) {
+            console.error("Database getOneValue error:", err.message);
+            return null;
+        }
+    }
+
+    async update(table, data, where) {
+        const setParts = [];
+        const setValues = {};
+        for (const [column, value] of Object.entries(data)) {
+            setParts.push(`${column} = ?`);
+            setValues[`set_${column}`] = value;
+        }
+        const setClause = setParts.join(', ');
+        const whereParts = [];
+        const whereValues = {};
+        for (const [column, value] of Object.entries(where)) {
+            whereParts.push(`${column} = ?`);
+            whereValues[`where_${column}`] = value;
+        }
+        const whereClause = whereParts.join(' AND ');
+        const sql = `UPDATE ${table} SET ${setClause} WHERE ${whereClause}`;
+        const params = { ...setValues, ...whereValues };
+        try {
+            const [result] = await this.connection.execute(sql, Object.values(params));
+            return result.affectedRows > 0 ? 0 : 1;
+        } catch (err) {
+            console.error("Database update error:", err.message);
             return 1;
         }
     }
 
-    deleteById(table, id) {
+    async deleteById(table, id) {
         try {
-            // Simulate database delete
-            return 0;
-        } catch (error) {
-            console.error("Database error:", error.message);
+            const [result] = await this.connection.execute(`DELETE FROM ${table} WHERE id = ?`, [id]);
+            return result.affectedRows > 0 ? 0 : 1;
+        } catch (err) {
+            console.error("Database deleteById error:", err.message);
             return 1;
         }
     }
 
-    deleteByString(table, column, value) {
+    async deleteByString(table, column, value) {
         try {
-            // Simulate database delete
-            return 0;
-        } catch (error) {
-            console.error("Database error:", error.message);
+            const [result] = await this.connection.execute(`DELETE FROM ${table} WHERE ${column} = ?`, [value]);
+            return result.affectedRows > 0 ? 0 : 1;
+        } catch (err) {
+            console.error("Database deleteByString error:", err.message);
             return 1;
         }
     }
 }
+
+module.exports = DatabaseHandler;

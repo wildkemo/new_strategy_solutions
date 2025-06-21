@@ -1,31 +1,37 @@
+const { DatabaseHandler } = require('./DatabaseHandler');
+const User = require('./User');
+
 class Admin extends User {
     constructor() {
         super();
-        this.level = null;
+        this.role = null;
     }
 
-    getLevel() {
-        return this.level;
+    getRole() {
+        return this.role;
     }
 
-    setLevel(level) {
-        this.level = level;
+    setRole(role) {
+        this.role = role;
     }
 
-    addToDB(dbHandler) {
-        const exists = dbHandler.isExisting("admins", "email", this.getEmail());
+    async addToDB(dbHandler) {
+        const email = this.getEmail();
+        const exists = await dbHandler.is_existing('admins', 'email', email);
 
-        if (!exists) {
+        if (exists) {
+            const fetchedrole = await dbHandler.getOneValue('admins', 'role', 'email', email);
+            this.setRole(fetchedrole);
+
             const data = {
-                name: this.getName(),
-                email: this.getEmail(),
-                password: this.getPassword(),
-                level: this.getLevel()
+                'name': this.getName(),
+                'email': this.getEmail(),
+                'role': this.getRole()
             };
 
-            const op = dbHandler.insert('admins', data);
+            const op = await dbHandler.insert('admins', data);
 
-            if (op === true) {
+            if (op) {
                 return 0;
             } else {
                 return 1;
@@ -35,3 +41,5 @@ class Admin extends User {
         }
     }
 }
+
+module.exports = Admin;
