@@ -21,9 +21,9 @@ router.post('/delete_user', (req, res) => {
     // Initialize database handler
     const database = new DatabaseHandler(
       'localhost', 
-      'test2', 
-      'root', 
-      ''
+      'strategy_solutions', 
+      'postgres', 
+      'kemo4066'
     );
     
     // Get data from request body

@@ -2,13 +2,7 @@ const express = require('express');
 const router = express.Router();
 const DatabaseHandler = require('../Models/DatabaseHandler');
 
-// Set CORS headers to match the original PHP file
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://192.168.1.17:3000");
-  res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+
 
 // Handle preflight OPTIONS request
 router.options('/get_current_user', (req, res) => {
@@ -24,7 +18,7 @@ router.get('/get_current_user', (req, res) => {
     }
 
     // Initialize database handler
-    const dbHandler = new DatabaseHandler();
+    const dbHandler = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
 
     // Query database for current user
     const user = dbHandler.getAllRecordsWhere('customers', 'email', req.session.user_email);

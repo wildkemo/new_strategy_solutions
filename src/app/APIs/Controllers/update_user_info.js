@@ -38,7 +38,7 @@ router.post('/update_user_info', (req, res) => {
     // If password is being changed, verify current password
     if (currentPassword) {
       // Initialize database handler
-      const database = new DatabaseHandler();
+      const database = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
 
       // Get user's current password from database
       const currentPasswordFromDB = database.getOneValue(
@@ -63,7 +63,7 @@ router.post('/update_user_info', (req, res) => {
     delete updateData.confirmPassword;
 
     // Initialize database handler
-    const database = new DatabaseHandler();
+    const database = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
     
     // Update customer record
     const customerUpdateResult = database.update(

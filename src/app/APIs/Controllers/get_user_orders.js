@@ -24,7 +24,7 @@ router.get('/get_user_orders', (req, res) => {
     }
 
     // Initialize database handler
-    const database = new DatabaseHandler('localhost', 'test2', 'root', '');
+    const database = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
     
     // Query database for user's orders
     const orders = database.getAllRecordsWhere("orders", "email", req.session.user_email);

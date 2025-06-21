@@ -37,7 +37,7 @@ router.post('/request_service', (req, res) => {
     }
 
     // Initialize database handler
-    const dbHandler = new DatabaseHandler();
+    const dbHandler = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
 
     // Create order object
     const order = new Order();

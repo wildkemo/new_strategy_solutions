@@ -22,7 +22,7 @@ router.post('/delete_service', async (req, res) => {
     const id = data.id;
 
     // Connect to database and delete service
-    const database = new DatabaseHandler('localhost', 'test2', 'root', '');
+    const database = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
     const op = database.deleteById('services', id);
 
     if (op === 0) {

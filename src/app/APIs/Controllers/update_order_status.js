@@ -30,7 +30,7 @@ router.post('/update_order_status', (req, res) => {
     }
 
     // Initialize database handler
-    const database = new DatabaseHandler();
+    const database = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
     
     // Update order in database
     const result = database.update('orders', data, { id });

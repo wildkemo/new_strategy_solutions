@@ -30,7 +30,7 @@ router.put('/update_service', (req, res) => {
     }
 
     // Initialize database handler
-    const database = new DatabaseHandler();
+    const database = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
     
     // Update service in database
     const result = database.update('services', data, { id });

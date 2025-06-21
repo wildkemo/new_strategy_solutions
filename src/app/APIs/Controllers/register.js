@@ -46,12 +46,7 @@ router.post('/register', (req, res) => {
     }
 
     // Initialize database handler
-    const dbHandler = new DatabaseHandler(
-      'localhost',
-      'test2',
-      'root',
-      ''
-    );
+    const dbHandler = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
 
     // Create customer object and add to database
     const customer = new Customer();

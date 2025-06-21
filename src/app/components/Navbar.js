@@ -33,30 +33,30 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/APIs/Controllers/get_current_user.js",
-          // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+      // try {
+      //   const response = await fetch(
+      //     "http://localhost:3000/APIs/Controllers/get_current_user.js",
+      //     // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
+      //     {
+      //       method: "GET",
+      //       credentials: "include",
+      //     }
+      //   );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data");
-        }
+      //   if (!response.ok) {
+      //     throw new Error("Failed to fetch user data");
+      //   }
 
-        const userData = await response.json();
-        if (userData.length !== 0) {
-          setUser(userData);
-        }
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
+      //   const userData = await response.json();
+      //   if (userData.length !== 0) {
+      //     setUser(userData);
+      //   }
+      // } catch (err) {
+      //   console.error("Error fetching user data:", err);
+      //   setError(err.message);
+      // } finally {
+      //   setIsLoading(false);
+      // }
     };
 
     fetchUserData();

@@ -25,7 +25,7 @@ router.get('/get_users', (req, res) => {
     }
 
     // Initialize database handler
-    const dbHandler = new DatabaseHandler();
+    const dbHandler = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
 
     // Query database for all users
     const users = dbHandler.getAllRecords('users');
