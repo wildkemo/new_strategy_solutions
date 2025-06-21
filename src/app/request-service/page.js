@@ -13,7 +13,7 @@ const validateSession = async () => {
 
   const response2 = await fetch(
     // "http://localhost/strategy_solutions_backend/app/Controllers/validate_request.php",
-    "http://localhost/strategy_solutions_backend/app/Controllers/validate_request.php",
+    "http://localhost:3000/APIs/Controllers/validate_request.js",
     { headers: { "Content-Type": "application/json" }, credentials: "include" }
   );
 
@@ -126,7 +126,7 @@ export default function RequestService() {
     const fetchSignedInEmail = async () => {
       try {
         const response = await fetch(
-          "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
+          "http://localhost/3000/APIs/Controllers/get_current_user.js",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -161,7 +161,7 @@ export default function RequestService() {
       return;
     }
     const response = await fetch(
-      "http://localhost/strategy_solutions_backend/app/Controllers/request_service.php",
+      "http://localhost:3000/APIs/Controllers/request_service.js",
       {
         method: "POST",
         headers: {

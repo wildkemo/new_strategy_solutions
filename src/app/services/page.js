@@ -75,7 +75,7 @@ const Services = () => {
     const fetchServices = async () => {
       try {
         const response = await fetch(
-          "http://localhost/strategy_solutions_backend/app/Controllers/get_services.php"
+          "http://localhost:3000/APIs/Controllers/get_services.js"
           // "http://karim/oop_project/php_backend/app/Controllers/get_services.php"
         );
         if (!response.ok) {

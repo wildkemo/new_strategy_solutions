@@ -24,8 +24,7 @@ export default function CyberSecurityService() {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
-        // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
+        "http://localhost:3000/APIs/Controllers/get_current_user.js",
         { credentials: "include" }
       );
       if (response.ok) {

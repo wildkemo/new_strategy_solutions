@@ -16,7 +16,7 @@ export default function CloudVirtualization() {
       try {
         setLoading(true);
         const response = await fetch(
-          "http://localhost/strategy_solutions_backend/app/Controllers/get_services.php"
+          "http://localhost:3000/APIs/Controllers/get_services.js"
           // "http://localhost/www/oop_project/php_backend/app/Controllers/get_services.php"
         );
         if (!response.ok) {
@@ -49,7 +49,7 @@ export default function CloudVirtualization() {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
+        "http://localhost:3000/APIs/Controllers/get_current_user.js",
         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
         { credentials: "include" }
       );

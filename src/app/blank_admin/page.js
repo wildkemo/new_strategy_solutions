@@ -9,7 +9,7 @@ const validateSession = async () => {
   //  {headers: { 'Content-Type': 'application/json' } ,credentials: 'include'})
 
   const response2 = await fetch(
-    "http://localhost/strategy_solutions_backend/app/Controllers/route.php",
+    "http://localhost:3000/APIs/Controllers/route.js",
     // "http://localhost/www/oop_project/php_backend/app/Controllers/route.php",
     { headers: { "Content-Type": "application/json" }, credentials: "include" }
   );
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
     setError(null);
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/get_services.php"
+        "http://localhost:3000/APIs/Controllersget_services.js"
         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_services.php"
       );
       if (!response.ok) throw new Error("Failed to fetch services");
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
   const fetchServiceRequests = async () => {
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/get_orders.php"
+        "http://localhost:3000/APIs/Controllersget_orders.js"
         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_orders.php"
       );
       if (!response.ok) throw new Error("Failed to fetch service requests");
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
     setUsersError(null);
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/get_users.php",
+        "http://localhost:3000/APIs/Controllers/get_users.js",
         { credentials: "include" }
       );
       if (!response.ok) throw new Error("Failed to fetch users");
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
 
   const handleDeleteUser = async (ID, EMAIL) => {
     const response = await fetch(
-      "http://localhost/strategy_solutions_backend/app/Controllers/delete_user.php",
+      "http://localhost:3000/APIs/Controllers/delete_user.js",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
       return;
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/delete_service.php",
+        "http://localhost:3000/APIs/Controllers/delete_service.js",
         // "http://localhost/www/oop_project/php_backend/app/Controllers/delete_service.php",
         {
           method: "POST",
@@ -301,13 +301,13 @@ export default function AdminDashboard() {
     e.preventDefault();
     try {
       let url =
-        "http://localhost/strategy_solutions_backend/app/Controllers/add_service.php";
+        "http://localhost:3000/APIs/Controllers/add_service.js";
       // let url = "hhttp://localhost/www/oop_project/php_backend/app/Controllers/add_service.php";
       let method = "POST";
       let isEdit = false;
       if (editingService) {
         url =
-          "http://localhost/strategy_solutions_backend/app/Controllers/update_service.php";
+          "http://localhost:3000/APIs/Controllers/update_service.js";
         // url = "http://localhost/www/oop_project/php_backend/app/Controllers/update_service.php";
         method = "POST";
         isEdit = true;
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
 
   const handleStatusChange = async (requestId, newStatus) => {
     const response = await fetch(
-      "http://localhost/strategy_solutions_backend/app/Controllers/update_order_status.php",
+      "http://localhost:3000/APIs/Controllers/update_order_status.js",
       // "http://localhost/www/oop_project/php_backend/app/Controllers/update_order_status.php",
       {
         method: "POST",
@@ -500,7 +500,7 @@ export default function AdminDashboard() {
             onClick={async () => {
               try {
                 const response = await fetch(
-                  "http://localhost/strategy_solutions_backend/app/Controllers/logout.php",
+                  "http://localhost:3000/APIs/Controllers/logout.js",
                   // "http://localhost/www/oop_project/php_backend/app/Controllers/logout.php",
                   {
                     method: "POST",
