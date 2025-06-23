@@ -38,7 +38,6 @@ export default function Navbar() {
           "/api/get_current_user/",
           {
             method: "GET",
-            //headers: { "Content-Type": "application/json" },
             credentials: "include",
           }
         );
@@ -51,6 +50,7 @@ export default function Navbar() {
         }
 
         const userData = await response.json();
+        console.log("User data fetched:", userData);
         if (userData.length !== 0) {
           setUser(userData);
         }
