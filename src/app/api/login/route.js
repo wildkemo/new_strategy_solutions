@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
-import jwt from 'jsonwebtoken';
-import mysql from 'mysql2/promise';
-import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'; //for token generation
+import mysql from 'mysql2/promise'; //for database connection
+import bcrypt from 'bcryptjs'; //for password hashing
 
 // Create MySQL connection pool
 const pool = mysql.createPool({

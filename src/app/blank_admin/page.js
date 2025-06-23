@@ -83,19 +83,19 @@ function PopupNotification({ message, onClose, success = true }) {
 
 export default function AdminDashboard() {
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const valid = await validateSession();
-        if (!valid) {
-          window.location.href = "/"; // or handle it however you want
-        }
-      } catch (err) {
-        console.error(err);
-        window.location.href = "/services/page.js"; // redirect on failure
-      }
-    };
+    // const checkSession = async () => {
+    //   try {
+    //     const valid = await validateSession();
+    //     if (!valid) {
+    //       window.location.href = "/"; // or handle it however you want
+    //     }
+    //   } catch (err) {
+    //     console.error(err);
+    //     window.location.href = "/services/page.js"; // redirect on failure
+    //   }
+    // };
 
-    checkSession();
+    // checkSession();
   }, []);
 
   // if(validateSession() == true){

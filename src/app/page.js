@@ -74,7 +74,7 @@ export default function Home() {
 
     if (form.email != "admin@gmail.com") {
       const loginRequest = await fetch(
-        "/api/login/",
+        "/api/login/",  //router to login api
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
