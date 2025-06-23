@@ -1,91 +1,112 @@
-const express = require('express');
-const router = express.Router();
-const DatabaseHandler = require('../Models/DatabaseHandler');
-const Customer = require('../Models/Customer');
+import { serialize } from 'cookie';
+import jwt from 'jsonwebtoken';
+import mysql from 'mysql2/promise';
+import bcrypt from 'bcryptjs';
 
-// Set CORS headers to match the original PHP file
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://192.168.1.17:3000");
-  res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-// Handle preflight OPTIONS request
-router.options('/register', (req, res) => {
-  res.status(200).end();
-});
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
-// Handle POST request
-router.post('/register', (req, res) => {
   try {
-    // Check if user is already logged in
-    if (req.session && (req.session.logged_in_user || req.session.logged_in_admin)) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'Please logout first before registering'
-      });
+    const { name, email, password, phone, company_name } = req.body;
+
+    // 1. Check if email exists
+    const emailExists = await checkEmailExists(email);
+    if (emailExists) {
+      return res.status(409).json({ message: 'Email already registered' });
     }
 
-    // Get data from request body
-    const { 
-      name, 
-      email, 
-      phone, 
-      gender, 
-      password, 
-      company_name 
-    } = req.body;
+    // 2. Hash password
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 salt rounds
 
-    // Validate required fields (similar validation as PHP)
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Missing required fields'
-      });
-    }
+    // 3. Create user in database
+    const user = await createCustomer({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      company_name
+    });
 
-    // Initialize database handler
-    const dbHandler = new DatabaseHandler('localhost', 'strategy_solutions', 'postgres', 'kemo4066');
+    // 4. Create JWT token for auto-login
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
-    // Create customer object and add to database
-    const customer = new Customer();
-    customer.setName(name);
-    customer.setEmail(email);
-    customer.setPhone(phone || '');
-    customer.setGender(gender || '');
-    customer.setPassword(password);
-    customer.setCompanyName(company_name || '');
+    // 5. Set HTTP-only cookie
+    const cookie = serialize('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24,
+      path: '/',
+    });
 
-    const result = customer.addToDB(dbHandler);
-
-    if (result === 0) {
-      // Registration successful
-      res.status(200).json({
-        status: 'success',
-        message: 'User registered successfully'
-      });
-    } else if (result === 2) {
-      // User already exists
-      res.status(400).json({
-        status: 'error',
-        message: 'User already exists'
-      });
-    } else {
-      // Database error
-      res.status(500).json({
-        status: 'error',
-        message: 'An error occurred with the database'
-      });
-    }
+    res.setHeader('Set-Cookie', cookie);
+    return res.status(201).json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        company_name: user.company_name
+      }
+    });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error'
-    });
+    console.error('Registration error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
-});
+}
 
-module.exports = router;
+// Helper Functions
+async function checkEmailExists(email) {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      'SELECT 1 FROM customers WHERE email = ? LIMIT 1',
+      [email]
+    );
+    return rows.length > 0;
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
+async function createCustomer({ name, email, password, phone, company_name }) {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const [result] = await connection.query(
+      `INSERT INTO customers 
+       (name, email, password, phone, company_name) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [name, email, password, phone, company_name]
+    );
+    
+    // Return the newly created user (without password)
+    return {
+      id: result.insertId,
+      name,
+      email,
+      phone,
+      company_name
+    };
+  } finally {
+    if (connection) connection.release();
+  }
+}

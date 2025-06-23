@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 import jwt from 'jsonwebtoken';
 import mysql from 'mysql2/promise';
@@ -14,28 +15,35 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
+export async function POST(req) {
   try {
-    const { email, password } = req.body;
+    const { email, password } = await req.json();
 
-    // 1. Validate credentials against MySQL database
     const user = await validateCredentials(email, password);
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+
+    if (user === 1) {
+      return NextResponse.json({ status: 'error', message: 'Email not registered' }, { status: 200 });
+    }
+    if (user === 2) {
+      return NextResponse.json({ status: 'error', message: 'Invalid password' }, { status: 200 });
     }
 
-    // 2. Create JWT token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
+    let token = null;
+
+    if(email !== "admin@gmail.com"){
+      token = jwt.sign(
+      { userId: user.id, email: user.email, name: user.name, admin: false },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
-    );
+      );
+    }else{
+      token = jwt.sign(
+        { userId: user.id, email: user.email, name: user.name, admin: true },
+        process.env.JWT_SECRET,
+        { expiresIn: '1d' }
+      );
+    }
 
-    // 3. Set HTTP-only cookie
     const cookie = serialize('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -44,18 +52,18 @@ export default async function handler(req, res) {
       path: '/',
     });
 
-    res.setHeader('Set-Cookie', cookie);
-    return res.status(200).json({ 
-      user: { 
-        id: user.id, 
-        email: user.email,
-        name: user.name 
-      } 
-    });
+    const res = NextResponse.json({
+      status: 'success-user',
+      message: 'Login successful',
+      
+    }, { status: 200 });
+
+    res.headers.set('Set-Cookie', cookie);
+    return res;
 
   } catch (error) {
     console.error('Login error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return NextResponse.json({ status: 'error', message: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -63,27 +71,18 @@ async function validateCredentials(email, password) {
   let connection;
   try {
     connection = await pool.getConnection();
-    
-    // 1. Find user by email
     const [rows] = await connection.execute(
       'SELECT id, email, name, password FROM customers WHERE email = ? LIMIT 1',
       [email]
     );
 
-    if (rows.length === 0) return null;
+    if (rows.length === 0) return 1;
     const user = rows[0];
 
-    // 2. Verify password (compare with bcrypt hash)
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return null;
+    if (!isPasswordValid) return 2;
 
-    // 3. Return user data (without password)
-    return { 
-      id: user.id, 
-      email: user.email, 
-      name: user.name 
-    };
-
+    return { id: user.id, email: user.email, name: user.name };
   } finally {
     if (connection) connection.release();
   }

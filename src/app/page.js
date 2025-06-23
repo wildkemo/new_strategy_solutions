@@ -74,18 +74,15 @@ export default function Home() {
 
     if (form.email != "admin@gmail.com") {
       const loginRequest = await fetch(
-        "http://localhost:3000/APIs/Controllers/login.js",
-        // "http://localhost/www/oop_project/php_backend/app/Controllers/login.php",
+        "/api/login/",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({
-            action: "login",
             email: form.email,
             password: form.password,
           }),
-          // credentials: 'include'
         }
       );
 
@@ -97,12 +94,12 @@ export default function Home() {
       } else {
         const loginResponse = await loginRequest.json();
 
-        if (loginResponse.status == "sucess-user") {
+        if (loginResponse.status == "success-user") {
           // alert(loginResponse.message);
           setFormError("");
           setFormSuccess(true);
           window.location.href = "/services";
-        } else if (loginResponse.status == "sucess-admin") {
+        } else if (loginResponse.status == "success-admin") {
           setFormError("");
           setFormSuccess(true);
           window.location.href = "/blank_admin";

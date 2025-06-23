@@ -4,26 +4,26 @@ import { useState, useEffect, useRef } from "react";
 import styles from "./admin.module.css";
 
 const validateSession = async () => {
+  // // const response2 = await fetch(
+  // // "http://localhost/oop_project/php_backend/app/Controllers/route.php",
+  // //  {headers: { 'Content-Type': 'application/json' } ,credentials: 'include'})
+
   // const response2 = await fetch(
-  // "http://localhost/oop_project/php_backend/app/Controllers/route.php",
-  //  {headers: { 'Content-Type': 'application/json' } ,credentials: 'include'})
+  //   "http://localhost:3000/APIs/Controllers/route.js",
+  //   // "http://localhost/www/oop_project/php_backend/app/Controllers/route.php",
+  //   { headers: { "Content-Type": "application/json" }, credentials: "include" }
+  // );
 
-  const response2 = await fetch(
-    "http://localhost:3000/APIs/Controllers/route.js",
-    // "http://localhost/www/oop_project/php_backend/app/Controllers/route.php",
-    { headers: { "Content-Type": "application/json" }, credentials: "include" }
-  );
+  // if (!response2.ok) throw new Error("Failed to fetch services");
 
-  if (!response2.ok) throw new Error("Failed to fetch services");
+  // let result = await response2.json();
 
-  let result = await response2.json();
-
-  if (result.status != "success") {
-    return false;
-    throw new Error("Permission required");
-  } else {
-    return true;
-  }
+  // if (result.status != "success") {
+  //   return false;
+  //   throw new Error("Permission required");
+  // } else {
+  //   return true;
+  // }
 };
 
 function PopupNotification({ message, onClose, success = true }) {
