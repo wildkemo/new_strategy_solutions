@@ -71,7 +71,7 @@ export default function Navbar() {
     setIsOrdersLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:3000/APIs/Controllers/get_user_orders.js",
+        "/api/get_user_orders",
         {
           method: "GET",
           credentials: "include",
