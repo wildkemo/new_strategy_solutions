@@ -151,7 +151,7 @@ export default function AdminDashboard() {
     setError(null);
     try {
       const response = await fetch(
-        "http://localhost:3000/APIs/Controllersget_services.js"
+        "api/get_services"
         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_services.php"
       );
       if (!response.ok) throw new Error("Failed to fetch services");
