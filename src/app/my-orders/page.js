@@ -10,13 +10,11 @@ export default function MyOrders({ userId }) {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          "/api/get_user_orders",
+          "/api/get_user_orders/",
           // "http://localhost/www/oop_project/php_backend/app/Controllers/get_user_orders.php",
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: "GET",
             credentials: "include",
-            body: JSON.stringify({ userId }),
           }
         );
         if (!response.ok) throw new Error("Failed to fetch orders");

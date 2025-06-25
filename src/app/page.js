@@ -72,7 +72,7 @@ export default function Home() {
 
     // You can add further logic here (e.g., send to backend)
 
-    if (form.email != "admin@gmail.com") {
+    if (true) {
       const loginRequest = await fetch(
         "/api/login/",  //router to login api
         {

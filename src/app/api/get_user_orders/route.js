@@ -39,7 +39,7 @@ export async function GET() {
     if (orders.length === 0) {
       return NextResponse.json({ message: 'No orders found for this user' }, { status: 200 })
     }
-
+    console.log('Orders fetched successfully:', orders)
     return NextResponse.json(orders, { status: 200 })
 
   } catch (err) {

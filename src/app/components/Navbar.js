@@ -71,7 +71,7 @@ export default function Navbar() {
     setIsOrdersLoading(true);
     try {
       const response = await fetch(
-        "/api/get_user_orders",
+        "/api/get_user_orders/",
         {
           method: "GET",
           credentials: "include",
@@ -99,7 +99,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/APIs/Controllers/logout.js",
+        "/api/logout",
         {
           method: "POST",
           credentials: "include",

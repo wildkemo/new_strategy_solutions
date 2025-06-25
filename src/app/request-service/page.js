@@ -6,27 +6,24 @@ import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
 
 const validateSession = async () => {
+  
+
   // const response2 = await fetch(
-  //   "http://localhost/oop_project/php_backend/app/Controllers/validate_request.php",
+  //   // "http://localhost/strategy_solutions_backend/app/Controllers/validate_request.php",
+  //   "http://localhost:3000/APIs/Controllers/validate_request.js",
   //   { headers: { "Content-Type": "application/json" }, credentials: "include" }
   // );
 
-  const response2 = await fetch(
-    // "http://localhost/strategy_solutions_backend/app/Controllers/validate_request.php",
-    "http://localhost:3000/APIs/Controllers/validate_request.js",
-    { headers: { "Content-Type": "application/json" }, credentials: "include" }
-  );
+  // if (!response2.ok) throw new Error("Failed to fetch services");
 
-  if (!response2.ok) throw new Error("Failed to fetch services");
+  // let result = await response2.json();
 
-  let result = await response2.json();
-
-  if (result.status != "success") {
-    return false;
-    throw new Error("Permission required");
-  } else {
-    return true;
-  }
+  // if (result.status != "success") {
+  //   return false;
+  //   throw new Error("Permission required");
+  // } else {
+  //   return true;
+  // }
 };
 
 function PopupNotification({ message, onClose, error }) {
@@ -94,23 +91,23 @@ export default function RequestService() {
 
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+  const [checkingSession, setCheckingSession] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [signedInEmail, setSignedInEmail] = useState("");
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const isValid = await validateSession();
-      if (!isValid) {
-        window.location.href = "/"; // redirect here if not allowed
-      } else {
-        setCheckingSession(false);
-      }
-    };
-    checkSession();
-  }, []);
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     const isValid = await validateSession();
+  //     if (!isValid) {
+  //       window.location.href = "/"; // redirect here if not allowed
+  //     } else {
+  //       setCheckingSession(false);
+  //     }
+  //   };
+  //   checkSession();
+  // }, []);
 
   useEffect(() => {
     if (showPopup) {
@@ -123,25 +120,25 @@ export default function RequestService() {
 
   useEffect(() => {
     // Fetch signed-in user's email
-    const fetchSignedInEmail = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost/3000/APIs/Controllers/get_current_user.js",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          if (data && data[0] && data[0].email) {
-            setSignedInEmail(data[0].email);
-          }
-        }
-      } catch {}
-    };
-    fetchSignedInEmail();
+    // const fetchSignedInEmail = async () => {
+    //   try {
+    //     const response = await fetch(
+    //       "http://localhost/3000/APIs/Controllers/get_current_user.js",
+    //       {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         credentials: "include",
+    //       }
+    //     );
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       if (data && data[0] && data[0].email) {
+    //         setSignedInEmail(data[0].email);
+    //       }
+    //     }
+    //   } catch {}
+    // };
+    // fetchSignedInEmail();
   }, []);
 
   const validateForm = () => {
@@ -161,7 +158,7 @@ export default function RequestService() {
       return;
     }
     const response = await fetch(
-      "http://localhost:3000/APIs/Controllers/request_service.js",
+      "/api/request_service/",
       {
         method: "POST",
         headers: {
@@ -169,7 +166,6 @@ export default function RequestService() {
         },
         credentials: "include",
         body: JSON.stringify({
-          email: formData.email,
           service_type: formData.serviceType,
           service_description: formData.description,
         }),

@@ -49,18 +49,16 @@ export default function Profile({ userId }) {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
-          // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
+          "/api/get_current_user/", // Adjust this path based on your API route
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: "GET",
             credentials: "include",
           }
         );
         if (!response.ok) throw new Error("Failed to fetch user data");
         const data = await response.json();
-        // console.log(data); // Add this after fetching
-        const userdata = data[0];
+        console.log(data);
+        const userdata = data;
         setUser(userdata);
         setFormData({
           name: userdata.name,
@@ -106,10 +104,9 @@ export default function Profile({ userId }) {
     }
     try {
       const response = await fetch(
-        "http://localhost/strategy_solutions_backend/app/Controllers/update_user_info.php",
-        // "http://localhost/www/oop_project/php_backend/app/Controllers/update_user_info.php",
+        "/api/update_user_info/",
         {
-          method: "POST",
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(formData),
@@ -136,17 +133,15 @@ export default function Profile({ userId }) {
         setUpdateError(null);
         // Refresh user data
         const userResponse = await fetch(
-          "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
-          // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
+          "/api/get_current_user/", // Adjust this path based on your API route
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: "GET",
             credentials: "include",
           }
         );
         if (userResponse.ok) {
           const data = await userResponse.json();
-          const userdata = data[0];
+          const userdata = data;
           setUser(userdata);
           setFormData({
             name: userdata.name || "",
