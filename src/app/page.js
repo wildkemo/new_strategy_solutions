@@ -5,10 +5,6 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 
 export default function Home() {
-  const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [formError, setFormError] = useState("");
-  const [formSuccess, setFormSuccess] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,10 +16,10 @@ export default function Home() {
     // Fetch user data to determine if signed in
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/APIs/Controllers/get_current_user.js",
-          { method: "GET", credentials: "include" }
-        );
+        const response = await fetch("api/get_current_user", {
+          method: "GET",
+          credentials: "include",
+        });
         if (response.ok) {
           const userData = await response.json();
           if (userData && userData.length > 0) {
@@ -43,121 +39,6 @@ export default function Home() {
     fetchUserData();
   }, []);
 
-  const handleOpenModal = () => {
-    setShowModal(true);
-    setForm({ email: "", password: "" });
-    setFormError("");
-    setFormSuccess(false);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleFormChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    // Simple validation
-    if (!form.email.trim() || !form.password.trim()) {
-      setFormError("All fields are required.");
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(form.email)) {
-      setFormError("Invalid email address.");
-      return;
-    }
-
-    // You can add further logic here (e.g., send to backend)
-
-    if (true) {
-      const loginRequest = await fetch(
-        "/api/login/",  //router to login api
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            email: form.email,
-            password: form.password,
-          }),
-        }
-      );
-
-      if (!loginRequest.ok) {
-        let errorText = await loginRequest.text();
-        throw new Error(
-          `HTTP error! Status: ${loginRequest.status}, Message: ${errorText}`
-        );
-      } else {
-        const loginResponse = await loginRequest.json();
-
-        if (loginResponse.status == "success-user") {
-          // alert(loginResponse.message);
-          setFormError("");
-          setFormSuccess(true);
-          window.location.href = "/services";
-        } else if (loginResponse.status == "success-admin") {
-          setFormError("");
-          setFormSuccess(true);
-          window.location.href = "/blank_admin";
-        } else if (loginResponse.status == "error") {
-          //alert(loginResponse.message);
-          setFormError(loginResponse.message);
-          setFormSuccess(false);
-        } else {
-          setFormError("An Unknown error occured");
-          setFormSuccess(false);
-        }
-      }
-    } else {
-      const loginRequest = await fetch(
-        "http://localhost:3000/APIs/Controllerslogin.php",
-        // "http://localhost/www/oop_project/php_backend/app/Controllers/login.php",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            action: "login-as-admin",
-            email: form.email,
-            password: form.password,
-          }),
-          // credentials: 'include'
-        }
-      );
-
-      if (!loginRequest.ok) {
-        let errorText = await loginRequest.text();
-        throw new Error(
-          `HTTP error! Status: ${loginRequest.status}, Message: ${errorText}`
-        );
-      } else {
-        const loginResponse = await loginRequest.json();
-
-        if (loginResponse.status == "sucess-user") {
-          // alert(loginResponse.message);
-          setFormError("");
-          setFormSuccess(true);
-          window.location.href = "/services";
-        } else if (loginResponse.status == "sucess-admin") {
-          setFormError("");
-          setFormSuccess(true);
-          window.location.href = "/blank_admin";
-        } else if (loginResponse.status == "error") {
-          //alert(loginResponse.message);
-          setFormError(loginResponse.message);
-          setFormSuccess(false);
-        } else {
-          setFormError("An Unknown error occured");
-          setFormSuccess(false);
-        }
-      }
-    }
-  };
-
   return (
     <>
       <main className={styles.main}>
@@ -170,9 +51,9 @@ export default function Home() {
             </p>
             <div className={styles.ctas}>
               {!isLoading && !user && (
-                <button onClick={handleOpenModal} className={styles.primary}>
+                <a href="/login" className={styles.primary}>
                   Get Started
-                </button>
+                </a>
               )}
               <a href="/services" className={styles.secondary}>
                 Learn More
@@ -209,70 +90,12 @@ export default function Home() {
             </div>
             <div className={styles.featureCard}>
               <h3>Performance Optimization</h3>
-              <p>Enhance efficiency and productivity across your organization</p>
+              <p>
+                Enhance efficiency and productivity across your organization
+              </p>
             </div>
           </div>
         </section>
-
-        {/* Modal Validation Form */}
-        {showModal && (
-          <div className={styles.modalOverlay} onClick={handleCloseModal}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-              <button
-                className={styles.closeButton}
-                onClick={handleCloseModal}
-                aria-label="Close"
-              >
-                ×
-              </button>
-              <h2>Sign In</h2>
-              {formSuccess ? (
-                <div className={styles.successMessage}>
-                  Thank you! We'll contact you soon.
-                  <br />
-                  <a href="/register" className={styles.registerLink}>
-                    Go to Register Form
-                  </a>
-                </div>
-              ) : (
-                <form
-                  onSubmit={handleFormSubmit}
-                  className={styles.validationForm}
-                >
-                  <div className={styles.formGroup}>
-                    <label>Email</label>
-                    <input
-                      name="email"
-                      value={form.email}
-                      onChange={handleFormChange}
-                      required
-                      type="email"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Password</label>
-                    <input
-                      name="password"
-                      value={form.password}
-                      onChange={handleFormChange}
-                      required
-                      type="password"
-                    />
-                  </div>
-                  {formError && (
-                    <div className={styles.formError}>{formError}</div>
-                  )}
-                  <button type="submit" className={styles.saveButton}>
-                    Submit
-                  </button>
-                  <a href="/register" className={styles.registerLink}>
-                    Go to Register Form
-                  </a>
-                </form>
-              )}
-            </div>
-          </div>
-        )}
       </main>
       <footer
         style={{
@@ -286,7 +109,7 @@ export default function Home() {
           boxShadow: "0 -2px 12px rgba(0,0,0,0.08)",
           marginTop: "2.5rem",
           left: 0,
-          right: 0
+          right: 0,
         }}
       >
         Copyright © 2025 Strategy Solution - All Rights Reserved.

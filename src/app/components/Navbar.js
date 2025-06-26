@@ -34,13 +34,10 @@ export default function Navbar() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          "/api/get_current_user/",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch("/api/get_current_user/", {
+          method: "GET",
+          credentials: "include",
+        });
 
         if (!response.ok) {
           let errorText = await response.text();
@@ -51,8 +48,10 @@ export default function Navbar() {
 
         const userData = await response.json();
         console.log("User data fetched:", userData);
-        if (userData.length !== 0) {
-          setUser(userData);
+        if (userData.user) {
+          setUser(userData.user);
+        } else {
+          setUser(null);
         }
       } catch (err) {
         console.error("Error fetching user data:", err);
@@ -70,13 +69,10 @@ export default function Navbar() {
 
     setIsOrdersLoading(true);
     try {
-      const response = await fetch(
-        "/api/get_user_orders/",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch("/api/get_user_orders/", {
+        method: "GET",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch orders");
@@ -98,13 +94,10 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(
-        "/api/logout",
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Logout failed");
