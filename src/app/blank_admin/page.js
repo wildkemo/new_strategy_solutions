@@ -174,7 +174,7 @@ export default function AdminDashboard() {
   const fetchServiceRequests = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3000/APIs/Controllersget_orders.js"
+        "api/get_all_orders"
         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_orders.php"
       );
       if (!response.ok) throw new Error("Failed to fetch service requests");
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
     setUsersError(null);
     try {
       const response = await fetch(
-        "http://localhost:3000/APIs/Controllers/get_users.js",
+        "api/get_all_users",
         { credentials: "include" }
       );
       if (!response.ok) throw new Error("Failed to fetch users");
@@ -500,7 +500,7 @@ export default function AdminDashboard() {
             onClick={async () => {
               try {
                 const response = await fetch(
-                  "http://localhost:3000/APIs/Controllers/logout.js",
+                  "api/logout",
                   // "http://localhost/www/oop_project/php_backend/app/Controllers/logout.php",
                   {
                     method: "POST",

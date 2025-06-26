@@ -1,11 +1,11 @@
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
-import mysql from 'mysql2/promise';
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import { jwtVerify } from "jose";
+import mysql from "mysql2/promise";
 
 export async function GET() {
   const cookieStore = cookies();
-  const token = cookieStore.get('auth_token')?.value;
+  const token = cookieStore.get("auth_token")?.value;
 
   // Return null if token is missing
   if (!token) {
@@ -38,7 +38,7 @@ export async function GET() {
     });
 
     const [rows] = await db.execute(
-      'SELECT * FROM customers WHERE email = ? LIMIT 1',
+      "SELECT * FROM customers WHERE email = ? LIMIT 1",
       [email]
     );
 
@@ -53,9 +53,9 @@ export async function GET() {
 
     return NextResponse.json({ user }, { status: 200 });
   } catch (err) {
-    console.error('[get_current_user] DB error:', err);
+    console.error("[get_current_user] DB error:", err);
     return NextResponse.json(
-      { error: 'Database error', details: err.message },
+      { error: "Database error", details: err.message },
       { status: 500 }
     );
   }

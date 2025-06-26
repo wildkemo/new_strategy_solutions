@@ -50,3 +50,19 @@ a {
     color-scheme: dark;
   }
 }
+
+.loginLogoAnimated {
+  animation: floatLogo 3.5s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

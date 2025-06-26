@@ -22,8 +22,8 @@ export default function Home() {
         });
         if (response.ok) {
           const userData = await response.json();
-          if (userData && userData.length > 0) {
-            setUser(userData[0]);
+          if (userData && userData.user) {
+            setUser(userData.user);
           } else {
             setUser(null);
           }

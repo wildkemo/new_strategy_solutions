@@ -143,7 +143,7 @@ export default function Navbar() {
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
           <img
-            src="/images/WhatsApp_Image_2025-06-08_at_20.37.40_9716fb98-removebg-preview.png"
+            src="/images/SS-logo-small-removebg-preview.png"
             alt="Strategy Solutions Logo"
             className={styles.logoImage}
           />
