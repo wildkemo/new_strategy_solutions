@@ -231,37 +231,42 @@ export default function Navbar() {
                   <p className={styles.userEmail}>{user.email}</p>
                 </div>
 
-                <div className={styles.ordersSection}>
-                  <h3>Recent Orders</h3>
-                  {isOrdersLoading ? (
-                    <div className={styles.loadingSpinner}></div>
-                  ) : orders.length > 0 ? (
-                    <div className={styles.ordersList}>
-                      {orders.slice(0, 3).map((order) => (
-                        <div key={order.id} className={styles.orderItem}>
-                          <span className={styles.orderService}>
-                            {order.service_type}
-                          </span>
-                          <span className={styles.orderStatus}>
-                            {order.status}
-                          </span>
+                {/* Hide orders section and View All Orders for admin */}
+                {user.email !== "admin@gmail.com" && (
+                  <>
+                    <div className={styles.ordersSection}>
+                      <h3>Recent Orders</h3>
+                      {isOrdersLoading ? (
+                        <div className={styles.loadingSpinner}></div>
+                      ) : orders.length > 0 ? (
+                        <div className={styles.ordersList}>
+                          {orders.slice(0, 3).map((order) => (
+                            <div key={order.id} className={styles.orderItem}>
+                              <span className={styles.orderService}>
+                                {order.service_type}
+                              </span>
+                              <span className={styles.orderStatus}>
+                                {order.status}
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      ) : (
+                        <p className={styles.noOrders}>No orders found</p>
+                      )}
                     </div>
-                  ) : (
-                    <p className={styles.noOrders}>No orders found</p>
-                  )}
-                </div>
+                    <button
+                      className={styles.sidebarBtn}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        router.push("/my-orders");
+                      }}
+                    >
+                      View All Orders
+                    </button>
+                  </>
+                )}
 
-                <button
-                  className={styles.sidebarBtn}
-                  onClick={() => {
-                    setSidebarOpen(false);
-                    router.push("/my-orders");
-                  }}
-                >
-                  View All Orders
-                </button>
                 <button
                   className={styles.sidebarBtn}
                   onClick={() => {
@@ -271,6 +276,18 @@ export default function Navbar() {
                 >
                   Manage My Profile
                 </button>
+                {user.email === "admin@gmail.com" && (
+                  <button
+                    className={styles.sidebarBtn}
+                    style={{ background: "#d63031", marginTop: "2rem" }}
+                    onClick={() => {
+                      setSidebarOpen(false);
+                      router.push("blank_admin");
+                    }}
+                  >
+                    Return to Admin Dashboard
+                  </button>
+                )}
                 <button
                   className={styles.sidebarBtn}
                   style={{ background: "#d63031", marginTop: "2rem" }}

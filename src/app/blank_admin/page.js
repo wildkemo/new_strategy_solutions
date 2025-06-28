@@ -244,24 +244,32 @@ export default function AdminDashboard() {
 
   const handleDeleteUser = async (ID, EMAIL) => {
     const response = await fetch(
-      "http://localhost:3000/APIs/Controllers/delete_user.js",
+      "/api/delete_user", // make sure this matches your file path
       {
-        method: "POST",
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: ID, email: EMAIL }),
       }
     );
-    if (!response.ok) throw new Error("Failed to delete service");
-    const result = await response.json();
-    if (result.status == "success") {
-      setPopup({ show: true, message: "User deleted.", success: false });
-    } else {
-      alert(result.message);
+  
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Failed response:", errorText);
+      throw new Error("Failed to delete user");
     }
+  
+    const result = await response.json();
+    if (result.message === "User deleted successfully") {
+      setPopup({ show: true, message: "User deleted.", success: true });
+    } else {
+      alert(result.error || "An unknown error occurred.");
+    }
+  
     await fetchUsers();
     await fetchServiceRequests();
     await fetchServices();
   };
+  
 
   const handleEditService = (service) => {
     setEditingService(service);
@@ -270,50 +278,50 @@ export default function AdminDashboard() {
     setNewService({ ...service, features });
     setShowAddModal(true);
   };
-
   const handleDeleteService = async (serviceId) => {
-    if (!window.confirm("Are you sure you want to delete this service?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this service?")) return;
+  
     try {
-      const response = await fetch(
-        "http://localhost:3000/APIs/Controllers/delete_service.js",
-        // "http://localhost/www/oop_project/php_backend/app/Controllers/delete_service.php",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: serviceId }),
-        }
-      );
-      if (!response.ok) throw new Error("Failed to delete service");
+      const response = await fetch("/api/delete_services", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: serviceId }),
+      });
+  
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error("Delete service failed:", errText);
+        throw new Error("Failed to delete service");
+      }
+  
       const result = await response.json();
-      if (result.status == "success") {
-        setPopup({ show: true, message: "Service deleted.", success: false });
+  
+      if (result.status === "success") {
+        setPopup({ show: true, message: "Service deleted.", success: true });
         await fetchServices();
       } else {
-        alert(result.message);
+        alert(result.message || "Unknown error");
       }
+  
     } catch (err) {
       setError(err.message);
     }
   };
-
+  
   const handleServiceSubmit = async (e) => {
     e.preventDefault();
     try {
-      let url =
-        "http://localhost:3000/APIs/Controllers/add_service.js";
-      // let url = "hhttp://localhost/www/oop_project/php_backend/app/Controllers/add_service.php";
+      let url = "/api/add_service";
       let method = "POST";
       let isEdit = false;
+  
       if (editingService) {
-        url =
-          "http://localhost:3000/APIs/Controllers/update_service.js";
-        // url = "http://localhost/www/oop_project/php_backend/app/Controllers/update_service.php";
-        method = "POST";
+        url = "/api/update_services";
+        method = "PUT";
         isEdit = true;
       }
-      // Always send features as array of objects
-      const features = normalizeFeatures(newService.features);
+  
+      const features = normalizeFeatures(newService.features); // assuming this is defined
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -323,8 +331,15 @@ export default function AdminDashboard() {
           id: editingService ? editingService.id : undefined,
         }),
       });
-      if (!response.ok) throw new Error("Failed to save service");
+  
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        console.error("Failed request:", errorDetails);
+        throw new Error("Failed to save service");
+      }
+  
       const result = await response.json();
+  
       if (result.status === "success") {
         setShowAddModal(false);
         setEditingService(null);
@@ -336,19 +351,12 @@ export default function AdminDashboard() {
           icon: "box1",
         });
         await fetchServices();
-        if (isEdit) {
-          setPopup({
-            show: true,
-            message: `Service '${newService.title}' edited successfully.`,
-            success: true,
-          });
-        } else {
-          setPopup({
-            show: true,
-            message: `Service '${newService.title}' added successfully.`,
-            success: true,
-          });
-        }
+  
+        setPopup({
+          show: true,
+          message: `Service '${newService.title}' ${isEdit ? "edited" : "added"} successfully.`,
+          success: true,
+        });
       } else {
         alert(result.message);
         setError(result.message || "Error in database");
@@ -357,6 +365,7 @@ export default function AdminDashboard() {
       setError(error.message);
     }
   };
+  
 
   const handleFeatureChange = (index, field, value) => {
     const newFeatures = [...newService.features];
