@@ -68,6 +68,7 @@ export default function ServicePage() {
             </li>
           ))}
         </ul>
+        <img src={service.image} alt="failed to load image" width={400} height={250}/>
       </div>
     </div>
   );

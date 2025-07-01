@@ -398,6 +398,7 @@ export default function AdminDashboard() {
       } else {
         alert(result.message || "Unknown error");
       }
+      
     } catch (err) {
       setError(err.message);
     }

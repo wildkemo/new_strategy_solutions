@@ -35,6 +35,7 @@ export async function DELETE(req) {
     // Return the deleted row
     return NextResponse.json(
       {
+        status: 'success',
         message: 'Service deleted successfully',
         service: existingRows[0],
       },
