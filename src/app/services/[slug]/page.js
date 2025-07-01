@@ -22,7 +22,8 @@ export default function ServicePage() {
       try {
         const res = await fetch("/api/get_services/");
         const services = await res.json();
-        const found = services.find((s) => getSlug(s.title) === slug);
+        let found = services.find((s) => getSlug(s.title) === slug);
+        found.features = JSON.parse(found.features || "[]");
         setService(found || null);
       } catch (err) {
         console.error("Error:", err);
@@ -49,7 +50,7 @@ export default function ServicePage() {
       </div>
     );
 
-  const features = service.features?.split(",").map((f) => f.trim());
+  const features = service.features
 
   return (
     <div className={styles.wrapper}>
@@ -64,7 +65,7 @@ export default function ServicePage() {
               className={styles.featureItem}
               style={{ animationDelay: `${i * 0.1 + 0.2}s` }}
             >
-              {f}
+              <strong>{f.name}</strong>: {f.description}
             </li>
           ))}
         </ul>

@@ -252,10 +252,14 @@ export default function AdminDashboard() {
       );
       if (!response.ok) throw new Error("Failed to fetch services");
       let data = await response.json();
+      // let tempfeatures = JSON.parse(data[0].features || "[]");
+      // data[0].features = tempfeatures;
+      // console.log(data[0].features);
+
       // Normalize features for all services
       data = data.map((service) => ({
         ...service,
-        features: normalizeFeatures(service.features),
+        features: JSON.parse(service.features),
       }));
       setServices(data);
       setLastUpdated(new Date());

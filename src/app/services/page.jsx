@@ -27,7 +27,11 @@ const Services = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data = await response.json();
+        let data = await response.json();
+        data = data.map((service) => ({
+        ...service,
+        features: JSON.parse(service.features),
+      }));
         setServices(data);
       } catch (err) {
         setError(err.message);
@@ -79,8 +83,10 @@ const Services = () => {
                     <h2>{service.title}</h2>
                     {service.description && <p>{service.description}</p>}
                     <ul>
-                      {parseFeatures(service.features).map((feature, i) => (
-                        <li key={i}>{feature}</li>
+                      {service.features.map((feature, i) => (
+                        <li key={i}>
+                          <strong>{feature.name}</strong>: {feature.description}
+                        </li>
                       ))}
                     </ul>
                   </Link>
