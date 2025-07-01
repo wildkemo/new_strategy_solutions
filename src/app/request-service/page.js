@@ -6,18 +6,13 @@ import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
 
 const validateSession = async () => {
-  
-
   // const response2 = await fetch(
   //   // "http://localhost/strategy_solutions_backend/app/Controllers/validate_request.php",
   //   "http://localhost:3000/APIs/Controllers/validate_request.js",
   //   { headers: { "Content-Type": "application/json" }, credentials: "include" }
   // );
-
   // if (!response2.ok) throw new Error("Failed to fetch services");
-
   // let result = await response2.json();
-
   // if (result.status != "success") {
   //   return false;
   //   throw new Error("Permission required");
@@ -96,6 +91,10 @@ export default function RequestService() {
   const [signedInEmail, setSignedInEmail] = useState("");
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [pendingRequestData, setPendingRequestData] = useState(null);
 
   // useEffect(() => {
   //   const checkSession = async () => {
@@ -157,33 +156,64 @@ export default function RequestService() {
       setLoading(false);
       return;
     }
-    const response = await fetch(
-      "/api/request_service/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          service_type: formData.serviceType,
-          service_description: formData.description,
-        }),
-      }
-    );
+    const response = await fetch("/api/request_service/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        service_type: formData.serviceType,
+        service_description: formData.description,
+        email: formData.email,
+        name: formData.name,
+        phone: formData.phone,
+      }),
+    });
+    setLoading(false);
     if (!response.ok) {
       const errorText = await response.text();
-      setLoading(false);
       throw new Error(
         `HTTP error! Status: ${response.status}, Message: ${errorText}`
       );
     }
     const result = await response.json();
-    setLoading(false);
-    if (result.status == "success") {
-      setShowPopup(true);
-    } else if (result.status == "error") {
+    if (result.status === "otp_sent") {
+      setPendingRequestData({
+        service_type: formData.serviceType,
+        service_description: formData.description,
+        email: formData.email,
+        name: formData.name,
+        phone: formData.phone,
+      });
+      setShowOtpModal(true);
+    } else if (result.status === "error") {
       alert(result.message);
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setOtpError("");
+    setLoading(true);
+    const response = await fetch("/api/verify_otp/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        email: pendingRequestData.email,
+        otp,
+      }),
+    });
+    setLoading(false);
+    if (!response.ok) {
+      setOtpError("Failed to verify OTP. Try again.");
+      return;
+    }
+    const result = await response.json();
+    if (result.status === "success") {
+      setShowOtpModal(false);
+      setShowPopup(true);
+    } else {
+      setOtpError(result.message || "Invalid OTP. Try again.");
     }
   };
 
@@ -214,6 +244,29 @@ export default function RequestService() {
           onClose={() => setShowEmailPopup(false)}
           error
         />
+      )}
+      {showOtpModal && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <h2>Enter OTP</h2>
+            <p>We sent a code to your email. Please enter it below:</p>
+            <form onSubmit={handleOtpSubmit}>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                maxLength={6}
+                className={styles.otpInput}
+                placeholder="Enter OTP"
+                required
+              />
+              {otpError && <div className={styles.otpError}>{otpError}</div>}
+              <button type="submit" className={styles.button}>
+                Verify OTP
+              </button>
+            </form>
+          </div>
+        </div>
       )}
       {!isSubmitted && (
         <div className={styles.content}>

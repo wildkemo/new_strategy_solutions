@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import styles from "../../data-management/ServiceDetail.module.css";
 
 const getSlug = (title) =>
   title
@@ -36,29 +37,35 @@ export default function ServicePage() {
 
   if (loading)
     return (
-      <div style={wrapperStyle}>
+      <div className={styles.wrapper}>
         <p>Loading...</p>
       </div>
     );
 
   if (!service)
     return (
-      <div style={wrapperStyle}>
-        <p style={{ color: "red" }}>Service not found</p>
+      <div className={styles.wrapper}>
+        <p className={styles.notFound}>Service not found</p>
       </div>
     );
 
   const features = service.features?.split(",").map((f) => f.trim());
 
   return (
-    <div style={wrapperStyle}>
-      <div style={boxStyle}>
-        <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>{service.title}</h1>
-        <p style={{ color: "#555", marginBottom: "1.5rem" }}>{service.description}</p>
-        <h3 style={{ marginBottom: "0.5rem" }}>Features:</h3>
-        <ul style={{ paddingLeft: "1.5rem", lineHeight: "1.8" }}>
+    <div className={styles.wrapper}>
+      <div className={styles.box}>
+        <h1 className={styles.serviceTitle}>{service.title}</h1>
+        <p className={styles.serviceDescription}>{service.description}</p>
+        <h3 className={styles.featuresTitle}>Features:</h3>
+        <ul className={styles.featuresList}>
           {features?.map((f, i) => (
-            <li key={i}>{f}</li>
+            <li
+              key={i}
+              className={styles.featureItem}
+              style={{ animationDelay: `${i * 0.1 + 0.2}s` }}
+            >
+              {f}
+            </li>
           ))}
         </ul>
       </div>

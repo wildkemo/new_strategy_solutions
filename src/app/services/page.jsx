@@ -38,8 +38,8 @@ const Services = () => {
     fetchServices();
   }, []);
 
-  // Split services into rows of 5
-  const servicesPerRow = 5;
+  // Split services into rows of 4
+  const servicesPerRow = 4;
   const rows = [];
   for (let i = 0; i < services.length; i += servicesPerRow) {
     rows.push(services.slice(i, i + servicesPerRow));
@@ -49,25 +49,32 @@ const Services = () => {
   const parseFeatures = (features) => {
     if (!features) return [];
     if (Array.isArray(features)) return features;
-    return features.split(',').map(f => f.trim());
+    return features.split(",").map((f) => f.trim());
   };
 
   return (
     <div className={styles.servicesContainer}>
-      {showPopup && (
-        <div className={styles.popup}>
-          {/* Popup content */}
-        </div>
-      )}
+      {showPopup && <div className={styles.popup}>{/* Popup content */}</div>}
       <div className={styles.servicesContent}>
         <h1 className={styles.servicesTitle}>Our Services</h1>
         <div className={styles.servicesGrid}>
           {rows.map((row, rowIndex) => (
-            <div key={rowIndex} className={styles.serviceRow}>
-              {row.map((service) => (
-                <div key={service.id} className={`${styles.serviceBox} ${
-                  colorClasses[(rowIndex * servicesPerRow + row.indexOf(service)) % colorClasses.length]
-                }`}>
+            <div
+              key={rowIndex}
+              className={styles.serviceRow}
+              style={{ display: "flex", gap: "1.5rem", marginBottom: "2rem" }}
+            >
+              {row.map((service, colIndex) => (
+                <div
+                  key={service.id}
+                  className={`${styles.serviceBox} ${
+                    colorClasses[
+                      (rowIndex * servicesPerRow + colIndex) %
+                        colorClasses.length
+                    ]
+                  }`}
+                  style={{ flex: 1 }}
+                >
                   <Link href={`/services/${getSlug(service.title)}`}>
                     <h2>{service.title}</h2>
                     {service.description && <p>{service.description}</p>}
@@ -88,4 +95,4 @@ const Services = () => {
 };
 
 export default Services;
-export {data};
+export { data };
