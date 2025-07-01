@@ -19,6 +19,8 @@ export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
+    // let isAdmin = false;
+
     const user = await validateCredentials(email, password);
 
     if (user === 1) {
@@ -28,17 +30,20 @@ export async function POST(req) {
       return NextResponse.json({ status: 'error', message: 'Invalid password' }, { status: 200 });
     }
 
+    console.log("user found:", user);
+
+
     let token = null;
 
-    if(email !== "admin@gmail.com"){
+    if(user.isAdmin === true){
       token = jwt.sign(
-      { userId: user.id, email: user.email, name: user.name, admin: false },
+      { userId: user.id, email: user.email, name: user.name, admin: true },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
       );
     }else{
       token = jwt.sign(
-        { userId: user.id, email: user.email, name: user.name, admin: true },
+        { userId: user.id, email: user.email, name: user.name, admin: false },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
@@ -53,12 +58,15 @@ export async function POST(req) {
     });
 
     const res = NextResponse.json({
-      status: 'success-user',
+      status: 'success',
       message: 'Login successful',
+      isAdmin: user.isAdmin,
       
     }, { status: 200 });
 
     res.headers.set('Set-Cookie', cookie);
+
+    console.log("isAdmin", res.isAdmin);
     return res;
 
   } catch (error) {
@@ -71,6 +79,26 @@ async function validateCredentials(email, password) {
   let connection;
   try {
     connection = await pool.getConnection();
+
+    const [adminRow] = await connection.execute(
+      'SELECT id, email, name, password FROM admins WHERE email = ? LIMIT 1',
+      [email]
+    );
+
+    if (adminRow.length !== 0){
+      const admin = adminRow[0];
+
+      const isAdminPasswordValid = await bcrypt.compare(password, admin.password);
+      if (isAdminPasswordValid){
+        // isAdmin = true;
+        return { id: admin.id, email: admin.email, name: admin.name, isAdmin: true };
+      }else{
+        return 2; // Invalid password
+      }
+    };
+
+    
+
     const [rows] = await connection.execute(
       'SELECT id, email, name, password FROM customers WHERE email = ? LIMIT 1',
       [email]
@@ -82,7 +110,7 @@ async function validateCredentials(email, password) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return 2;
 
-    return { id: user.id, email: user.email, name: user.name };
+    return { id: user.id, email: user.email, name: user.name, isAdmin: false };
   } finally {
     if (connection) connection.release();
   }

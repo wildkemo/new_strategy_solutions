@@ -97,15 +97,13 @@ export default function Login() {
       } else {
         const loginResponse = await loginRequest.json();
 
-        if (
-          loginResponse.status === "success-user" ||
-          loginResponse.status === "success-admin"
-        ) {
+        if (loginResponse.status === "success") {
+
           setFormError("");
           setFormSuccess(true);
 
           // Check if it's admin and redirect accordingly
-          if (form.email === "admin@gmail.com") {
+          if (loginResponse.isAdmin) {
             window.location.href = "/blank_admin";
           } else {
             window.location.href = "/services";

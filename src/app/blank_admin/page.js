@@ -109,6 +109,21 @@ export default function AdminDashboard() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Add this with your other state declarations
+const [admins, setAdmins] = useState([]);
+const [isAdminsLoading, setIsAdminsLoading] = useState(true);
+const [adminsError, setAdminsError] = useState(null);
+
+  // Add this with your other state declarations
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [adminError, setAdminError] = useState('');
+
   // New service form state
   const [newService, setNewService] = useState({
     title: "",
@@ -134,6 +149,96 @@ export default function AdminDashboard() {
     message: "",
     success: true,
   });
+
+
+  const handleAddAdmin = () => {
+  setAdminError('');
+  setNewAdmin({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  setShowAdminModal(true);
+};
+
+const handleAdminInputChange = (e) => {
+  const { name, value } = e.target;
+  setNewAdmin(prev => ({
+    ...prev,
+    [name]: value
+  }));
+};
+
+const handleAdminSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Validation
+  if (newAdmin.password !== newAdmin.confirmPassword) {
+    setAdminError('Passwords do not match');
+    return;
+  }
+  
+  if (newAdmin.password.length < 6) {
+    setAdminError('Password must be at least 6 characters');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/add_admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: newAdmin.name,
+        email: newAdmin.email,
+        password: newAdmin.password
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to add admin');
+    }
+
+    const result = await response.json();
+    
+    if (result.status === 'success') {
+      setPopup({
+        show: true,
+        message: 'Admin added successfully',
+        success: true
+      });
+      setShowAdminModal(false);
+      // Refresh admin list if needed
+      // await fetchAdmins();
+    } else {
+      setAdminError(result.message || 'Error adding admin');
+    }
+  } catch (err) {
+    setAdminError(err.message);
+  }
+};
+
+
+// Add this with your other fetch functions
+const fetchAdmins = async () => {
+  setIsAdminsLoading(true);
+  setAdminsError(null);
+  try {
+    const response = await fetch(
+      "api/get_admins",
+      { credentials: "include" }
+    );
+    if (!response.ok) throw new Error("Failed to fetch admins");
+    const data = await response.json();
+    setAdmins(data);
+  } catch (err) {
+    setAdminsError(err.message);
+  } finally {
+    setIsAdminsLoading(false);
+  }
+};
+
 
   // Helper to normalize features array
   function normalizeFeatures(features) {
@@ -208,6 +313,7 @@ export default function AdminDashboard() {
     fetchServices();
     fetchServiceRequests();
     fetchUsers();
+    fetchAdmins();
   }, []);
 
   useEffect(() => {
@@ -454,6 +560,16 @@ export default function AdminDashboard() {
       matches(user.gender)
     );
   });
+
+  const filteredAdmins = admins.filter((admin) => {
+  if (!term) return true;
+  return (
+    matches(admin.id) ||
+    matches(admin.name) ||
+    matches(admin.email) ||
+    matches(admin.created_at)
+  );
+});
 
   if (error) {
     return (
@@ -716,6 +832,45 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Admin Management Card */}
+<div className={`${styles.card} ${styles.userCard}`}>
+  <h2>Admin Management</h2>
+  <button onClick={handleAddAdmin} className={styles.addButton}>
+    Add new Admin
+  </button>
+  {isAdminsLoading ? (
+    <div className={styles.loading}>Loading admins...</div>
+  ) : adminsError ? (
+    <div className={styles.error}>{adminsError}</div>
+  ) : (
+    <div className={styles.tableContainer}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+            {/* <th>Actions</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {admins.map((admin) => (
+            <tr key={admin.id || admin.email || admin.name}>
+              <td>{admin.id}</td>
+              <td>{admin.name}</td>
+              <td>{admin.email}</td>
+              <td>{new Date(admin.created_at).toLocaleDateString()}</td>
+              
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+
+
       {/* Add/Edit Service Modal */}
       {showAddModal && (
         <div
@@ -880,6 +1035,79 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* Add Admin Modal */}
+{showAdminModal && (
+  <div className={styles.modalOverlay} onClick={() => setShowAdminModal(false)}>
+    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        className={styles.closeButton}
+        onClick={() => setShowAdminModal(false)}
+        aria-label="Close"
+      >
+        ×
+      </button>
+      <h2>Add New Admin</h2>
+      {adminError && <div className={styles.error}>{adminError}</div>}
+      <form onSubmit={handleAdminSubmit}>
+        <div className={styles.formGroup}>
+          <label>Name</label>
+          <input
+            type="text"
+            name="name"
+            value={newAdmin.name}
+            onChange={handleAdminInputChange}
+            required
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            value={newAdmin.email}
+            onChange={handleAdminInputChange}
+            required
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            value={newAdmin.password}
+            onChange={handleAdminInputChange}
+            required
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Confirm Password</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={newAdmin.confirmPassword}
+            onChange={handleAdminInputChange}
+            required
+          />
+        </div>
+        <div className={styles.modalActions}>
+          <button type="submit" className={styles.saveButton}>
+            Add Admin
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowAdminModal(false)}
+            className={styles.cancelButton}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
     </div>
   );
   // }
