@@ -232,7 +232,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Hide orders section and View All Orders for admin */}
-                {user.email !== "admin@gmail.com" && (
+                {user.isAdmin !== true && (
                   <>
                     <div className={styles.ordersSection}>
                       <h3>Recent Orders</h3>
@@ -276,13 +276,13 @@ export default function Navbar() {
                 >
                   Manage My Profile
                 </button>
-                {user.email === "admin@gmail.com" && (
+                {user.isAdmin === true && (
                   <button
                     className={styles.sidebarBtn}
                     style={{ background: "#d63031", marginTop: "2rem" }}
                     onClick={() => {
                       setSidebarOpen(false);
-                      router.push("blank_admin");
+                      router.push("/blank_admin");
                     }}
                   >
                     Return to Admin Dashboard

@@ -7,17 +7,13 @@ const validateSession = async () => {
   // // const response2 = await fetch(
   // // "http://localhost/oop_project/php_backend/app/Controllers/route.php",
   // //  {headers: { 'Content-Type': 'application/json' } ,credentials: 'include'})
-
   // const response2 = await fetch(
   //   "http://localhost:3000/APIs/Controllers/route.js",
   //   // "http://localhost/www/oop_project/php_backend/app/Controllers/route.php",
   //   { headers: { "Content-Type": "application/json" }, credentials: "include" }
   // );
-
   // if (!response2.ok) throw new Error("Failed to fetch services");
-
   // let result = await response2.json();
-
   // if (result.status != "success") {
   //   return false;
   //   throw new Error("Permission required");
@@ -94,7 +90,6 @@ export default function AdminDashboard() {
     //     window.location.href = "/services/page.js"; // redirect on failure
     //   }
     // };
-
     // checkSession();
   }, []);
 
@@ -110,19 +105,19 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Add this with your other state declarations
-const [admins, setAdmins] = useState([]);
-const [isAdminsLoading, setIsAdminsLoading] = useState(true);
-const [adminsError, setAdminsError] = useState(null);
+  const [admins, setAdmins] = useState([]);
+  const [isAdminsLoading, setIsAdminsLoading] = useState(true);
+  const [adminsError, setAdminsError] = useState(null);
 
   // Add this with your other state declarations
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [newAdmin, setNewAdmin] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [adminError, setAdminError] = useState('');
+  const [adminError, setAdminError] = useState("");
 
   // New service form state
   const [newService, setNewService] = useState({
@@ -150,95 +145,91 @@ const [adminsError, setAdminsError] = useState(null);
     success: true,
   });
 
-
   const handleAddAdmin = () => {
-  setAdminError('');
-  setNewAdmin({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-  setShowAdminModal(true);
-};
-
-const handleAdminInputChange = (e) => {
-  const { name, value } = e.target;
-  setNewAdmin(prev => ({
-    ...prev,
-    [name]: value
-  }));
-};
-
-const handleAdminSubmit = async (e) => {
-  e.preventDefault();
-  
-  // Validation
-  if (newAdmin.password !== newAdmin.confirmPassword) {
-    setAdminError('Passwords do not match');
-    return;
-  }
-  
-  if (newAdmin.password.length < 6) {
-    setAdminError('Password must be at least 6 characters');
-    return;
-  }
-
-  try {
-    const response = await fetch('/api/add_admin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: newAdmin.name,
-        email: newAdmin.email,
-        password: newAdmin.password
-      })
+    setAdminError("");
+    setNewAdmin({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     });
+    setShowAdminModal(true);
+  };
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to add admin');
+  const handleAdminInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewAdmin((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleAdminSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (newAdmin.password !== newAdmin.confirmPassword) {
+      setAdminError("Passwords do not match");
+      return;
     }
 
-    const result = await response.json();
-    
-    if (result.status === 'success') {
-      setPopup({
-        show: true,
-        message: 'Admin added successfully',
-        success: true
+    if (newAdmin.password.length < 6) {
+      setAdminError("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/add_admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newAdmin.name,
+          email: newAdmin.email,
+          password: newAdmin.password,
+        }),
       });
-      setShowAdminModal(false);
-      // Refresh admin list if needed
-      // await fetchAdmins();
-    } else {
-      setAdminError(result.message || 'Error adding admin');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add admin");
+      }
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        setPopup({
+          show: true,
+          message: "Admin added successfully",
+          success: true,
+        });
+        setShowAdminModal(false);
+        // Refresh admin list if needed
+        // await fetchAdmins();
+      } else {
+        setAdminError(result.message || "Error adding admin");
+      }
+    } catch (err) {
+      setAdminError(err.message);
     }
-  } catch (err) {
-    setAdminError(err.message);
-  }
-};
+  };
 
-
-// Add this with your other fetch functions
-const fetchAdmins = async () => {
-  setIsAdminsLoading(true);
-  setAdminsError(null);
-  try {
-    const response = await fetch(
-      "api/get_admins",
-      { credentials: "include" }
-    );
-    if (!response.ok) throw new Error("Failed to fetch admins");
-    const data = await response.json();
-    setAdmins(data);
-  } catch (err) {
-    setAdminsError(err.message);
-  } finally {
-    setIsAdminsLoading(false);
-  }
-};
-
+  // Add this with your other fetch functions
+  const fetchAdmins = async () => {
+    setIsAdminsLoading(true);
+    setAdminsError(null);
+    try {
+      const response = await fetch("api/get_admins", {
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error("Failed to fetch admins");
+      const data = await response.json();
+      setAdmins(data);
+    } catch (err) {
+      setAdminsError(err.message);
+    } finally {
+      setIsAdminsLoading(false);
+    }
+  };
 
   // Helper to normalize features array
   function normalizeFeatures(features) {
@@ -295,10 +286,9 @@ const fetchAdmins = async () => {
     setIsUsersLoading(true);
     setUsersError(null);
     try {
-      const response = await fetch(
-        "api/get_all_users",
-        { credentials: "include" }
-      );
+      const response = await fetch("api/get_all_users", {
+        credentials: "include",
+      });
       if (!response.ok) throw new Error("Failed to fetch users");
       const data = await response.json();
       setUsers(data);
@@ -357,25 +347,24 @@ const fetchAdmins = async () => {
         body: JSON.stringify({ id: ID, email: EMAIL }),
       }
     );
-  
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Failed response:", errorText);
       throw new Error("Failed to delete user");
     }
-  
+
     const result = await response.json();
     if (result.message === "User deleted successfully") {
       setPopup({ show: true, message: "User deleted.", success: true });
     } else {
       alert(result.error || "An unknown error occurred.");
     }
-  
+
     await fetchUsers();
     await fetchServiceRequests();
     await fetchServices();
   };
-  
 
   const handleEditService = (service) => {
     setEditingService(service);
@@ -385,48 +374,48 @@ const fetchAdmins = async () => {
     setShowAddModal(true);
   };
   const handleDeleteService = async (serviceId) => {
-    if (!window.confirm("Are you sure you want to delete this service?")) return;
-  
+    if (!window.confirm("Are you sure you want to delete this service?"))
+      return;
+
     try {
       const response = await fetch("/api/delete_services", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: serviceId }),
       });
-  
+
       if (!response.ok) {
         const errText = await response.text();
         console.error("Delete service failed:", errText);
         throw new Error("Failed to delete service");
       }
-  
+
       const result = await response.json();
-  
+
       if (result.status === "success") {
         setPopup({ show: true, message: "Service deleted.", success: true });
         await fetchServices();
       } else {
         alert(result.message || "Unknown error");
       }
-  
     } catch (err) {
       setError(err.message);
     }
   };
-  
+
   const handleServiceSubmit = async (e) => {
     e.preventDefault();
     try {
       let url = "/api/add_service";
       let method = "POST";
       let isEdit = false;
-  
+
       if (editingService) {
         url = "/api/update_services";
         method = "PUT";
         isEdit = true;
       }
-  
+
       const features = normalizeFeatures(newService.features); // assuming this is defined
       const formData = new FormData();
       formData.append("title", newService.title);
@@ -436,20 +425,20 @@ const fetchAdmins = async () => {
       formData.append("features", JSON.stringify(features));
       if (editingService) formData.append("id", editingService.id);
       if (newService.image) formData.append("image", newService.image);
-          
+
       const response = await fetch(url, {
         method,
         body: formData,
       });
-  
+
       if (!response.ok) {
         const errorDetails = await response.text();
         console.error("Failed request:", errorDetails);
         throw new Error("Failed to save service");
       }
-  
+
       const result = await response.json();
-  
+
       if (result.status === "success") {
         setShowAddModal(false);
         setEditingService(null);
@@ -461,10 +450,12 @@ const fetchAdmins = async () => {
           icon: "box1",
         });
         await fetchServices();
-  
+
         setPopup({
           show: true,
-          message: `Service '${newService.title}' ${isEdit ? "edited" : "added"} successfully.`,
+          message: `Service '${newService.title}' ${
+            isEdit ? "edited" : "added"
+          } successfully.`,
           success: true,
         });
       } else {
@@ -475,7 +466,6 @@ const fetchAdmins = async () => {
       setError(error.message);
     }
   };
-  
 
   const handleFeatureChange = (index, field, value) => {
     const newFeatures = [...newService.features];
@@ -566,14 +556,14 @@ const fetchAdmins = async () => {
   });
 
   const filteredAdmins = admins.filter((admin) => {
-  if (!term) return true;
-  return (
-    matches(admin.id) ||
-    matches(admin.name) ||
-    matches(admin.email) ||
-    matches(admin.created_at)
-  );
-});
+    if (!term) return true;
+    return (
+      matches(admin.id) ||
+      matches(admin.name) ||
+      matches(admin.email) ||
+      matches(admin.created_at)
+    );
+  });
 
   if (error) {
     return (
@@ -837,43 +827,41 @@ const fetchAdmins = async () => {
       )}
 
       {/* Admin Management Card */}
-<div className={`${styles.card} ${styles.userCard}`}>
-  <h2>Admin Management</h2>
-  <button onClick={handleAddAdmin} className={styles.addButton}>
-    Add new Admin
-  </button>
-  {isAdminsLoading ? (
-    <div className={styles.loading}>Loading admins...</div>
-  ) : adminsError ? (
-    <div className={styles.error}>{adminsError}</div>
-  ) : (
-    <div className={styles.tableContainer}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created At</th>
-            {/* <th>Actions</th> */}
-          </tr>
-        </thead>
-        <tbody>
-          {admins.map((admin) => (
-            <tr key={admin.id || admin.email || admin.name}>
-              <td>{admin.id}</td>
-              <td>{admin.name}</td>
-              <td>{admin.email}</td>
-              <td>{new Date(admin.created_at).toLocaleDateString()}</td>
-              
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )}
-</div>
-
+      <div className={`${styles.card} ${styles.userCard}`}>
+        <h2>Admin Management</h2>
+        <button onClick={handleAddAdmin} className={styles.addButton}>
+          Add new Admin
+        </button>
+        {isAdminsLoading ? (
+          <div className={styles.loading}>Loading admins...</div>
+        ) : adminsError ? (
+          <div className={styles.error}>{adminsError}</div>
+        ) : (
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Created At</th>
+                  {/* <th>Actions</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {admins.map((admin) => (
+                  <tr key={admin.id || admin.email || admin.name}>
+                    <td>{admin.id}</td>
+                    <td>{admin.name}</td>
+                    <td>{admin.email}</td>
+                    <td>{new Date(admin.created_at).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {/* Add/Edit Service Modal */}
       {showAddModal && (
@@ -1014,12 +1002,14 @@ const fetchAdmins = async () => {
                 </button>
               </div>
               <div className={styles.formGroup}>
-              <label>Upload Icon Image</label>
-              <input
+                <label>Upload Icon Image</label>
+                <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) =>setNewService({ ...newService, image: e.target.files[0] })}
-                  />
+                  onChange={(e) =>
+                    setNewService({ ...newService, image: e.target.files[0] })
+                  }
+                />
               </div>
               <div className={styles.modalActions}>
                 <button type="submit" className={styles.saveButton}>
@@ -1049,77 +1039,79 @@ const fetchAdmins = async () => {
       )}
 
       {/* Add Admin Modal */}
-{showAdminModal && (
-  <div className={styles.modalOverlay} onClick={() => setShowAdminModal(false)}>
-    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-      <button
-        type="button"
-        className={styles.closeButton}
-        onClick={() => setShowAdminModal(false)}
-        aria-label="Close"
-      >
-        ×
-      </button>
-      <h2>Add New Admin</h2>
-      {adminError && <div className={styles.error}>{adminError}</div>}
-      <form onSubmit={handleAdminSubmit}>
-        <div className={styles.formGroup}>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={newAdmin.name}
-            onChange={handleAdminInputChange}
-            required
-          />
+      {showAdminModal && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setShowAdminModal(false)}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className={styles.closeButton}
+              onClick={() => setShowAdminModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <h2>Add New Admin</h2>
+            {adminError && <div className={styles.error}>{adminError}</div>}
+            <form onSubmit={handleAdminSubmit}>
+              <div className={styles.formGroup}>
+                <label>Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={newAdmin.name}
+                  onChange={handleAdminInputChange}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={newAdmin.email}
+                  onChange={handleAdminInputChange}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={newAdmin.password}
+                  onChange={handleAdminInputChange}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={newAdmin.confirmPassword}
+                  onChange={handleAdminInputChange}
+                  required
+                />
+              </div>
+              <div className={styles.modalActions}>
+                <button type="submit" className={styles.saveButton}>
+                  Add Admin
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAdminModal(false)}
+                  className={styles.cancelButton}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div className={styles.formGroup}>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={newAdmin.email}
-            onChange={handleAdminInputChange}
-            required
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={newAdmin.password}
-            onChange={handleAdminInputChange}
-            required
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={newAdmin.confirmPassword}
-            onChange={handleAdminInputChange}
-            required
-          />
-        </div>
-        <div className={styles.modalActions}>
-          <button type="submit" className={styles.saveButton}>
-            Add Admin
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowAdminModal(false)}
-            className={styles.cancelButton}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-
+      )}
     </div>
   );
   // }
