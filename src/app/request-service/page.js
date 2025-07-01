@@ -213,7 +213,7 @@ export default function RequestService() {
       setShowOtpModal(false);
       setShowPopup(true);
     } else {
-      setOtpError(result.message || "Invalid OTP. Try again.");
+      setOtpError(result.error || "Invalid OTP. Try again.");
     }
   };
 
