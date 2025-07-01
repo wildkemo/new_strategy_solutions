@@ -428,14 +428,18 @@ const fetchAdmins = async () => {
       }
   
       const features = normalizeFeatures(newService.features); // assuming this is defined
+      const formData = new FormData();
+      formData.append("title", newService.title);
+      formData.append("description", newService.description);
+      formData.append("category", newService.category);
+      formData.append("icon", newService.icon);
+      formData.append("features", JSON.stringify(features));
+      if (editingService) formData.append("id", editingService.id);
+      if (newService.image) formData.append("image", newService.image);
+          
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...newService,
-          features,
-          id: editingService ? editingService.id : undefined,
-        }),
+        body: formData,
       });
   
       if (!response.ok) {
@@ -1008,6 +1012,14 @@ const fetchAdmins = async () => {
                 >
                   Add Feature
                 </button>
+              </div>
+              <div className={styles.formGroup}>
+              <label>Upload Icon Image</label>
+              <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>setNewService({ ...newService, image: e.target.files[0] })}
+                  />
               </div>
               <div className={styles.modalActions}>
                 <button type="submit" className={styles.saveButton}>
