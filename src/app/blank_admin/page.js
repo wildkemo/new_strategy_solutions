@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./admin.module.css";
+import Navbar from "../components/Navbar";
 
 const validateSession = async () => {
   // // const response2 = await fetch(
@@ -402,7 +403,6 @@ export default function AdminDashboard() {
       } else {
         alert(result.message || "Unknown error");
       }
-      
     } catch (err) {
       setError(err.message);
     }
@@ -585,120 +585,276 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className={styles.dashboard}>
-      {popup.show && (
-        <PopupNotification
-          message={popup.message}
-          onClose={() => setPopup({ show: false, message: "", success: true })}
-          success={popup.success}
-        />
-      )}
-      <header className={styles.header}>
-        <h1>Admin Dashboard</h1>
-        <div className={styles.headerControls}>
-          <input
-            type="text"
-            placeholder="Search all data..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              padding: "0.5rem 1rem",
-              borderRadius: 4,
-              border: "1px solid #ccc",
-              fontSize: "1rem",
-              marginRight: "1rem",
-              minWidth: 200,
-            }}
+    <>
+      <Navbar className="navbarWhite" />
+      <div className={styles.dashboard}>
+        {popup.show && (
+          <PopupNotification
+            message={popup.message}
+            onClose={() =>
+              setPopup({ show: false, message: "", success: true })
+            }
+            success={popup.success}
           />
-          <div className={styles.lastUpdated}>
-            Last updated: {lastUpdated.toLocaleTimeString()}
-          </div>
-          <button
-            onClick={handleRefresh}
-            className={styles.refreshButton}
-            disabled={isLoading}
-          >
-            {isLoading ? "Refreshing..." : "Refresh"}
-          </button>
-          <button
-            onClick={async () => {
-              try {
-                const response = await fetch(
-                  "api/logout",
-                  // "http://localhost/www/oop_project/php_backend/app/Controllers/logout.php",
-                  {
-                    method: "POST",
-                    credentials: "include",
-                  }
-                );
-                if (!response.ok) throw new Error("Logout failed");
-                window.location.href = "/";
-              } catch (err) {
-                console.error(err);
-                alert("Logout failed. Please try again.");
-              }
-            }}
-            className={styles.refreshButton}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
-
-      {isLoading ? (
-        <div className={styles.loading}>Loading dashboard data...</div>
-      ) : (
-        <div className={styles.grid}>
-          {/* Service Management Card */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <h2>Service Management</h2>
-              <button onClick={handleAddService} className={styles.addButton}>
-                Add New Service
-              </button>
+        )}
+        <header className={styles.header}>
+          <h1>Admin Dashboard</h1>
+          <div className={styles.headerControls}>
+            <input
+              type="text"
+              placeholder="Search all data..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                padding: "0.5rem 1rem",
+                borderRadius: 4,
+                border: "1px solid #ccc",
+                fontSize: "1rem",
+                marginRight: "1rem",
+                minWidth: 200,
+              }}
+            />
+            <div className={styles.lastUpdated}>
+              Last updated: {lastUpdated.toLocaleTimeString()}
             </div>
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Features</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredServices.map((service) => (
-                    <tr key={service.id}>
-                      <td>{service.title}</td>
-                      <td>{service.category}</td>
-                      <td>{service.features.length} features</td>
-                      <td>
-                        <div className={styles.actionButtons}>
-                          <button
-                            onClick={() => handleEditService(service)}
-                            className={styles.editButton}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteService(service.id)}
-                            className={styles.deleteButton}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
+            <button
+              onClick={handleRefresh}
+              className={styles.refreshButton}
+              disabled={isLoading}
+            >
+              {isLoading ? "Refreshing..." : "Refresh"}
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  const response = await fetch(
+                    "api/logout",
+                    // "http://localhost/www/oop_project/php_backend/app/Controllers/logout.php",
+                    {
+                      method: "POST",
+                      credentials: "include",
+                    }
+                  );
+                  if (!response.ok) throw new Error("Logout failed");
+                  window.location.href = "/";
+                } catch (err) {
+                  console.error(err);
+                  alert("Logout failed. Please try again.");
+                }
+              }}
+              className={styles.refreshButton}
+            >
+              Logout
+            </button>
+          </div>
+        </header>
+
+        {isLoading ? (
+          <div className={styles.loading}>Loading dashboard data...</div>
+        ) : (
+          <div className={styles.grid}>
+            {/* Service Management Card */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h2>Service Management</h2>
+                <button onClick={handleAddService} className={styles.addButton}>
+                  Add New Service
+                </button>
+              </div>
+              <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>Features</th>
+                      <th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredServices.map((service) => (
+                      <tr key={service.id}>
+                        <td>{service.title}</td>
+                        <td>{service.category}</td>
+                        <td>{service.features.length} features</td>
+                        <td>
+                          <div className={styles.actionButtons}>
+                            <button
+                              onClick={() => handleEditService(service)}
+                              className={styles.editButton}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteService(service.id)}
+                              className={styles.deleteButton}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Service Requests Card (now dynamic from backend) */}
+            <div className={styles.card}>
+              <h2>Recent Service Requests</h2>
+              <div className={styles.tableContainer}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Company Name</th>
+                      <th>Service Type</th>
+                      <th>Description</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredServiceRequests.map((request) => (
+                      <tr key={request.id}>
+                        <td data-label="ID">{request.id}</td>
+                        <td data-label="Name">{request.name}</td>
+                        <td data-label="Email">{request.email}</td>
+                        <td data-label="Phone">{request.phone}</td>
+                        <td data-label="Company Name">
+                          {request.company_name}
+                        </td>
+                        <td data-label="Service Type">
+                          {request.service_type}
+                        </td>
+                        <td data-label="Description">
+                          {request.service_description}
+                        </td>
+                        <td
+                          data-label="Status"
+                          style={{ position: "relative" }}
+                        >
+                          <button
+                            ref={(el) =>
+                              (statusButtonRefs.current[request.id] = el)
+                            }
+                            className={styles.statusButton}
+                            data-status={request.status}
+                            style={{
+                              background:
+                                request.status === "Pending"
+                                  ? "#f1c40f"
+                                  : request.status === "Active"
+                                  ? "#0984e3"
+                                  : request.status === "Declined"
+                                  ? "#d63031"
+                                  : request.status === "Done"
+                                  ? "#00b894"
+                                  : "#b2bec3",
+                              color: "#fff",
+                              border: "none",
+                              borderRadius: "4px",
+                              padding: "0.5rem 1rem",
+                              cursor: "pointer",
+                              fontWeight: 600,
+                              minWidth: 90,
+                            }}
+                            onClick={() => handleStatusButtonClick(request.id)}
+                          >
+                            {request.status}
+                          </button>
+                          {statusDropdown.open &&
+                            statusDropdown.requestId === request.id && (
+                              <div
+                                className={styles.statusDropdown}
+                                ref={statusDropdownRef}
+                              >
+                                {["Active", "Declined", "Done"].map(
+                                  (option) => (
+                                    <button
+                                      key={option}
+                                      className={styles.statusDropdownOption}
+                                      onClick={() =>
+                                        handleStatusChange(request.id, option)
+                                      }
+                                    >
+                                      {option}
+                                    </button>
+                                  )
+                                )}
+                              </div>
+                            )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* User Management Card */}
+            <div className={`${styles.card} ${styles.userCard}`}>
+              <h2>User Management</h2>
+              {filteredUsers && filteredUsers.length > 0 && null}
+              {isUsersLoading ? (
+                <div className={styles.loading}>Loading users...</div>
+              ) : usersError ? (
+                <div className={styles.error}>{usersError}</div>
+              ) : (
+                <div className={styles.tableContainer}>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Company Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Gender</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsers.map((user) => (
+                        <tr key={user.id || user.email || user.name}>
+                          <td>{user.name}</td>
+                          <td>{user.company_name}</td>
+                          <td>{user.phone}</td>
+                          <td>{user.email}</td>
+                          <td>{user.gender}</td>
+                          <td>
+                            <button
+                              onClick={() =>
+                                handleDeleteUser(user.id, user.email)
+                              }
+                              className={styles.deleteButton}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
+        )}
 
-          {/* Service Requests Card (now dynamic from backend) */}
-          <div className={styles.card}>
-            <h2>Recent Service Requests</h2>
+        {/* Admin Management Card */}
+        <div className={`${styles.card} ${styles.userCard}`}>
+          <h2>Admin Management</h2>
+          <button onClick={handleAddAdmin} className={styles.addButton}>
+            Add new Admin
+          </button>
+          {isAdminsLoading ? (
+            <div className={styles.loading}>Loading admins...</div>
+          ) : adminsError ? (
+            <div className={styles.error}>{adminsError}</div>
+          ) : (
             <div className={styles.tableContainer}>
               <table className={styles.table}>
                 <thead>
@@ -706,418 +862,276 @@ export default function AdminDashboard() {
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone</th>
-                    <th>Company Name</th>
-                    <th>Service Type</th>
-                    <th>Description</th>
-                    <th>Status</th>
+                    <th>Created At</th>
+                    {/* <th>Actions</th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredServiceRequests.map((request) => (
-                    <tr key={request.id}>
-                      <td data-label="ID">{request.id}</td>
-                      <td data-label="Name">{request.name}</td>
-                      <td data-label="Email">{request.email}</td>
-                      <td data-label="Phone">{request.phone}</td>
-                      <td data-label="Company Name">{request.company_name}</td>
-                      <td data-label="Service Type">{request.service_type}</td>
-                      <td data-label="Description">
-                        {request.service_description}
-                      </td>
-                      <td data-label="Status" style={{ position: "relative" }}>
-                        <button
-                          ref={(el) =>
-                            (statusButtonRefs.current[request.id] = el)
-                          }
-                          className={styles.statusButton}
-                          data-status={request.status}
-                          style={{
-                            background:
-                              request.status === "Pending"
-                                ? "#f1c40f"
-                                : request.status === "Active"
-                                ? "#0984e3"
-                                : request.status === "Declined"
-                                ? "#d63031"
-                                : request.status === "Done"
-                                ? "#00b894"
-                                : "#b2bec3",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: "4px",
-                            padding: "0.5rem 1rem",
-                            cursor: "pointer",
-                            fontWeight: 600,
-                            minWidth: 90,
-                          }}
-                          onClick={() => handleStatusButtonClick(request.id)}
-                        >
-                          {request.status}
-                        </button>
-                        {statusDropdown.open &&
-                          statusDropdown.requestId === request.id && (
-                            <div
-                              className={styles.statusDropdown}
-                              ref={statusDropdownRef}
-                            >
-                              {["Active", "Declined", "Done"].map((option) => (
-                                <button
-                                  key={option}
-                                  className={styles.statusDropdownOption}
-                                  onClick={() =>
-                                    handleStatusChange(request.id, option)
-                                  }
-                                >
-                                  {option}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                      </td>
+                  {admins.map((admin) => (
+                    <tr key={admin.id || admin.email || admin.name}>
+                      <td>{admin.id}</td>
+                      <td>{admin.name}</td>
+                      <td>{admin.email}</td>
+                      <td>{new Date(admin.created_at).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-
-          {/* User Management Card */}
-          <div className={`${styles.card} ${styles.userCard}`}>
-            <h2>User Management</h2>
-            {filteredUsers && filteredUsers.length > 0 && null}
-            {isUsersLoading ? (
-              <div className={styles.loading}>Loading users...</div>
-            ) : usersError ? (
-              <div className={styles.error}>{usersError}</div>
-            ) : (
-              <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Company Name</th>
-                      <th>Phone</th>
-                      <th>Email</th>
-                      <th>Gender</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredUsers.map((user) => (
-                      <tr key={user.id || user.email || user.name}>
-                        <td>{user.name}</td>
-                        <td>{user.company_name}</td>
-                        <td>{user.phone}</td>
-                        <td>{user.email}</td>
-                        <td>{user.gender}</td>
-                        <td>
-                          <button
-                            onClick={() =>
-                              handleDeleteUser(user.id, user.email)
-                            }
-                            className={styles.deleteButton}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+          )}
         </div>
-      )}
 
-      {/* Admin Management Card */}
-      <div className={`${styles.card} ${styles.userCard}`}>
-        <h2>Admin Management</h2>
-        <button onClick={handleAddAdmin} className={styles.addButton}>
-          Add new Admin
-        </button>
-        {isAdminsLoading ? (
-          <div className={styles.loading}>Loading admins...</div>
-        ) : adminsError ? (
-          <div className={styles.error}>{adminsError}</div>
-        ) : (
-          <div className={styles.tableContainer}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Created At</th>
-                  {/* <th>Actions</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {admins.map((admin) => (
-                  <tr key={admin.id || admin.email || admin.name}>
-                    <td>{admin.id}</td>
-                    <td>{admin.name}</td>
-                    <td>{admin.email}</td>
-                    <td>{new Date(admin.created_at).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Add/Edit Service Modal */}
+        {showAddModal && (
+          <div
+            className={styles.modalOverlay}
+            onClick={() => {
+              setShowAddModal(false);
+              setEditingService(null);
+              setNewService({
+                title: "",
+                description: "",
+                features: [{ name: "", description: "" }],
+                category: "",
+                icon: "box1",
+              });
+            }}
+          >
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingService(null);
+                  setNewService({
+                    title: "",
+                    description: "",
+                    features: [{ name: "", description: "" }],
+                    category: "",
+                    icon: "box1",
+                  });
+                }}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <h2>{editingService ? "Edit Service" : "Add New Service"}</h2>
+              <form onSubmit={handleServiceSubmit}>
+                <div className={styles.formGroup}>
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    value={newService.title}
+                    onChange={(e) =>
+                      setNewService({ ...newService, title: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Description</label>
+                  <textarea
+                    value={newService.description}
+                    onChange={(e) =>
+                      setNewService({
+                        ...newService,
+                        description: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Category</label>
+                  <input
+                    type="text"
+                    value={newService.category}
+                    onChange={(e) =>
+                      setNewService({ ...newService, category: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Icon Style</label>
+                  <select
+                    value={newService.icon}
+                    onChange={(e) =>
+                      setNewService({ ...newService, icon: e.target.value })
+                    }
+                  >
+                    <option value="box1">Box 1</option>
+                    <option value="box2">Box 2</option>
+                    <option value="box3">Box 3</option>
+                    <option value="box4">Box 4</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Features</label>
+                  {newService.features.map((feature, index) => (
+                    <div
+                      key={index}
+                      className={styles.featureInput}
+                      style={{
+                        flexDirection: "column",
+                        alignItems: "stretch",
+                        gap: "0.5rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Feature Name"
+                        value={feature.name}
+                        onChange={(e) =>
+                          handleFeatureChange(index, "name", e.target.value)
+                        }
+                        required
+                      />
+                      <textarea
+                        placeholder="Feature Description"
+                        value={feature.description}
+                        onChange={(e) =>
+                          handleFeatureChange(
+                            index,
+                            "description",
+                            e.target.value
+                          )
+                        }
+                        style={{ minHeight: "60px" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeFeatureField(index)}
+                        className={styles.removeButton}
+                        style={{ alignSelf: "flex-end" }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addFeatureField}
+                    className={styles.addFeatureButton}
+                  >
+                    Add Feature
+                  </button>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Upload Icon Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setNewService({ ...newService, image: e.target.files[0] })
+                    }
+                  />
+                </div>
+                <div className={styles.modalActions}>
+                  <button type="submit" className={styles.saveButton}>
+                    {editingService ? "Update Service" : "Add Service"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setEditingService(null);
+                      setNewService({
+                        title: "",
+                        description: "",
+                        features: [{ name: "", description: "" }],
+                        category: "",
+                        icon: "box1",
+                      });
+                    }}
+                    className={styles.cancelButton}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Add Admin Modal */}
+        {showAdminModal && (
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setShowAdminModal(false)}
+          >
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className={styles.closeButton}
+                onClick={() => setShowAdminModal(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+              <h2>Add New Admin</h2>
+              {adminError && <div className={styles.error}>{adminError}</div>}
+              <form onSubmit={handleAdminSubmit}>
+                <div className={styles.formGroup}>
+                  <label>Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={newAdmin.name}
+                    onChange={handleAdminInputChange}
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={newAdmin.email}
+                    onChange={handleAdminInputChange}
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={newAdmin.password}
+                    onChange={handleAdminInputChange}
+                    required
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Confirm Password</label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={newAdmin.confirmPassword}
+                    onChange={handleAdminInputChange}
+                    required
+                  />
+                </div>
+                <div className={styles.modalActions}>
+                  <button type="submit" className={styles.saveButton}>
+                    Add Admin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdminModal(false)}
+                    className={styles.cancelButton}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
-
-      {/* Add/Edit Service Modal */}
-      {showAddModal && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => {
-            setShowAddModal(false);
-            setEditingService(null);
-            setNewService({
-              title: "",
-              description: "",
-              features: [{ name: "", description: "" }],
-              category: "",
-              icon: "box1",
-            });
-          }}
-        >
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className={styles.closeButton}
-              onClick={() => {
-                setShowAddModal(false);
-                setEditingService(null);
-                setNewService({
-                  title: "",
-                  description: "",
-                  features: [{ name: "", description: "" }],
-                  category: "",
-                  icon: "box1",
-                });
-              }}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <h2>{editingService ? "Edit Service" : "Add New Service"}</h2>
-            <form onSubmit={handleServiceSubmit}>
-              <div className={styles.formGroup}>
-                <label>Title</label>
-                <input
-                  type="text"
-                  value={newService.title}
-                  onChange={(e) =>
-                    setNewService({ ...newService, title: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Description</label>
-                <textarea
-                  value={newService.description}
-                  onChange={(e) =>
-                    setNewService({
-                      ...newService,
-                      description: e.target.value,
-                    })
-                  }
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Category</label>
-                <input
-                  type="text"
-                  value={newService.category}
-                  onChange={(e) =>
-                    setNewService({ ...newService, category: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Icon Style</label>
-                <select
-                  value={newService.icon}
-                  onChange={(e) =>
-                    setNewService({ ...newService, icon: e.target.value })
-                  }
-                >
-                  <option value="box1">Box 1</option>
-                  <option value="box2">Box 2</option>
-                  <option value="box3">Box 3</option>
-                  <option value="box4">Box 4</option>
-                </select>
-              </div>
-              <div className={styles.formGroup}>
-                <label>Features</label>
-                {newService.features.map((feature, index) => (
-                  <div
-                    key={index}
-                    className={styles.featureInput}
-                    style={{
-                      flexDirection: "column",
-                      alignItems: "stretch",
-                      gap: "0.5rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    <input
-                      type="text"
-                      placeholder="Feature Name"
-                      value={feature.name}
-                      onChange={(e) =>
-                        handleFeatureChange(index, "name", e.target.value)
-                      }
-                      required
-                    />
-                    <textarea
-                      placeholder="Feature Description"
-                      value={feature.description}
-                      onChange={(e) =>
-                        handleFeatureChange(
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      style={{ minHeight: "60px" }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeFeatureField(index)}
-                      className={styles.removeButton}
-                      style={{ alignSelf: "flex-end" }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addFeatureField}
-                  className={styles.addFeatureButton}
-                >
-                  Add Feature
-                </button>
-              </div>
-              <div className={styles.formGroup}>
-                <label>Upload Icon Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    setNewService({ ...newService, image: e.target.files[0] })
-                  }
-                />
-              </div>
-              <div className={styles.modalActions}>
-                <button type="submit" className={styles.saveButton}>
-                  {editingService ? "Update Service" : "Add Service"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowAddModal(false);
-                    setEditingService(null);
-                    setNewService({
-                      title: "",
-                      description: "",
-                      features: [{ name: "", description: "" }],
-                      category: "",
-                      icon: "box1",
-                    });
-                  }}
-                  className={styles.cancelButton}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Add Admin Modal */}
-      {showAdminModal && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => setShowAdminModal(false)}
-        >
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className={styles.closeButton}
-              onClick={() => setShowAdminModal(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <h2>Add New Admin</h2>
-            {adminError && <div className={styles.error}>{adminError}</div>}
-            <form onSubmit={handleAdminSubmit}>
-              <div className={styles.formGroup}>
-                <label>Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={newAdmin.name}
-                  onChange={handleAdminInputChange}
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={newAdmin.email}
-                  onChange={handleAdminInputChange}
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={newAdmin.password}
-                  onChange={handleAdminInputChange}
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={newAdmin.confirmPassword}
-                  onChange={handleAdminInputChange}
-                  required
-                />
-              </div>
-              <div className={styles.modalActions}>
-                <button type="submit" className={styles.saveButton}>
-                  Add Admin
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAdminModal(false)}
-                  className={styles.cancelButton}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
   // }
 }

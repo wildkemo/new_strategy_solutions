@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import styles from "./Navbar.module.css";
 
-export default function Navbar() {
+export default function Navbar({ className = "" }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -134,12 +134,14 @@ export default function Navbar() {
     ? `${styles.navbar} ${scrolled ? styles.scrolled : ""}`
     : styles.navbar;
 
+  const mergedNavbarClass = `${navbarClass} ${className}`.trim();
+
   if (!hasMounted) {
     return null;
   }
 
   return (
-    <nav className={navbarClass}>
+    <nav className={mergedNavbarClass}>
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
           <img

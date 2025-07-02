@@ -19,6 +19,7 @@ const Services = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -29,9 +30,9 @@ const Services = () => {
         }
         let data = await response.json();
         data = data.map((service) => ({
-        ...service,
-        features: JSON.parse(service.features),
-      }));
+          ...service,
+          features: JSON.parse(service.features),
+        }));
         setServices(data);
       } catch (err) {
         setError(err.message);
@@ -68,30 +69,38 @@ const Services = () => {
               className={styles.serviceRow}
               style={{ display: "flex", gap: "1.5rem", marginBottom: "2rem" }}
             >
-              {row.map((service, colIndex) => (
-                <div
-                  key={service.id}
-                  className={`${styles.serviceBox} ${
-                    colorClasses[
-                      (rowIndex * servicesPerRow + colIndex) %
-                        colorClasses.length
-                    ]
-                  }`}
-                  style={{ flex: 1 }}
-                >
-                  <Link href={`/services/${getSlug(service.title)}`}>
-                    <h2>{service.title}</h2>
-                    {service.description && <p>{service.description}</p>}
-                    <ul>
-                      {service.features.map((feature, i) => (
-                        <li key={i}>
-                          <strong>{feature.name}</strong>: {feature.description}
-                        </li>
-                      ))}
-                    </ul>
-                  </Link>
-                </div>
-              ))}
+              {row.map((service, colIndex) => {
+                const globalIndex = rowIndex * servicesPerRow + colIndex;
+                const isBlurred =
+                  hoveredIndex !== null && hoveredIndex !== globalIndex;
+                const isFocused = hoveredIndex === globalIndex;
+                return (
+                  <div
+                    key={service.id}
+                    className={`${styles.serviceBox} ${
+                      colorClasses[globalIndex % colorClasses.length]
+                    } ${isBlurred ? styles.blurred : ""} ${
+                      isFocused ? styles.focused : ""
+                    }`}
+                    style={{ flex: 1 }}
+                    onMouseEnter={() => setHoveredIndex(globalIndex)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                  >
+                    <Link href={`/services/${getSlug(service.title)}`}>
+                      <h2>{service.title}</h2>
+                      {service.description && <p>{service.description}</p>}
+                      <ul>
+                        {service.features.map((feature, i) => (
+                          <li key={i}>
+                            <strong>{feature.name}</strong>:{" "}
+                            {feature.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           ))}
         </div>

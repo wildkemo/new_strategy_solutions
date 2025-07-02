@@ -11,7 +11,7 @@
   align-items: center;
   justify-items: center;
   min-height: 100svh;
- 
+
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -34,8 +34,6 @@
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
-  
-  
 }
 
 @media (prefers-color-scheme: dark) {
@@ -78,8 +76,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-    background: url("/images/bb2af275-e7f6-4e3e-acc4-3f60fd7341d1.png") center center / cover no-repeat; /* Set the background image */
-    background-size: cover; /* Ensure the image covers the entire section */
+  background: url("/images/bb2af275-e7f6-4e3e-acc4-3f60fd7341d1.png") center
+    center / cover no-repeat; /* Set the background image */
+  background-size: cover; /* Ensure the image covers the entire section */
   background-position: center; /* Center the image */
   border-radius: 0;
   padding: 0;
@@ -100,7 +99,7 @@
   flex-direction: column;
   align-items: center;
   /* Optional: add a dark overlay for text readability */
-  background: rgba(0, 0, 0, 0.45);
+  /* background: rgba(0, 0, 0, 0.45); */
   border-radius: 18px;
   padding: 32px 0;
   animation: slideUp 1.2s cubic-bezier(0.23, 1, 0.32, 1);
@@ -111,6 +110,7 @@
   font-weight: 700;
   margin-bottom: 20px;
   color: #ffffff;
+  text-shadow: none !important;
 }
 
 .heroSubtitle {
@@ -621,8 +621,7 @@
   }
 }
 
-
-.footer{
+.footer {
   display: flex;
   gap: 24px;
   color: #fff !important;
@@ -639,4 +638,236 @@
   font-size: 1.1rem;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
   flex-shrink: 0;
+}
+
+.enterpriseSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  background: #f7fafd;
+  border-radius: 24px;
+  margin: 60px auto 0 auto;
+  padding: 48px 32px;
+  max-width: 1200px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+  animation: fadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.enterpriseSection:hover {
+  transform: scale(1.012);
+  box-shadow: 0 12px 36px 0 rgba(26, 35, 126, 0.1);
+}
+.enterpriseSection:hover .enterpriseImage {
+  filter: brightness(1.08);
+  transition: filter 0.25s;
+}
+.enterpriseListItem {
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+}
+.enterpriseListItem:hover {
+  background: #dbeafe;
+  color: #1a237e;
+  transform: scale(1.03);
+  cursor: pointer;
+}
+.enterpriseImage {
+  width: 380px;
+  max-width: 90vw;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  animation: slideUp 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.enterpriseContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: fadeIn 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.enterpriseTitle {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #1a237e;
+  margin-bottom: 18px;
+  letter-spacing: -1px;
+}
+.enterpriseDesc {
+  font-size: 1.15rem;
+  color: #333;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+.enterpriseList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.enterpriseListItem {
+  font-size: 1.05rem;
+  color: #222;
+  background: #e3eafc;
+  border-radius: 8px;
+  padding: 10px 18px;
+  box-shadow: 0 2px 8px rgba(26, 35, 126, 0.04);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInList 0.7s forwards;
+}
+.enterpriseListItem:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.enterpriseListItem:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.enterpriseListItem:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.enterpriseListItem:nth-child(4) {
+  animation-delay: 0.8s;
+}
+.enterpriseListItem:nth-child(5) {
+  animation-delay: 1s;
+}
+.enterpriseListItem:nth-child(6) {
+  animation-delay: 1.2s;
+}
+@keyframes fadeInList {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 900px) {
+  .enterpriseSection {
+    flex-direction: column;
+    padding: 32px 10px;
+    gap: 32px;
+  }
+  .enterpriseImage {
+    width: 100%;
+    max-width: 100vw;
+  }
+}
+
+.reverseSection {
+  flex-direction: row-reverse;
+}
+@media (max-width: 900px) {
+  .reverseSection {
+    flex-direction: column;
+  }
+}
+
+.discoverBtn {
+  margin-top: 28px;
+  padding: 12px 32px;
+  background: #1a237e;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(26, 35, 126, 0.08);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  outline: none;
+  letter-spacing: 0.5px;
+}
+.discoverBtn:hover {
+  background: #3949ab;
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(26, 35, 126, 0.13);
+}
+
+.circularDiagramSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 48px 0 64px 0;
+  position: relative;
+  z-index: 2;
+}
+.circularDiagramImg {
+  width: 340px;
+  max-width: 90vw;
+  border-radius: 50%;
+  box-shadow: 0 4px 24px rgba(26, 35, 126, 0.08);
+  transition: box-shadow 0.3s, filter 0.3s;
+  cursor: pointer;
+}
+.circularDiagramImg:hover {
+  box-shadow: 0 8px 32px rgba(26, 35, 126, 0.18);
+  filter: brightness(1.04);
+}
+.diagramFloatingCard {
+  position: absolute;
+  min-width: 220px;
+  max-width: 300px;
+  background: #fff;
+  color: #222;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(26, 35, 126, 0.13);
+  padding: 18px 16px;
+  z-index: 10;
+  border: 1.5px solid #e3eafc;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: fadeInCard 0.5s forwards;
+}
+.diagramCardTop {
+  left: calc(60% + 130px);
+  top: 50px;
+  transform: translate(-50%, -100%) translateY(-50px);
+  animation-delay: 0.2s;
+}
+.diagramCardRight {
+  left: calc(100% - 400px);
+  top: calc(50% + 100px);
+  transform: translate(0, -50%) translateX(50px);
+  animation-delay: 0.05s;
+}
+.diagramCardBottom {
+  left: calc(50% - 500px);
+  top: calc(100% - 150px);
+  transform: translate(-50%, 0) translateY(50px);
+  animation-delay: 0.05s;
+}
+.diagramCardLeft {
+  left: 3%;
+  top: 8%;
+  transform: translate(-100%, -50%) translateX(-150px);
+  animation-delay: 0.05s;
+}
+@keyframes fadeInCard {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media (max-width: 900px) {
+  .diagramFloatingCard {
+    left: 50% !important;
+    top: 100% !important;
+    transform: translate(-50%, 20px) !important;
+    min-width: 90vw;
+    max-width: 95vw;
+    position: absolute;
+  }
+  .diagramCardTop,
+  .diagramCardRight,
+  .diagramCardBottom,
+  .diagramCardLeft {
+    left: 50% !important;
+    top: 100% !important;
+    transform: translate(-50%, 20px) !important;
+  }
 }
