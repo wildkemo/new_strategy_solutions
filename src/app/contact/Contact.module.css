@@ -1,37 +1,44 @@
 .container {
   min-height: 100vh;
-  background: #f3f1eb;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 2rem;
+  padding: 120px 20px 0 20px;
   position: relative;
   z-index: 2;
-  padding-top: 80px;
 }
 
 .content {
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 41, 59, 0.8),
+    rgba(15, 23, 42, 0.9)
+  );
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   padding: 48px 36px 40px 36px;
   max-width: 500px;
   width: 100%;
-  color: #222;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .title {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #000;
+  color: #60a5fa;
   margin-bottom: 0.5rem;
   text-align: center;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: #000;
+  color: #e2e8f0;
   margin-bottom: 2.2rem;
   text-align: center;
 }
@@ -50,52 +57,55 @@
 
 .formGroup label {
   font-weight: 600;
-  color: #000;
+  color: #60a5fa;
 }
 
 .input,
 .textarea {
   padding: 0.8rem 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  border-radius: 10px;
+  border: 1.5px solid #334155;
   font-size: 1rem;
-  color: #000;
-  background: #fafafa;
-  transition: border 0.2s;
+  color: #e2e8f0;
+  background: #1e293b;
+  transition: border 0.2s, background 0.2s;
 }
 
 .input:focus,
 .textarea:focus {
-  border: 1.5px solid #4a90e2;
+  border: 1.5px solid #60a5fa;
   outline: none;
+  background: #0f172a;
 }
 
 .button {
-  background: #111;
-  color: #000;
+  background: linear-gradient(90deg, #60a5fa, #34d399);
+  color: #fff;
   padding: 0.9rem 2.2rem;
-  border-radius: 4px;
+  border-radius: 10px;
   font-weight: 700;
   font-size: 1.1rem;
   border: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.08);
+  transition: background 0.3s, color 0.2s, transform 0.2s;
   letter-spacing: 0.5px;
   cursor: pointer;
 }
 
 .button:hover {
-  background: #333;
-  transform: translateY(-2px);
+  background: linear-gradient(90deg, #34d399, #60a5fa);
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
 }
 
 .success {
   text-align: center;
-  color: #000;
-  background: #e8f5e9;
+  color: #34d399;
+  background: #1e293b;
   border-radius: 10px;
   padding: 2rem 1rem;
   margin-top: 2rem;
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.08);
 }
 
 .flexRow {
@@ -110,17 +120,22 @@
   margin: 0 auto;
 }
 
-.locationCard {
+.locationCard,
+.emailCard {
   flex: 0 0 260px;
   height: 260px;
   margin-top: 0;
-  background: #fafafa;
-  border-radius: 10px;
-  border: 2px solid #e0e0e0;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 41, 59, 0.8),
+    rgba(15, 23, 42, 0.9)
+  );
+  border-radius: 16px;
+  border: 1.5px solid #334155;
+  box-shadow: 0 2px 12px rgba(96, 165, 250, 0.08);
   padding: 1.2rem 1rem;
   text-align: left;
-  color: #000;
+  color: #e2e8f0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -133,72 +148,37 @@
   flex: 2 1 400px;
   min-width: 620px;
   height: 400px;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  background: #eee;
+  box-shadow: 0 4px 24px rgba(96, 165, 250, 0.12);
+  background: #1e293b;
   margin-top: 1rem;
 }
 
-.locationTitle {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #000;
-  margin-bottom: 0.3rem;
-  text-align: center;
-  width: 100%;
-}
-
-.locationText {
-  font-size: 0.98rem;
-  color: #000;
-  line-height: 1.5;
-  text-align: center;
-  width: 100%;
-}
-
-.emailCard {
-  flex: 0 0 260px;
-  height: 260px;
-  margin-top: 0;
-  background: #fafafa;
-  border-radius: 10px;
-  border: 2px solid #e0e0e0;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  padding: 1.2rem 1rem;
-  text-align: left;
-  color: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-width: 300px;
-}
-
+.locationTitle,
 .emailTitle {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #000;
+  color: #60a5fa;
   margin-bottom: 0.3rem;
+  text-align: center;
+  width: 100%;
 }
 
+.locationText,
 .emailText {
   font-size: 0.98rem;
-  color: #000;
+  color: #e2e8f0;
   line-height: 1.5;
+  text-align: center;
+  width: 100%;
 }
 
-.emailIcon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #000;
-  align-self: center;
-}
-
+.emailIcon,
 .pinIcon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #000;
+  color: #60a5fa;
   align-self: center;
 }
 

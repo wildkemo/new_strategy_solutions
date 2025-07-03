@@ -186,6 +186,12 @@ export default function Navbar({ className = "" }) {
           <Link href="/contact" className={styles.navLink}>
             Contact
           </Link>
+          {/* Add Login/Sign Up button if not signed in */}
+          {!isLoading && !user && (
+            <Link href="/login" className={styles.loginBtn}>
+              Login / Sign Up
+            </Link>
+          )}
         </div>
 
         {!isLoading && user && (

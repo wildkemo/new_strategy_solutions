@@ -97,7 +97,7 @@ export default function Home() {
 
   return (
     <>
-      <main className={styles.main}>
+      <main className={styles.homeContainer}>
         {/* Hero Section */}
         <section className={styles.hero}>
           <div className={styles.heroContent}>

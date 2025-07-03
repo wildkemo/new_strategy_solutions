@@ -71,24 +71,25 @@
 
 /* Hero Section */
 .hero {
-  min-height: 100vh; /* Ensure the hero section takes up the full viewport height */
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   background: url("/images/bb2af275-e7f6-4e3e-acc4-3f60fd7341d1.png") center
-    center / cover no-repeat; /* Set the background image */
-  background-size: cover; /* Ensure the image covers the entire section */
-  background-position: center; /* Center the image */
+    center / cover no-repeat;
+  background-size: cover;
+  background-position: center;
   border-radius: 0;
   padding: 0;
+  margin-top: -120px;
   border: none;
   position: relative;
   animation: fadeIn 1.2s ease;
   width: 100vw;
   left: 50%;
   transform: translateX(-50%);
-  overflow: hidden; /* Prevent any content from overflowing */
+  overflow: hidden;
   height: 100%;
 }
 .heroContent {
@@ -118,7 +119,6 @@
   color: #fcfcfc;
   margin-bottom: 40px;
 }
-
 /* Features Section */
 .features {
   text-align: center;
@@ -513,8 +513,12 @@
     gap: 40px;
   }
   .hero {
-    padding: 20px;
-    min-height: 60vh;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  .heroContent {
+    margin-top: 0;
+    padding-top: 0;
   }
   .features {
     padding: 30px 0;
@@ -645,12 +649,13 @@
   align-items: center;
   justify-content: center;
   gap: 48px;
-  background: #f7fafd;
+  background: linear-gradient(135deg, #1e293b 60%, #0f172a 100%);
+  color: #e2e8f0;
   border-radius: 24px;
   margin: 60px auto 0 auto;
   padding: 48px 32px;
   max-width: 1200px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.18);
   animation: fadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1);
   transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
     box-shadow 0.25s cubic-bezier(0.23, 1, 0.32, 1);
@@ -667,8 +672,8 @@
   transition: background 0.25s, color 0.25s, transform 0.25s;
 }
 .enterpriseListItem:hover {
-  background: #dbeafe;
-  color: #1a237e;
+  background: #334155;
+  color: #60a5fa;
   transform: scale(1.03);
   cursor: pointer;
 }
@@ -676,9 +681,10 @@
   width: 380px;
   max-width: 90vw;
   border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 24px rgba(96, 165, 250, 0.18);
   object-fit: cover;
   animation: slideUp 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+  border: 2px solid #334155;
 }
 .enterpriseContent {
   flex: 1;
@@ -690,13 +696,13 @@
 .enterpriseTitle {
   font-size: 2.3rem;
   font-weight: 700;
-  color: #1a237e;
+  color: #60a5fa;
   margin-bottom: 18px;
   letter-spacing: -1px;
 }
 .enterpriseDesc {
   font-size: 1.15rem;
-  color: #333;
+  color: #e2e8f0;
   margin-bottom: 18px;
   line-height: 1.6;
 }
@@ -710,11 +716,11 @@
 }
 .enterpriseListItem {
   font-size: 1.05rem;
-  color: #222;
-  background: #e3eafc;
+  color: #e2e8f0;
+  background: #1e293b;
   border-radius: 8px;
   padding: 10px 18px;
-  box-shadow: 0 2px 8px rgba(26, 35, 126, 0.04);
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.04);
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInList 0.7s forwards;
@@ -767,23 +773,22 @@
 .discoverBtn {
   margin-top: 28px;
   padding: 12px 32px;
-  background: #1a237e;
+  background: linear-gradient(90deg, #60a5fa, #34d399);
   color: #fff;
   border: none;
   border-radius: 24px;
   font-size: 1.1rem;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(26, 35, 126, 0.08);
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.08);
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
   outline: none;
   letter-spacing: 0.5px;
 }
 .discoverBtn:hover {
-  background: #3949ab;
+  background: linear-gradient(90deg, #34d399, #60a5fa);
   color: #fff;
   transform: translateY(-2px) scale(1.04);
-  box-shadow: 0 4px 16px rgba(26, 35, 126, 0.13);
 }
 
 .circularDiagramSection {
@@ -799,9 +804,10 @@
   width: 340px;
   max-width: 90vw;
   border-radius: 50%;
-  box-shadow: 0 4px 24px rgba(26, 35, 126, 0.08);
+  box-shadow: 0 4px 24px rgba(96, 165, 250, 0.18);
   transition: box-shadow 0.3s, filter 0.3s;
   cursor: pointer;
+  border: 2px solid #334155;
 }
 .circularDiagramImg:hover {
   box-shadow: 0 8px 32px rgba(26, 35, 126, 0.18);
@@ -811,13 +817,13 @@
   position: absolute;
   min-width: 220px;
   max-width: 300px;
-  background: #fff;
-  color: #222;
+  background: linear-gradient(135deg, #1e293b 60%, #0f172a 100%);
+  color: #e2e8f0;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(26, 35, 126, 0.13);
   padding: 18px 16px;
   z-index: 10;
-  border: 1.5px solid #e3eafc;
+  border: 1.5px solid #334155;
   pointer-events: none;
   opacity: 0;
   transform: scale(0.95);
@@ -844,9 +850,11 @@
 .diagramCardLeft {
   left: 3%;
   top: 8%;
-  transform: translate(-100%, -50%) translateX(-150px);
+  transform: translate(-100%, -50%) translateX(300px) !important; /* was 150px */
   animation-delay: 0.05s;
+  border: none !important;
 }
+
 @keyframes fadeInCard {
   to {
     opacity: 1;
@@ -870,4 +878,22 @@
     top: 100% !important;
     transform: translate(-50%, 20px) !important;
   }
+}
+
+.homeContainer {
+  min-height: 100vh;
+  padding: 120px 20px 0 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+  overflow: hidden;
+  position: relative;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body,
+html {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
