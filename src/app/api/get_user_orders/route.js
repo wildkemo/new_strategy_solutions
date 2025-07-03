@@ -8,7 +8,7 @@ export async function GET() {
   const token = cookieStore.get('auth_token')?.value
 
   if (!token) {
-    return NextResponse.json({ error: 'No token provided' }, { status: 401 })
+    return NextResponse.json({orders: [], error: 'No token provided' }, { status: 401 })
   }
 
   let email
@@ -19,7 +19,7 @@ export async function GET() {
     )
     email = payload.email
   } catch (err) {
-    return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 })
+    return NextResponse.json({orders: [], error: 'Invalid or expired token' }, { status: 401 })
   }
 
   try {
@@ -37,10 +37,10 @@ export async function GET() {
     await db.end()
 
     if (orders.length === 0) {
-      return NextResponse.json({ message: 'No orders found for this user' }, { status: 200 })
+      return NextResponse.json({orders: [], message: 'No orders found for this user' }, { status: 200 })
     }
     console.log('Orders fetched successfully:', orders)
-    return NextResponse.json(orders, { status: 200 })
+    return NextResponse.json({orders: orders}, { status: 200 })
 
   } catch (err) {
     console.error('DB error:', err)

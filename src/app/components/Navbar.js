@@ -78,7 +78,8 @@ export default function Navbar({ className = "" }) {
         throw new Error("Failed to fetch orders");
       }
 
-      const ordersData = await response.json();
+      let ordersData = await response.json();
+      ordersData = ordersData.orders || []; // Ensure ordersData is an array
       if (ordersData.length !== 0) {
         setOrders(ordersData);
       }

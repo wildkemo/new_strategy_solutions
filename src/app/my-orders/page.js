@@ -18,7 +18,8 @@ export default function MyOrders({ userId }) {
           }
         );
         if (!response.ok) throw new Error("Failed to fetch orders");
-        const data = await response.json();
+        let data = await response.json();
+        data = data.orders
         setOrders(data);
       } catch (err) {
         setError(err.message);
