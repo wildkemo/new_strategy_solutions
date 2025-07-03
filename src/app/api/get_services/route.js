@@ -15,6 +15,13 @@ export async function GET() {
     // 2. Query all services
     const [rows] = await connection.execute('SELECT * FROM services');
 
+    if (rows.length === 0) {
+      return NextResponse.json(
+        { status: 'error' },
+        { status: 200 }
+      );
+    }
+
     console.log(rows[0].features);
     // 3. Return the services as JSON
     return NextResponse.json(rows, { status: 200 });

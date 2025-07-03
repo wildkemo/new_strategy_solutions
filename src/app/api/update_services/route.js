@@ -1,12 +1,30 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
+import { writeFile, unlink } from 'fs/promises';
+import path from 'path';
 
 export async function PUT(req) {
   try {
-    const body = await req.json();
-    const { id, title, description, features, category, icon } = body;
+    const formData = await req.formData();
 
-    // Validate input
+    const id = formData.get('id');
+    const title = formData.get('title');
+    const description = formData.get('description');
+    const category = formData.get('category');
+    const icon = formData.get('icon');
+    const image = formData.get('image');
+    const featuresRaw = formData.get('features');
+
+    let features;
+    try {
+      features = JSON.parse(featuresRaw || '[]');
+    } catch {
+      return NextResponse.json(
+        { status: 'error', message: 'Invalid JSON for features' },
+        { status: 400 }
+      );
+    }
+
     if (!id || !title || !description || !category || !icon || !Array.isArray(features)) {
       return NextResponse.json(
         { status: 'error', message: 'Missing or invalid required fields' },
@@ -14,7 +32,6 @@ export async function PUT(req) {
       );
     }
 
-    // Connect to DB
     const db = await mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
@@ -22,12 +39,7 @@ export async function PUT(req) {
       database: process.env.DB_NAME,
     });
 
-    // Check if service exists
-    const [existing] = await db.execute(
-      'SELECT * FROM services WHERE id = ?',
-      [id]
-    );
-
+    const [existing] = await db.execute('SELECT * FROM services WHERE id = ?', [id]);
     if (existing.length === 0) {
       await db.end();
       return NextResponse.json(
@@ -36,36 +48,53 @@ export async function PUT(req) {
       );
     }
 
-    // Convert features array to JSON string
-    const featuresJson = JSON.stringify(features);
+    let imagePath = existing[0].image; // default: keep old image
 
-    // Update the service
+    // Only replace image if a new file was actually sent
+    if (
+      image &&
+      typeof image.arrayBuffer === 'function' &&
+      image.size > 0 &&
+      image.name // if empty, name is usually ""
+    ) {
+      // Delete old image if exists
+      if (imagePath) {
+        const oldPath = path.join(process.cwd(), 'public', imagePath);
+        try {
+          await unlink(oldPath);
+        } catch (err) {
+          console.warn('Failed to delete old image:', err.message);
+        }
+      }
+
+      // Save new image
+      const buffer = Buffer.from(await image.arrayBuffer());
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      const filename = `${title.replace(/\s+/g, '_')}${path.extname(image.name)}`;
+      const filepath = path.join(uploadDir, filename);
+      await writeFile(filepath, buffer);
+      imagePath = `/uploads/${filename}`;
+    }
+
+    // Update DB
     await db.execute(
       `UPDATE services 
-       SET title = ?, description = ?, features = ?, category = ?, icon = ? 
+       SET title = ?, description = ?, features = ?, category = ?, icon = ?, image = ?
        WHERE id = ?`,
-      [title, description, featuresJson, category, icon, id]
+      [title, description, JSON.stringify(features), category, icon, imagePath, id]
     );
 
-    // Fetch updated row
-    const [updated] = await db.execute(
-      'SELECT * FROM services WHERE id = ?',
-      [id]
-    );
-
+    const [updated] = await db.execute('SELECT * FROM services WHERE id = ?', [id]);
     await db.end();
 
     const updatedService = updated[0];
     updatedService.features = JSON.parse(updatedService.features || '[]');
 
-    return NextResponse.json(
-      { status: 'success', service: updatedService },
-      { status: 200 }
-    );
+    return NextResponse.json({ status: 'success', service: updatedService }, { status: 200 });
   } catch (err) {
     console.error('Update Service Error:', err);
     return NextResponse.json(
-      { status: 'error', message: 'Database error', details: err.message },
+      { status: 'error', message: 'Server error', details: err.message },
       { status: 500 }
     );
   }

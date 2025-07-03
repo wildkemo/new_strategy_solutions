@@ -252,10 +252,13 @@ export default function AdminDashboard() {
         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_services.php"
       );
       if (!response.ok) throw new Error("Failed to fetch services");
+
       let data = await response.json();
-      // let tempfeatures = JSON.parse(data[0].features || "[]");
-      // data[0].features = tempfeatures;
-      // console.log(data[0].features);
+
+      if(data.status === "error") {
+        data = [];
+      }
+      
 
       // Normalize features for all services
       data = data.map((service) => ({
@@ -894,6 +897,7 @@ export default function AdminDashboard() {
                 features: [{ name: "", description: "" }],
                 category: "",
                 icon: "box1",
+                image: null,
               });
             }}
           >
@@ -910,6 +914,7 @@ export default function AdminDashboard() {
                     features: [{ name: "", description: "" }],
                     category: "",
                     icon: "box1",
+                    image: null,
                   });
                 }}
                 aria-label="Close"
@@ -1023,6 +1028,7 @@ export default function AdminDashboard() {
                   <label>Upload Icon Image</label>
                   <input
                     type="file"
+                    // value={newService.image}
                     accept="image/*"
                     onChange={(e) =>
                       setNewService({ ...newService, image: e.target.files[0] })
@@ -1044,6 +1050,7 @@ export default function AdminDashboard() {
                         features: [{ name: "", description: "" }],
                         category: "",
                         icon: "box1",
+                        image: null,
                       });
                     }}
                     className={styles.cancelButton}
