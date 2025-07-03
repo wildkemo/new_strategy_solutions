@@ -58,12 +58,12 @@ const Services = () => {
   };
 
   const handleMouseMove = (e) => {
-    document.querySelectorAll('.serviceBox').forEach(box => {
+    document.querySelectorAll(".serviceBox").forEach((box) => {
       const rect = box.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      box.style.setProperty('--x', `${x}px`);
-      box.style.setProperty('--y', `${y}px`);
+      box.style.setProperty("--x", `${x}px`);
+      box.style.setProperty("--y", `${y}px`);
     });
   };
 
@@ -99,14 +99,6 @@ const Services = () => {
                     <Link href={`/services/${getSlug(service.title)}`}>
                       <h2>{service.title}</h2>
                       {service.description && <p>{service.description}</p>}
-                      <ul>
-                        {service.features.map((feature, i) => (
-                          <li key={i}>
-                            <strong>{feature.name}</strong>:{" "}
-                            {feature.description}
-                          </li>
-                        ))}
-                      </ul>
                     </Link>
                   </div>
                 );

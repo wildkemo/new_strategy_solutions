@@ -33,6 +33,17 @@ export default function MyOrders({ userId }) {
   if (error)
     return <div style={{ padding: 32, color: "red" }}>Error: {error}</div>;
 
+  if (orders.length === 0) {
+    return (
+      <div style={{ padding: "80px 32px 32px 32px", textAlign: "center" }}>
+        <h1>My Orders</h1>
+        <div style={{ marginTop: 40, fontSize: 20, color: "#888" }}>
+          There are no requested services yet.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: "80px 32px 32px 32px" }}>
       <h1>My Orders</h1>
