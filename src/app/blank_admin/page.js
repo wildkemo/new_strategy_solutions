@@ -502,10 +502,9 @@ export default function AdminDashboard() {
 
   const handleStatusChange = async (requestId, newStatus) => {
     const response = await fetch(
-      "http://localhost:3000/APIs/Controllers/update_order_status.js",
-      // "http://localhost/www/oop_project/php_backend/app/Controllers/update_order_status.php",
+      "/api/update_order_status/",
       {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: requestId, status: newStatus }),
       }
