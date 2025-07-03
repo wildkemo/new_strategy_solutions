@@ -57,8 +57,18 @@ const Services = () => {
     return features.split(",").map((f) => f.trim());
   };
 
+  const handleMouseMove = (e) => {
+    document.querySelectorAll('.serviceBox').forEach(box => {
+      const rect = box.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      box.style.setProperty('--x', `${x}px`);
+      box.style.setProperty('--y', `${y}px`);
+    });
+  };
+
   return (
-    <div className={styles.servicesContainer}>
+    <div className={styles.servicesContainer} onMouseMove={handleMouseMove}>
       {showPopup && <div className={styles.popup}>{/* Popup content */}</div>}
       <div className={styles.servicesContent}>
         <h1 className={styles.servicesTitle}>Our Services</h1>
