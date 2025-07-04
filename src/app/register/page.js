@@ -66,6 +66,7 @@ export default function Register() {
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState(false);
   const [showUserExists, setShowUserExists] = useState(false);
+  const [userExistsMessage, setUserExistsMessage] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -116,6 +117,24 @@ export default function Register() {
 
     if (!registerRequest.ok) {
       let errorText = await registerRequest.text();
+      // Try to parse JSON error
+      let errorMsg = "";
+      try {
+        const errorObj = JSON.parse(errorText);
+        errorMsg = errorObj.message || errorObj.error || errorText;
+      } catch {
+        errorMsg = errorText;
+      }
+      if (
+        registerRequest.status === 409 ||
+        (errorMsg && errorMsg.toLowerCase().includes("already"))
+      ) {
+        setUserExistsMessage(
+          "This email is already registered. Please sign in or use another email to sign up."
+        );
+        setShowUserExists(true);
+        return;
+      }
       throw new Error(
         `HTTP error! Status: ${registerRequest.status}, Message: ${errorText}`
       );
@@ -164,7 +183,7 @@ export default function Register() {
         <h2 className={styles.title}>Register</h2>
         {showUserExists && (
           <Popup
-            message="User already exists"
+            message={userExistsMessage || "User already exists"}
             onClose={() => setShowUserExists(false)}
           />
         )}

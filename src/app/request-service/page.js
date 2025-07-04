@@ -248,21 +248,30 @@ export default function RequestService() {
       {showOtpModal && (
         <div className={styles.otpModalOverlay}>
           <div className={styles.otpModal}>
-            <h2>Enter OTP</h2>
-            <p>We sent a code to your email. Please enter it below:</p>
-            <form onSubmit={handleOtpSubmit}>
+            <h2>Enter 6-Digit OTP</h2>
+            <p>We sent a 6-digit code to your email. Please enter it below:</p>
+            <form onSubmit={handleOtpSubmit} autoComplete="off">
               <input
                 type="text"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
+                }
                 maxLength={6}
                 className={styles.otpInput}
-                placeholder="Enter OTP"
+                placeholder="------"
                 required
+                inputMode="numeric"
+                pattern="[0-9]{6}"
+                autoFocus
               />
               {otpError && <div className={styles.otpError}>{otpError}</div>}
-              <button type="submit" className={styles.button}>
-                Verify OTP
+              <button
+                type="submit"
+                className={styles.button}
+                disabled={otp.length !== 6}
+              >
+                Submit
               </button>
             </form>
           </div>
