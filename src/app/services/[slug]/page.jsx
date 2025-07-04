@@ -237,10 +237,6 @@ export default function ServicePage() {
         >
           Key Features
         </h2>
-        <p style={{ color: "#507c95", fontSize: 18, marginBottom: 32 }}>
-          Our hardware services are designed to meet your specific needs,
-          ensuring optimal performance and longevity of your systems.
-        </p>
         <div
           style={{
             display: "grid",

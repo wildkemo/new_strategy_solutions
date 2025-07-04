@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
 
@@ -75,7 +75,7 @@ function PopupNotification({ message, onClose, error }) {
 }
 
 export default function RequestService() {
-  // const router = useRouter();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -95,6 +95,9 @@ export default function RequestService() {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
   const [pendingRequestData, setPendingRequestData] = useState(null);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [checkingUser, setCheckingUser] = useState(true);
+  const [otpSent, setOtpSent] = useState(false);
 
   // useEffect(() => {
   //   const checkSession = async () => {
@@ -140,6 +143,28 @@ export default function RequestService() {
     // fetchSignedInEmail();
   }, []);
 
+  useEffect(() => {
+    // Check if user is signed in
+    const checkUser = async () => {
+      try {
+        const response = await fetch("/api/get_current_user/", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error("Not signed in");
+        const data = await response.json();
+        if (!data.user) {
+          setShowSignInModal(true);
+        }
+      } catch {
+        setShowSignInModal(true);
+      } finally {
+        setCheckingUser(false);
+      }
+    };
+    checkUser();
+  }, [router]);
+
   const validateForm = () => {
     return true;
   };
@@ -147,25 +172,18 @@ export default function RequestService() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Check if entered email matches signed-in email
-    if (
-      signedInEmail &&
-      formData.email.trim().toLowerCase() !== signedInEmail.trim().toLowerCase()
-    ) {
-      setShowEmailPopup(true);
-      setLoading(false);
-      return;
-    }
+    // Send OTP only, do not submit the service request yet
     const response = await fetch("/api/request_service/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        service_type: formData.serviceType,
-        service_description: formData.description,
         email: formData.email,
         name: formData.name,
         phone: formData.phone,
+        service_type: formData.serviceType,
+        service_description: formData.description,
+        otp_only: true, // Add a flag so backend knows to only send OTP
       }),
     });
     setLoading(false);
@@ -177,14 +195,9 @@ export default function RequestService() {
     }
     const result = await response.json();
     if (result.status === "otp_sent") {
-      setPendingRequestData({
-        service_type: formData.serviceType,
-        service_description: formData.description,
-        email: formData.email,
-        name: formData.name,
-        phone: formData.phone,
-      });
+      setPendingRequestData({ ...formData });
       setShowOtpModal(true);
+      setOtpSent(true);
     } else if (result.status === "error") {
       alert(result.message);
     }
@@ -194,6 +207,7 @@ export default function RequestService() {
     e.preventDefault();
     setOtpError("");
     setLoading(true);
+    // Verify OTP first
     const response = await fetch("/api/verify_otp/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -204,12 +218,31 @@ export default function RequestService() {
       }),
     });
     setLoading(false);
+    const result = await response.json();
     if (!response.ok) {
-      setOtpError("Failed to verify OTP. Try again.");
+      setOtpError(result.error || "Failed to verify OTP. Try again.");
       return;
     }
-    const result = await response.json();
     if (result.status === "success") {
+      // Now submit the actual service request
+      setLoading(true);
+      const serviceResponse = await fetch("/api/request_service/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          service_type: pendingRequestData.serviceType,
+          service_description: pendingRequestData.description,
+          email: pendingRequestData.email,
+          name: pendingRequestData.name,
+          phone: pendingRequestData.phone,
+        }),
+      });
+      setLoading(false);
+      if (!serviceResponse.ok) {
+        setOtpError("Failed to submit service request after OTP verification.");
+        return;
+      }
       setShowOtpModal(false);
       setShowPopup(true);
     } else {
@@ -227,6 +260,77 @@ export default function RequestService() {
 
   if (checkingSession) return <div className={styles.loading}>Loading...</div>;
   if (loading) return <LoadingScreen />;
+  if (checkingUser) return <LoadingScreen />;
+  if (showSignInModal) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100vh",
+          background: "rgba(0,0,0,0.3)",
+          zIndex: 9999,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            color: "#222",
+            padding: "2.5rem 2rem 2rem 2rem",
+            borderRadius: "14px",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
+            maxWidth: 400,
+            width: "90%",
+            textAlign: "center",
+          }}
+        >
+          <h2 style={{ marginBottom: 16, color: "#0070f3" }}>
+            Sign In Required
+          </h2>
+          <div style={{ fontSize: "1.1rem", marginBottom: 24 }}>
+            To request a service, please sign in.
+          </div>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            <button
+              style={{
+                background: "#0070f3",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.7rem 1.3rem",
+                fontWeight: 500,
+                fontSize: 16,
+                cursor: "pointer",
+              }}
+              onClick={() => router.push("/login")}
+            >
+              Go to Login
+            </button>
+            <button
+              style={{
+                background: "#f3f3f3",
+                color: "#222",
+                border: "1px solid #ddd",
+                borderRadius: 6,
+                padding: "0.7rem 1.3rem",
+                fontWeight: 500,
+                fontSize: 16,
+                cursor: "pointer",
+              }}
+              onClick={() => router.push("/services")}
+            >
+              Back to Services
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
