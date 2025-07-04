@@ -122,6 +122,7 @@ export default function Navbar({ className = "" }) {
   }, [sidebarOpen, user]);
 
   const isSolidNavbarPage =
+    pathname === "/" ||
     pathname.startsWith("/services") ||
     pathname.startsWith("/about") ||
     pathname.startsWith("/contact") ||

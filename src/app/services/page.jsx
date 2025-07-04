@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./Services.module.css";
 import Link from "next/link";
 
@@ -19,7 +19,8 @@ const Services = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [hoveredService, setHoveredService] = useState(null);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -31,7 +32,7 @@ const Services = () => {
         let data = await response.json();
         data = data.map((service) => ({
           ...service,
-          features: JSON.parse(service.features),
+          features: service.features ? JSON.parse(service.features) : [],
         }));
         setServices(data);
       } catch (err) {
@@ -71,42 +72,183 @@ const Services = () => {
     <div className={styles.servicesContainer} onMouseMove={handleMouseMove}>
       {showPopup && <div className={styles.popup}>{/* Popup content */}</div>}
       <div className={styles.servicesContent}>
-        <h1 className={styles.servicesTitle}>Our Services</h1>
-        <div className={styles.servicesGrid}>
-          {rows.map((row, rowIndex) => (
-            <div
-              key={rowIndex}
-              className={styles.serviceRow}
-              style={{ display: "flex", gap: "1.5rem", marginBottom: "2rem" }}
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            gap: "1.5rem",
+            padding: "1rem 0 0 0",
+          }}
+        >
+          <div
+            style={{
+              minWidth: 280,
+              flex: 1,
+              maxWidth: 400,
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
+          >
+            <h1
+              className={styles.servicesTitle}
+              style={{
+                color: "#0e161b",
+                textAlign: "left",
+                fontWeight: 800,
+                fontSize: 44,
+                marginBottom: 8,
+                marginTop: 0,
+              }}
             >
-              {row.map((service, colIndex) => {
-                const globalIndex = rowIndex * servicesPerRow + colIndex;
-                const isBlurred =
-                  hoveredIndex !== null && hoveredIndex !== globalIndex;
-                const isFocused = hoveredIndex === globalIndex;
-                return (
-                  <div
-                    key={service.id}
-                    className={`${styles.serviceBox} ${
-                      colorClasses[globalIndex % colorClasses.length]
-                    } ${isBlurred ? styles.blurred : ""} ${
-                      isFocused ? styles.focused : ""
-                    }`}
-                    style={{ flex: 1 }}
-                    onMouseEnter={() => setHoveredIndex(globalIndex)}
-                    onMouseLeave={() => setHoveredIndex(null)}
+              Our Services
+            </h1>
+            <p
+              style={{
+                color: "#507c95",
+                fontSize: 16,
+                fontWeight: 400,
+                lineHeight: 1.6,
+              }}
+            >
+              We offer a range of technology solutions to help your business
+              thrive in the digital age.
+            </p>
+          </div>
+        </div>
+        <div
+          className={styles.servicesGrid}
+          style={{ marginTop: 24, position: "relative" }}
+          ref={gridRef}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "1.5rem",
+              width: "100%",
+            }}
+          >
+            {isLoading && <div>Loading...</div>}
+            {error && <div style={{ color: "red" }}>{error}</div>}
+            {!isLoading &&
+              !error &&
+              services.map((service) => (
+                <div
+                  key={service.id}
+                  className={styles.serviceBox}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                    padding: 20,
+                    borderRadius: 12,
+                    background: "#fff",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    minHeight: 320,
+                  }}
+                  onMouseEnter={() => setHoveredService(service)}
+                  onMouseLeave={() => setHoveredService(null)}
+                >
+                  <Link
+                    href={`/services/${getSlug(service.title)}`}
+                    style={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 8,
+                      flex: 1,
+                    }}
                   >
-                    <Link href={`/services/${getSlug(service.title)}`}>
-                      <h2>{service.title}</h2>
-                      {service.description && <p>{service.description}</p>}
+                    {hoveredService &&
+                      hoveredService.id === service.id &&
+                      service.image && (
+                        <div
+                          style={{
+                            width: "100%",
+                            aspectRatio: "1/1",
+                            background: "#f8fafb",
+                            borderRadius: 8,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundImage: `url(${service.image})`,
+                          }}
+                        />
+                      )}
+                    <div
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 4,
+                      }}
+                    >
+                      <p
+                        style={{
+                          color: "#0e161b",
+                          fontWeight: 600,
+                          fontSize: 18,
+                          margin: 0,
+                        }}
+                      >
+                        {service.title}
+                      </p>
+                      <p
+                        style={{
+                          color: "#507c95",
+                          fontSize: 14,
+                          fontWeight: 400,
+                          margin: 0,
+                        }}
+                      >
+                        {service.description}
+                      </p>
+                    </div>
+                  </Link>
+                  <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
+                    <Link
+                      href="/request-service"
+                      style={{
+                        background: "#5eb5e8",
+                        color: "#0e161b",
+                        padding: "8px 18px",
+                        borderRadius: 8,
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        fontSize: 14,
+                        border: "none",
+                        transition: "background 0.2s",
+                      }}
+                    >
+                      Request this Service
                     </Link>
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                </div>
+              ))}
+          </div>
         </div>
       </div>
+      {/* CTA Section */}
+     
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerContent}>
+          <div className={styles.footerLinks}>
+            <a className={styles.footerLink} href="/privacy">
+              Privacy Policy
+            </a>
+            <a className={styles.footerLink} href="/terms">
+              Terms of Service
+            </a>
+          </div>
+          <p className={styles.footerCopyright}>
+            © 2025 Strategy Solutions. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
