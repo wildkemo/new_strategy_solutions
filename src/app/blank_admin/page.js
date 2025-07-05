@@ -676,6 +676,81 @@ export default function AdminDashboard() {
     }
   };
 
+  // Handler to confirm an order (set otp to 'Confirmed' and status to 'Active')
+  const handleConfirmOrder = async (orderId) => {
+    setStatusUpdating(true);
+    try {
+      const response = await fetch("/api/update_services", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: orderId,
+          otp: "Confirmed",
+          status: "Active",
+        }),
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        setPopup({
+          show: true,
+          message: "Order confirmed successfully",
+          success: true,
+        });
+        await fetchServiceRequests();
+      } else {
+        setPopup({
+          show: true,
+          message: result.message || "Failed to confirm order",
+          success: false,
+        });
+      }
+    } catch (err) {
+      setPopup({
+        show: true,
+        message: "Failed to confirm order",
+        success: false,
+      });
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
+  // Handler to delete an order
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) return;
+    setStatusUpdating(true);
+    try {
+      const response = await fetch("/api/delete_services", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: orderId }),
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        setPopup({
+          show: true,
+          message: "Order deleted successfully",
+          success: true,
+        });
+        await fetchServiceRequests();
+      } else {
+        setPopup({
+          show: true,
+          message: result.message || "Failed to delete order",
+          success: false,
+        });
+      }
+    } catch (err) {
+      setPopup({
+        show: true,
+        message: "Failed to delete order",
+        success: false,
+      });
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
   if (error) {
     return (
       <div className={styles.errorContainer}>
@@ -814,55 +889,74 @@ export default function AdminDashboard() {
                     <th>Date Requested</th>
                     <th>Status</th>
                     <th>Verification</th>
-
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredServiceRequests.map((request) => (
-                    <tr key={request.id}>
-                      <td>{request.id}</td>
-                      <td>{request.name}</td>
-                      <td>{request.phone || "-"}</td>
-                      <td>{request.company_name}</td>
-                      <td>{request.email}</td>
-                      <td>{request.service_type}</td>
-                      <td>{request.date || request.created_at || ""}</td>
-                      <td style={{ position: "relative" }}>
-                        <button
-                          className={styles.statusButton}
-                          data-status={request.status || "Pending"}
-                          onClick={() => {request.otp === "Confirmed" ? handleStatusButtonClick(request.id): ()=>{}}}
-                        >
-                          {request.status || "Pending"}
-                        </button>
-                        {statusDropdown.open &&
-                          statusDropdown.requestId === request.id && (
-                            <div
-                              className={styles.statusDropdown}
-                              ref={statusDropdownRef}
-                            >
-                              {["Active", "Done", "Rejected", "Pending"].map(
-                                (option) => (
-                                  <button
-                                    key={option}
-                                    className={styles.statusDropdownOption}
-                                    onClick={() =>
-                                      !statusUpdating &&
-                                      handleStatusChange(request.id, option)
-                                    }
-                                    disabled={statusUpdating}
-                                  >
-                                    {option}
-                                  </button>
-                                )
-                              )}
-                            </div>
-                          )}
-                      </td>
-                      <td>{request.otp === "Confirmed" ? request.otp : "Not confirmed"}</td>
-
-                    </tr>
-                  ))}
+                  {filteredServiceRequests.map((request) => {
+                    const user = users.find((u) => u.email === request.email);
+                    return (
+                      <tr key={request.id}>
+                        <td>{request.id}</td>
+                        <td>{user ? user.name : request.name}</td>
+                        <td>{user ? user.phone : "-"}</td>
+                        <td>{user ? user.company_name : "-"}</td>
+                        <td>{request.email}</td>
+                        <td>{request.service_type}</td>
+                        <td>{request.date || request.created_at || ""}</td>
+                        <td style={{ position: "relative" }}>
+                          <button
+                            className={styles.statusButton}
+                            data-status={request.status || "Pending"}
+                            onClick={() => {
+                              request.otp === "Confirmed"
+                                ? handleStatusButtonClick(request.id)
+                                : () => {};
+                            }}
+                          >
+                            {request.status || "Pending"}
+                          </button>
+                          {statusDropdown.open &&
+                            statusDropdown.requestId === request.id && (
+                              <div
+                                className={styles.statusDropdown}
+                                ref={statusDropdownRef}
+                              >
+                                {["Active", "Done", "Rejected", "Pending"].map(
+                                  (option) => (
+                                    <button
+                                      key={option}
+                                      className={styles.statusDropdownOption}
+                                      onClick={() =>
+                                        !statusUpdating &&
+                                        handleStatusChange(request.id, option)
+                                      }
+                                      disabled={statusUpdating}
+                                    >
+                                      {option}
+                                    </button>
+                                  )
+                                )}
+                              </div>
+                            )}
+                        </td>
+                        <td>
+                          {request.otp === "Confirmed"
+                            ? request.otp
+                            : "Not confirmed"}
+                        </td>
+                        <td>
+                          <button
+                            className={styles.deleteModernBtn}
+                            onClick={() => handleDeleteOrder(request.id)}
+                            disabled={statusUpdating}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
