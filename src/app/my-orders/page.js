@@ -19,7 +19,7 @@ export default function MyOrders({ userId }) {
         );
         if (!response.ok) throw new Error("Failed to fetch orders");
         let data = await response.json();
-        data = data.orders
+        data = data.orders;
         setOrders(data);
       } catch (err) {
         setError(err.message);
@@ -29,6 +29,25 @@ export default function MyOrders({ userId }) {
     };
     fetchOrders();
   }, [userId]);
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) return;
+    try {
+      const response = await fetch("/api/delete_services", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: orderId }),
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        setOrders((prev) => prev.filter((order) => order.id !== orderId));
+      } else {
+        alert(result.message || "Failed to delete order");
+      }
+    } catch (err) {
+      alert("Failed to delete order");
+    }
+  };
 
   if (loading) return <div style={{ padding: 32 }}>Loading...</div>;
   if (error)
@@ -58,7 +77,7 @@ export default function MyOrders({ userId }) {
             <th style={{ textAlign: "left", padding: 8 }}>Description</th>
             <th style={{ textAlign: "left", padding: 8 }}>Status</th>
             <th style={{ textAlign: "left", padding: 8 }}>Verification</th>
-
+            <th style={{ textAlign: "right", padding: 8 }}></th>
           </tr>
         </thead>
         <tbody>
@@ -68,8 +87,24 @@ export default function MyOrders({ userId }) {
               <td style={{ padding: 8 }}>{order.service_type}</td>
               <td style={{ padding: 8 }}>{order.service_description}</td>
               <td style={{ padding: 8 }}>{order.status}</td>
-              <td style={{ padding: 8 }}>{order.otp === "Confirmed" ? order.otp : "Not confirmed"}</td>
-
+              <td style={{ padding: 8 }}>
+                {order.otp === "Confirmed" ? order.otp : "Not confirmed"}
+              </td>
+              <td style={{ padding: 8, textAlign: "right" }}>
+                <button
+                  style={{
+                    color: "#fff",
+                    background: "#e74c3c",
+                    border: "none",
+                    borderRadius: 4,
+                    padding: "2px 10px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleDeleteOrder(order.id)}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
