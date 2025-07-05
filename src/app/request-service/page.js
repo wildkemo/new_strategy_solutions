@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
-import { useRef } from 'react';
-
+import { useRef } from "react";
 
 const validateSession = async () => {
   // const response2 = await fetch(
@@ -78,6 +77,7 @@ function PopupNotification({ message, onClose, error }) {
 
 export default function RequestService() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -100,6 +100,7 @@ export default function RequestService() {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [checkingUser, setCheckingUser] = useState(true);
   const [otpSent, setOtpSent] = useState(false);
+  const [pendingOtpData, setPendingOtpData] = useState(null);
 
   // useEffect(() => {
   //   const checkSession = async () => {
@@ -157,6 +158,11 @@ export default function RequestService() {
         const data = await response.json();
         if (!data.user) {
           setShowSignInModal(true);
+        } else {
+          // If user is signed in and verify_otp parameter is present, fetch pending OTP orders
+          if (searchParams.get("verify_otp") === "true") {
+            await fetchPendingOtpOrders();
+          }
         }
       } catch {
         setShowSignInModal(true);
@@ -165,7 +171,37 @@ export default function RequestService() {
       }
     };
     checkUser();
-  }, [router]);
+  }, [router, searchParams]);
+
+  const fetchPendingOtpOrders = async () => {
+    try {
+      const response = await fetch("/api/get_pending_otp_orders/", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch pending OTP orders");
+      }
+
+      const data = await response.json();
+      if (data.status === "success" && data.pendingOrders.length > 0) {
+        // Use the first pending order
+        const firstOrder = data.pendingOrders[0];
+        setPendingOtpData({
+          orderId: firstOrder.id,
+          serviceType: firstOrder.service_type,
+          serviceDescription: firstOrder.service_description,
+          email: "", // Will be filled from user data
+          name: "", // Will be filled from user data
+        });
+        orderIdRef.current = firstOrder.id;
+        setShowOtpModal(true);
+      }
+    } catch (err) {
+      console.error("Error fetching pending OTP orders:", err);
+    }
+  };
 
   const validateForm = () => {
     return true;
@@ -173,7 +209,6 @@ export default function RequestService() {
 
   // let order_id;
   const orderIdRef = useRef(null); // at top of component
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -216,18 +251,23 @@ export default function RequestService() {
     e.preventDefault();
     setOtpError("");
     setLoading(true);
+
+    // Determine which data to use based on whether we're verifying a pending order or a new request
+    const requestData = pendingOtpData || pendingRequestData;
+
     // Verify OTP first
     const response = await fetch("/api/verify_otp/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        email: pendingRequestData.email,
+        email: requestData.email,
         otp,
         order_id: orderIdRef.current, // Use the ref to get the order ID
-        service_type: pendingRequestData.serviceType,
-        service_description: pendingRequestData.description,
-        name: pendingRequestData.name,
+        service_type: requestData.serviceType,
+        service_description:
+          requestData.serviceDescription || requestData.description,
+        name: requestData.name,
       }),
     });
     setLoading(false);
@@ -237,27 +277,12 @@ export default function RequestService() {
       return;
     }
     if (result.status === "success") {
-      // Now submit the actual service request
-      setLoading(true);
-      // const serviceResponse = await fetch("/api/request_service/", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   credentials: "include",
-      //   body: JSON.stringify({
-      //     service_type: pendingRequestData.serviceType,
-      //     service_description: pendingRequestData.description,
-      //     email: pendingRequestData.email,
-      //     name: pendingRequestData.name,
-      //     phone: pendingRequestData.phone,
-      //   }),
-      // });
-      setLoading(false);
-      // if (!serviceResponse.ok) {
-      //   setOtpError("Failed to submit service request after OTP verification.");
-      //   return;
-      // }
       setShowOtpModal(false);
       setShowPopup(true);
+      // Clear the pending OTP data if it was a pending order
+      if (pendingOtpData) {
+        setPendingOtpData(null);
+      }
     } else {
       setOtpError(result.error || "Invalid OTP. Try again.");
     }
@@ -366,7 +391,27 @@ export default function RequestService() {
         <div className={styles.otpModalOverlay}>
           <div className={styles.otpModal}>
             <h2>Enter 6-Digit OTP</h2>
-            <p>We sent a 6-digit code to your email. Please enter it below:</p>
+            <p>
+              {pendingOtpData
+                ? "Please enter the 6-digit code sent to your email to verify your pending service request:"
+                : "We sent a 6-digit code to your email. Please enter it below:"}
+            </p>
+            {pendingOtpData && (
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  padding: "1rem",
+                  borderRadius: "8px",
+                  marginBottom: "1rem",
+                  border: "1px solid #e9ecef",
+                }}
+              >
+                <strong>Service:</strong> {pendingOtpData.serviceType}
+                <br />
+                <strong>Description:</strong>{" "}
+                {pendingOtpData.serviceDescription}
+              </div>
+            )}
             <form onSubmit={handleOtpSubmit} autoComplete="off">
               <input
                 type="text"
@@ -388,7 +433,7 @@ export default function RequestService() {
                 className={styles.button}
                 disabled={otp.length !== 6}
               >
-                Submit
+                {pendingOtpData ? "Verify OTP" : "Submit"}
               </button>
             </form>
           </div>

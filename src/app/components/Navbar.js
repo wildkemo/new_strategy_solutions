@@ -15,6 +15,8 @@ export default function Navbar({ className = "" }) {
   const [error, setError] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const [pendingOtpOrders, setPendingOtpOrders] = useState([]);
+  const [hasPendingOtp, setHasPendingOtp] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -91,6 +93,29 @@ export default function Navbar({ className = "" }) {
     }
   };
 
+  const fetchPendingOtpOrders = async () => {
+    if (!user) return;
+
+    try {
+      const response = await fetch("/api/get_pending_otp_orders/", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch pending OTP orders");
+      }
+
+      const data = await response.json();
+      if (data.status === "success") {
+        setPendingOtpOrders(data.pendingOrders || []);
+        setHasPendingOtp(data.hasPendingOrders);
+      }
+    } catch (err) {
+      console.error("Error fetching pending OTP orders:", err);
+    }
+  };
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLogout = async () => {
@@ -118,8 +143,16 @@ export default function Navbar({ className = "" }) {
   useEffect(() => {
     if (sidebarOpen && user) {
       fetchUserOrders();
+      fetchPendingOtpOrders();
     }
   }, [sidebarOpen, user]);
+
+  // Fetch pending OTP orders when user data is loaded
+  useEffect(() => {
+    if (user) {
+      fetchPendingOtpOrders();
+    }
+  }, [user]);
 
   const isSolidNavbarPage =
     pathname === "/" ||
@@ -265,6 +298,21 @@ export default function Navbar({ className = "" }) {
                         <p className={styles.noOrders}>No orders found</p>
                       )}
                     </div>
+
+                    {/* Show Verify Now button if there are pending OTP orders */}
+                    {hasPendingOtp && (
+                      <button
+                        className={styles.sidebarBtn}
+                        style={{ background: "#e74c3c", marginBottom: "1rem" }}
+                        onClick={() => {
+                          setSidebarOpen(false);
+                          router.push("/request-service?verify_otp=true");
+                        }}
+                      >
+                        Verify Now ({pendingOtpOrders.length})
+                      </button>
+                    )}
+
                     <button
                       className={styles.sidebarBtn}
                       onClick={() => {
