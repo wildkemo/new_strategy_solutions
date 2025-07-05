@@ -21,7 +21,9 @@ export async function POST(req) {
     }
     console.log("Email:", email);
 
-    const { otp, service_type, service_description, name } = await req.json();
+    const { otp, service_type, service_description, name, order_id } = await req.json();
+
+    // let order_id = 30
 
     if (!otp) {
       return NextResponse.json({ error: 'Missing OTP' }, { status: 400 });
@@ -35,39 +37,89 @@ export async function POST(req) {
     });
 
     const [rows] = await connection.execute(
-      'SELECT * FROM otps WHERE email = ? LIMIT 1',
-      [email]
+      'SELECT * FROM orders WHERE id = ? LIMIT 1',
+      [order_id]
     );
 
     if (rows.length === 0) {
       await connection.end();
       return NextResponse.json({ error: 'OTP not found' }, { status: 404 });
     }
-
+    
     const otpRecord = rows[0];
     const now = new Date();
 
-    if (new Date(otpRecord.expires_at) < now) {
-      await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
+
+
+
+
+
+    
+    if(otpRecord.otp !== "verified"){
+
+      if (new Date(otpRecord.expires_at) < now) {
+      await connection.execute('DELETE FROM orders WHERE id = ?', [order_id]);
       await connection.end();
       return NextResponse.json({ error: 'OTP expired' }, { status: 410 });
-    }
+      }
 
-    if (otpRecord.otp_code !== otp) {
-      await connection.end();
-      return NextResponse.json({ error: 'Incorrect OTP' }, { status: 401 });
+
+
+
+    
+      if (otpRecord.otp !== otp) {
+        await connection.end();
+        return NextResponse.json({ error: 'Incorrect OTP' }, { status: 401 });
+      }else{
+
+        // // Insert into orders table
+        // await connection.execute(
+        //   "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
+        //   [name, email, service_type, service_description]
+        // );
+
+        // await connection.execute('DELETE FROM otps WHERE id = ?', [order_id]);
+        await connection.execute('UPDATE orders SET otp = "verified" WHERE id = ?', [order_id]);
+        await connection.end();
+        return NextResponse.json({ status: "success" });
+      }
     }else{
-
-      // Insert into orders table
-      await connection.execute(
-        "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
-        [name, email, service_type, service_description]
-      );
-
-      await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
       await connection.end();
       return NextResponse.json({ status: "success" });
     }
+
+
+
+    // let otpSuccess = false;
+    // let reason;
+
+    // for(let i=0;i<rows.length;i++){
+    //   if(rows[i].otp_code === otp){
+    //     if(rows[i].order_id === request_id){
+    //         // Insert into orders table
+    //         await connection.execute(
+    //           "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
+    //           [name, email, service_type, service_description]
+    //         );
+
+    //         await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
+    //         await connection.end();
+    //         otpSuccess = true;
+    //         break;
+    //       }
+    //       else{
+    //         reason = 'This is not the otp for the current order';
+            
+    //       }
+    //     }
+    //     else{
+    //       reason = 'Incorrect OTP';
+    //     }
+    //   }
+      
+      
+    //   return NextResponse.json({ status: "success" });
+
 
     
   } catch (err) {

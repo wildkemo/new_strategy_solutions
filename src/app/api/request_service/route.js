@@ -48,23 +48,29 @@ export async function POST(request) {
         database: process.env.DB_NAME,
       });
 
-      // // Insert into orders table
-      // const [result] = await connection.execute(
-      //   "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
-      //   [name, email, service_type, service_description]
-      // );
+      
 
-      // const orderId = result.insertId;
-
+      
       // ✅ Generate OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      // const requestId = Math.floor(100000 + Math.random() * 900000).toString();
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
-      // ✅ Store OTP in otps table
-      await connection.execute(
-        "INSERT INTO otps (email, otp_code, expires_at) VALUES (?, ?, ?)",
-        [email, otp, expiresAt]
+      
+      
+      // Insert into orders table
+      const [result] = await connection.execute(
+        "INSERT INTO orders (name, email, service_type, service_description, status, otp, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [name, email, service_type, service_description, "pending", otp, expiresAt]
       );
+      
+      const orderId = result.insertId;
+
+      
+      // // ✅ Store OTP in otps table
+      // await connection.execute(
+      //   "INSERT INTO otps (email, otp_code, request_id, expires_at) VALUES (?, ?, ?, ?)",
+      //   [email, otp, requestId, expiresAt]
+      // );
 
       // ✅ Send OTP to user's email
       const transporter = nodemailer.createTransport({
@@ -83,7 +89,7 @@ export async function POST(request) {
       });
 
       return NextResponse.json(
-        { status: "otp_sent", message: "Order placed, OTP sent." },
+        { status: "otp_sent", request_id: orderId, message: "Order placed, OTP sent." },
         { status: 201 }
       );
     } catch (dbError) {

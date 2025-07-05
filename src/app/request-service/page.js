@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
+import { useRef } from 'react';
+
 
 const validateSession = async () => {
   // const response2 = await fetch(
@@ -169,6 +171,10 @@ export default function RequestService() {
     return true;
   };
 
+  // let order_id;
+  const orderIdRef = useRef(null); // at top of component
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -195,6 +201,9 @@ export default function RequestService() {
     }
     const result = await response.json();
     if (result.status === "otp_sent") {
+      // order_id = result.request_id
+      orderIdRef.current = result.request_id;
+
       setPendingRequestData({ ...formData });
       setShowOtpModal(true);
       setOtpSent(true);
@@ -215,11 +224,10 @@ export default function RequestService() {
       body: JSON.stringify({
         email: pendingRequestData.email,
         otp,
+        order_id: orderIdRef.current, // Use the ref to get the order ID
         service_type: pendingRequestData.serviceType,
         service_description: pendingRequestData.description,
-        // email: pendingRequestData.email,
         name: pendingRequestData.name,
-        // phone: pendingRequestData.phone,
       }),
     });
     setLoading(false);
