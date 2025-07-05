@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function DELETE(req) {
   try {
@@ -17,7 +19,7 @@ export async function DELETE(req) {
       database: process.env.DB_NAME,
     });
 
-    // Check if the service exists
+    // Check if the service exists and get the image path
     const [existingRows] = await db.execute(
       'SELECT * FROM services WHERE id = ?',
       [id]
@@ -28,7 +30,20 @@ export async function DELETE(req) {
       return NextResponse.json({ error: 'Service not found' }, { status: 404 });
     }
 
-    // Delete the service
+    const service = existingRows[0];
+    
+    // Delete the image file if it exists
+    if (service.image) {
+      try {
+        const imagePath = path.join(process.cwd(), 'public', service.image);
+        await fs.unlink(imagePath);
+      } catch (err) {
+        console.error('Error deleting image file:', err);
+        // Continue with deletion even if image deletion fails
+      }
+    }
+
+    // Delete the service from database
     await db.execute('DELETE FROM services WHERE id = ?', [id]);
     await db.end();
 
@@ -37,7 +52,7 @@ export async function DELETE(req) {
       {
         status: 'success',
         message: 'Service deleted successfully',
-        service: existingRows[0],
+        service: service,
       },
       { status: 200 }
     );
