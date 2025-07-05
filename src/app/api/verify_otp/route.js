@@ -47,11 +47,11 @@ export async function POST(req) {
     const otpRecord = rows[0];
     const now = new Date();
 
-    // if (new Date(otpRecord.expires_at) < now) {
-    //   await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
-    //   await connection.end();
-    //   return NextResponse.json({ error: 'OTP expired' }, { status: 410 });
-    // }
+    if (new Date(otpRecord.expires_at) < now) {
+      await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
+      await connection.end();
+      return NextResponse.json({ error: 'OTP expired' }, { status: 410 });
+    }
 
     if (otpRecord.otp_code !== otp) {
       await connection.end();
