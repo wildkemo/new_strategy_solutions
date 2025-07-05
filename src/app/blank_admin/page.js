@@ -813,6 +813,8 @@ export default function AdminDashboard() {
                     <th>Service</th>
                     <th>Date Requested</th>
                     <th>Status</th>
+                    <th>Verification</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -829,7 +831,7 @@ export default function AdminDashboard() {
                         <button
                           className={styles.statusButton}
                           data-status={request.status || "Pending"}
-                          onClick={() => handleStatusButtonClick(request.id)}
+                          onClick={() => {request.otp === "Confirmed" ? handleStatusButtonClick(request.id): ()=>{}}}
                         >
                           {request.status || "Pending"}
                         </button>
@@ -857,6 +859,8 @@ export default function AdminDashboard() {
                             </div>
                           )}
                       </td>
+                      <td>{request.otp === "Confirmed" ? request.otp : "Not confirmed"}</td>
+
                     </tr>
                   ))}
                 </tbody>

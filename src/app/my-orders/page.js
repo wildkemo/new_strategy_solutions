@@ -57,6 +57,8 @@ export default function MyOrders({ userId }) {
             <th style={{ textAlign: "left", padding: 8 }}>Service Type</th>
             <th style={{ textAlign: "left", padding: 8 }}>Description</th>
             <th style={{ textAlign: "left", padding: 8 }}>Status</th>
+            <th style={{ textAlign: "left", padding: 8 }}>Verification</th>
+
           </tr>
         </thead>
         <tbody>
@@ -66,6 +68,8 @@ export default function MyOrders({ userId }) {
               <td style={{ padding: 8 }}>{order.service_type}</td>
               <td style={{ padding: 8 }}>{order.service_description}</td>
               <td style={{ padding: 8 }}>{order.status}</td>
+              <td style={{ padding: 8 }}>{order.otp === "Confirmed" ? order.otp : "Not confirmed"}</td>
+
             </tr>
           ))}
         </tbody>

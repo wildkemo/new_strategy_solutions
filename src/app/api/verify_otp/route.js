@@ -43,7 +43,7 @@ export async function POST(req) {
 
     if (rows.length === 0) {
       await connection.end();
-      return NextResponse.json({ error: 'OTP not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Order not found or not verified in time,\n please re-order it' }, { status: 404 });
     }
     
     const otpRecord = rows[0];
@@ -55,7 +55,7 @@ export async function POST(req) {
 
 
     
-    if(otpRecord.otp !== "verified"){
+    if(otpRecord.otp !== "Confirmed"){
 
       if (new Date(otpRecord.expires_at) < now) {
       await connection.execute('DELETE FROM orders WHERE id = ?', [order_id]);
@@ -79,7 +79,7 @@ export async function POST(req) {
         // );
 
         // await connection.execute('DELETE FROM otps WHERE id = ?', [order_id]);
-        await connection.execute('UPDATE orders SET otp = "verified" WHERE id = ?', [order_id]);
+        await connection.execute('UPDATE orders SET otp = "Confirmed" WHERE id = ?', [order_id]);
         await connection.end();
         return NextResponse.json({ status: "success" });
       }
