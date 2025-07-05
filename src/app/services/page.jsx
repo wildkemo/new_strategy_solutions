@@ -137,96 +137,95 @@ const Services = () => {
               !error &&
               services.map((service) => (
                 <div
-                  key={service.id}
-                  className={styles.serviceBox}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
-                    padding: 20,
-                    borderRadius: 12,
-                    background: "#fff",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                    minHeight: 320,
-                  }}
-                  onMouseEnter={() => setHoveredService(service)}
-                  onMouseLeave={() => setHoveredService(null)}
-                >
-                  <Link
-                    href={`/services/${getSlug(service.title)}`}
-                    style={{
-                      textDecoration: "none",
-                      color: "inherit",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8,
-                      flex: 1,
-                    }}
-                  >
-                    {hoveredService &&
-                      hoveredService.id === service.id &&
-                      service.image && (
-                        <div
-                          style={{
-                            width: "100%",
-                            aspectRatio: "1/1",
-                            background: "#f8fafb",
-                            borderRadius: 8,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            backgroundImage: `url(${service.image})`,
-                          }}
-                        />
-                      )}
-                    <div
-                      style={{
-                        flex: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 4,
-                      }}
-                    >
-                      <p
-                        style={{
-                          color: "#0e161b",
-                          fontWeight: 600,
-                          fontSize: 18,
-                          margin: 0,
-                        }}
-                      >
-                        {service.title}
-                      </p>
-                      <p
-                        style={{
-                          color: "#507c95",
-                          fontSize: 14,
-                          fontWeight: 400,
-                          margin: 0,
-                        }}
-                      >
-                        {service.description}
-                      </p>
-                    </div>
-                  </Link>
-                  <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
-                    <Link
-                      href="/request-service"
-                      style={{
-                        background: "#5eb5e8",
-                        color: "#0e161b",
-                        padding: "8px 18px",
-                        borderRadius: 8,
-                        fontWeight: 600,
-                        textDecoration: "none",
-                        fontSize: 14,
-                        border: "none",
-                        transition: "background 0.2s",
-                      }}
-                    >
-                      Request this Service
-                    </Link>
-                  </div>
-                </div>
+  key={service.id}
+  className={styles.serviceBox}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
+    padding: 20,
+    borderRadius: 12,
+    background: "#fff",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    minHeight: 320,
+  }}
+  onMouseEnter={() => setHoveredService(service)} // Keep for other hover effects
+  onMouseLeave={() => setHoveredService(null)}    // Keep for other hover effects
+>
+  <Link
+    href={`/services/${getSlug(service.title)}`}
+    style={{
+      textDecoration: "none",
+      color: "inherit",
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      flex: 1,
+    }}
+  >
+    {/* 👇 Always visible (no hover check) 👇 */}
+    {service.image && (
+      <div
+        style={{
+          width: "100%",
+          aspectRatio: "1/1",
+          background: "#f8fafb",
+          borderRadius: 8,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundImage: `url(${service.image})`,
+        }}
+      />
+    )}
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+      }}
+    >
+      <p
+        style={{
+          color: "#0e161b",
+          fontWeight: 600,
+          fontSize: 18,
+          margin: 0,
+        }}
+      >
+        {service.title}
+      </p>
+      <p
+        style={{
+          color: "#507c95",
+          fontSize: 14,
+          fontWeight: 400,
+          margin: 0,
+        }}
+      >
+        {service.description}
+      </p>
+    </div>
+  </Link>
+  <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
+    <Link
+      href="/request-service"
+      style={{
+        background: "#5eb5e8",
+        color: "#0e161b",
+        padding: "8px 18px",
+        borderRadius: 8,
+        fontWeight: 600,
+        textDecoration: "none",
+        fontSize: 14,
+        border: "none",
+        transition: "background 0.2s",
+      }}
+    >
+      Request this Service
+    </Link>
+  </div>
+</div>
               ))}
           </div>
         </div>
