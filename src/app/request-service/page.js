@@ -215,6 +215,11 @@ export default function RequestService() {
       body: JSON.stringify({
         email: pendingRequestData.email,
         otp,
+        service_type: pendingRequestData.serviceType,
+        service_description: pendingRequestData.description,
+        // email: pendingRequestData.email,
+        name: pendingRequestData.name,
+        // phone: pendingRequestData.phone,
       }),
     });
     setLoading(false);
@@ -226,23 +231,23 @@ export default function RequestService() {
     if (result.status === "success") {
       // Now submit the actual service request
       setLoading(true);
-      const serviceResponse = await fetch("/api/request_service/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          service_type: pendingRequestData.serviceType,
-          service_description: pendingRequestData.description,
-          email: pendingRequestData.email,
-          name: pendingRequestData.name,
-          phone: pendingRequestData.phone,
-        }),
-      });
+      // const serviceResponse = await fetch("/api/request_service/", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   credentials: "include",
+      //   body: JSON.stringify({
+      //     service_type: pendingRequestData.serviceType,
+      //     service_description: pendingRequestData.description,
+      //     email: pendingRequestData.email,
+      //     name: pendingRequestData.name,
+      //     phone: pendingRequestData.phone,
+      //   }),
+      // });
       setLoading(false);
-      if (!serviceResponse.ok) {
-        setOtpError("Failed to submit service request after OTP verification.");
-        return;
-      }
+      // if (!serviceResponse.ok) {
+      //   setOtpError("Failed to submit service request after OTP verification.");
+      //   return;
+      // }
       setShowOtpModal(false);
       setShowPopup(true);
     } else {

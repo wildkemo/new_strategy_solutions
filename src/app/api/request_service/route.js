@@ -48,13 +48,13 @@ export async function POST(request) {
         database: process.env.DB_NAME,
       });
 
-      // Insert into orders table
-      const [result] = await connection.execute(
-        "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
-        [name, email, service_type, service_description]
-      );
+      // // Insert into orders table
+      // const [result] = await connection.execute(
+      //   "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
+      //   [name, email, service_type, service_description]
+      // );
 
-      const orderId = result.insertId;
+      // const orderId = result.insertId;
 
       // ✅ Generate OTP
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -62,8 +62,8 @@ export async function POST(request) {
 
       // ✅ Store OTP in otps table
       await connection.execute(
-        "INSERT INTO otps (email, otp_code, request_id, expires_at) VALUES (?, ?, ?, ?)",
-        [email, otp, orderId.toString(), expiresAt]
+        "INSERT INTO otps (email, otp_code, expires_at) VALUES (?, ?, ?)",
+        [email, otp, expiresAt]
       );
 
       // ✅ Send OTP to user's email

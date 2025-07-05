@@ -19,8 +19,9 @@ export async function POST(req) {
     } catch (err) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
+    console.log("Email:", email);
 
-    const { otp } = await req.json();
+    const { otp, service_type, service_description, name } = await req.json();
 
     if (!otp) {
       return NextResponse.json({ error: 'Missing OTP' }, { status: 400 });
@@ -55,11 +56,20 @@ export async function POST(req) {
     if (otpRecord.otp_code !== otp) {
       await connection.end();
       return NextResponse.json({ error: 'Incorrect OTP' }, { status: 401 });
+    }else{
+
+      // Insert into orders table
+      await connection.execute(
+        "INSERT INTO orders (name, email, service_type, service_description) VALUES (?, ?, ?, ?)",
+        [name, email, service_type, service_description]
+      );
+
+      await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
+      await connection.end();
+      return NextResponse.json({ status: "success" });
     }
 
-    await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
-    await connection.end();
-    return NextResponse.json({ status: "success" });
+    
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
