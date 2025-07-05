@@ -1,12 +1,29 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
 export async function POST(req) {
   try {
-    const { email, otp } = await req.json();
+    const cookieStore = cookies();
+    const token = cookieStore.get('auth_token')?.value;
 
-    if (!email || !otp) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    if (!token) {
+      return NextResponse.json({ error: 'Missing auth token' }, { status: 401 });
+    }
+
+    let email;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      email = decoded.email;
+    } catch (err) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
+    const { otp } = await req.json();
+
+    if (!otp) {
+      return NextResponse.json({ error: 'Missing OTP' }, { status: 400 });
     }
 
     const connection = await mysql.createConnection({
@@ -29,11 +46,11 @@ export async function POST(req) {
     const otpRecord = rows[0];
     const now = new Date();
 
-    if (new Date(otpRecord.expires_at) < now) {
-      await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
-      await connection.end();
-      return NextResponse.json({ error: 'OTP expired' }, { status: 410 });
-    }
+    // if (new Date(otpRecord.expires_at) < now) {
+    //   await connection.execute('DELETE FROM otps WHERE email = ?', [email]);
+    //   await connection.end();
+    //   return NextResponse.json({ error: 'OTP expired' }, { status: 410 });
+    // }
 
     if (otpRecord.otp_code !== otp) {
       await connection.end();
