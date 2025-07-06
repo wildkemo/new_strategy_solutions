@@ -373,12 +373,49 @@ export default function RequestService() {
   return (
     <div className={styles.container}>
       {showPopup && (
-        <PopupNotification
-          message={
-            "Your service has been requested successfully. Stay tuned for our company's response."
-          }
-          onClose={() => setShowPopup(false)}
-        />
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <button
+              onClick={() => setShowPopup(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 14,
+                background: "none",
+                border: "none",
+                fontSize: 22,
+                color: "#888",
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2
+              style={{
+                color: "#11c29b",
+                marginBottom: 16,
+                fontSize: "2.2rem",
+                fontWeight: 800,
+                letterSpacing: "-1px",
+              }}
+            >
+              Success
+            </h2>
+            <div
+              style={{
+                fontSize: "1.18rem",
+                color: "#222",
+                marginBottom: 8,
+                marginTop: 0,
+                textAlign: "center",
+              }}
+            >
+              Your service has been requested successfully. Stay tuned for our
+              company's response.
+            </div>
+          </div>
+        </div>
       )}
       {showEmailPopup && (
         <PopupNotification
@@ -412,29 +449,36 @@ export default function RequestService() {
                 {pendingOtpData.serviceDescription}
               </div>
             )}
-            <form onSubmit={handleOtpSubmit} autoComplete="off">
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) =>
-                  setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
-                }
-                maxLength={6}
-                className={styles.otpInput}
-                placeholder="------"
-                required
-                inputMode="numeric"
-                pattern="[0-9]{6}"
-                autoFocus
-              />
+            <form
+              onSubmit={handleOtpSubmit}
+              autoComplete="off"
+              style={{ width: "100%" }}
+            >
+              <div className={styles.otpFormRow}>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) =>
+                    setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
+                  }
+                  maxLength={6}
+                  className={styles.otpInput}
+                  placeholder="------"
+                  required
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  autoFocus
+                  style={{ marginBottom: "1.2rem" }}
+                />
+                <button
+                  type="submit"
+                  className={styles.button}
+                  disabled={otp.length !== 6}
+                >
+                  {pendingOtpData ? "Verify OTP" : "Submit"}
+                </button>
+              </div>
               {otpError && <div className={styles.otpError}>{otpError}</div>}
-              <button
-                type="submit"
-                className={styles.button}
-                disabled={otp.length !== 6}
-              >
-                {pendingOtpData ? "Verify OTP" : "Submit"}
-              </button>
             </form>
           </div>
         </div>

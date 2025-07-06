@@ -5,7 +5,6 @@ import styles from "../Services.module.css";
 import { request } from "http";
 import { useRef } from "react";
 
-
 const getSlug = (title) =>
   title
     ?.toLowerCase()
@@ -74,8 +73,7 @@ export default function ServicePage() {
   const [otp, setOtp] = useState("");
   const [showPopup, setShowPopup] = useState(false);
 
-
-
+  const otpInputRefs = useRef([]);
 
   useEffect(() => {
     const fetchService = async () => {
@@ -99,11 +97,9 @@ export default function ServicePage() {
   }, [slug]);
 
   const orderIdRef = useRef(null); // at top of component
-  
 
   const requestService = async () => {
-    if(service){
-
+    if (service) {
       const response = await fetch("/api/request_service/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -125,7 +121,7 @@ export default function ServicePage() {
       const result = await response.json();
       if (result.status === "otp_sent") {
         // order_id = result.request_id
-        orderIdRef.current = result.request_id; 
+        orderIdRef.current = result.request_id;
 
         // setPendingRequestData({ ...formData });
         setShowOtpModal(true);
@@ -133,10 +129,8 @@ export default function ServicePage() {
       } else if (result.status === "error") {
         alert(result.message);
       }
-
     }
   };
-
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
@@ -174,6 +168,45 @@ export default function ServicePage() {
     }
   };
 
+  const handleOtpBoxChange = (e, idx) => {
+    const val = e.target.value.replace(/[^0-9]/g, "");
+    if (!val) return;
+    let newOtp = otp.split("");
+    newOtp[idx] = val;
+    setOtp(newOtp.join("").slice(0, 6));
+    // Move focus to next input
+    if (val && idx < 5) {
+      otpInputRefs.current[idx + 1]?.focus();
+    }
+  };
+
+  const handleOtpBoxKeyDown = (e, idx) => {
+    if (e.key === "Backspace") {
+      if (!otp[idx] && idx > 0) {
+        otpInputRefs.current[idx - 1]?.focus();
+      }
+      let newOtp = otp.split("");
+      newOtp[idx] = "";
+      setOtp(newOtp.join(""));
+    } else if (e.key === "ArrowLeft" && idx > 0) {
+      otpInputRefs.current[idx - 1]?.focus();
+    } else if (e.key === "ArrowRight" && idx < 5) {
+      otpInputRefs.current[idx + 1]?.focus();
+    }
+  };
+
+  const handleOtpBoxPaste = (e) => {
+    const paste = e.clipboardData
+      .getData("text")
+      .replace(/[^0-9]/g, "")
+      .slice(0, 6);
+    if (paste.length === 6) {
+      setOtp(paste);
+      // Focus last input
+      setTimeout(() => otpInputRefs.current[5]?.focus(), 0);
+    }
+    e.preventDefault();
+  };
 
   if (loading) {
     return (
@@ -396,30 +429,72 @@ export default function ServicePage() {
                 {pendingOtpData.serviceDescription}
               </div>
             )}
-            <form onSubmit={handleOtpSubmit} autoComplete="off">
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) =>
-                  setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
-                }
-                maxLength={6}
-                className={styles.otpInput}
-                placeholder="------"
-                required
-                inputMode="numeric"
-                pattern="[0-9]{6}"
-                autoFocus
-              />
-              {otpError && <div className={styles.otpError}>{otpError}</div>}
-              <button
-                type="submit"
-                className={styles.button}
-                disabled={otp.length !== 6}
+            <form
+              onSubmit={handleOtpSubmit}
+              autoComplete="off"
+              style={{ width: "100%" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "100%",
+                }}
               >
-                {pendingOtpData ? "Verify OTP" : "Submit"}
-              </button>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) =>
+                    setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
+                  }
+                  maxLength={6}
+                  className={styles.otpInput}
+                  placeholder="------"
+                  required
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  autoFocus
+                  style={{ marginBottom: "1.2rem" }}
+                />
+                <button
+                  type="submit"
+                  className={styles.button}
+                  disabled={otp.length !== 6}
+                >
+                  {pendingOtpData ? "Verify OTP" : "Submit"}
+                </button>
+              </div>
+              {otpError && <div className={styles.otpError}>{otpError}</div>}
             </form>
+          </div>
+        </div>
+      )}
+
+      {showPopup && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <button
+              onClick={() => setShowPopup(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 14,
+                background: "none",
+                border: "none",
+                fontSize: 22,
+                color: "#888",
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2 style={{ color: "#11c29b", marginBottom: 16 }}>Success</h2>
+            <div style={{ fontSize: "1.1rem", color: "#222", marginBottom: 8 }}>
+              Your service has been requested successfully. Stay tuned for our
+              company's response.
+            </div>
           </div>
         </div>
       )}

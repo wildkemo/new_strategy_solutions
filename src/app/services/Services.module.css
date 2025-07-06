@@ -364,3 +364,102 @@
   font-weight: normal;
   line-height: 1.5;
 }
+
+.otpModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.otpModal {
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 8px 32px rgba(16, 30, 54, 0.13);
+  padding: 2rem 1.5rem 2rem 1.5rem;
+  max-width: 370px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otpModal h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1.1rem;
+  color: #222;
+  letter-spacing: -1px;
+}
+
+.otpModal p {
+  font-size: 1.15rem;
+  color: #444;
+  margin-bottom: 2.1rem;
+  margin-top: 0;
+}
+
+.otpInput {
+  width: 140px;
+  max-width: 100%;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 2px solid #aaa;
+  border-radius: 8px;
+  padding: 0.5em 0.8em;
+  background: #f7f9fa;
+  color: #222;
+  outline: none;
+  transition: border 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 4px rgba(16, 30, 54, 0.06);
+  margin-right: 0;
+}
+
+.otpInput:focus {
+  border: 2px solid #11c29b;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(16, 30, 54, 0.1);
+}
+
+.otpError {
+  color: #d63031;
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.button {
+  background: #11c29b;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5em 1.6em;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-left: 0;
+  box-shadow: 0 2px 8px rgba(16, 30, 54, 0.1);
+  display: inline-block;
+}
+
+.button:hover {
+  background: #0e9e7a;
+}
+
+.otpFormRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
