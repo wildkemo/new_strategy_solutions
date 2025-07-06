@@ -7,8 +7,8 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('auth_token')?.value
 
-  const publicPaths = ['/', '/login', '/register', '/services', '/about', '/contact']
-  const isPublicPath = publicPaths.includes(pathname)
+  const publicPaths = ['/', '/login', '/register', '/about', '/contact']
+  const isPublicPath = publicPaths.includes(pathname) || pathname.startsWith('/services')
   const isDashboard = pathname.startsWith('/blank_admin')
 
   // ✅ If logged in and trying to access /login or /register → redirect to /services
