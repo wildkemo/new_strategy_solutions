@@ -33,7 +33,7 @@ export default function MyOrders({ userId }) {
   const handleDeleteOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
     try {
-      const response = await fetch("/api/delete_services", {
+      const response = await fetch("/api/delete_order", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: orderId }),

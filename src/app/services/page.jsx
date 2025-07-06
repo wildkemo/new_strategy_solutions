@@ -207,7 +207,7 @@ const Services = () => {
       </p>
     </div>
   </Link>
-  <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
+  {/* <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
     <Link
       href="/request-service"
       style={{
@@ -224,7 +224,7 @@ const Services = () => {
     >
       Request this Service
     </Link>
-  </div>
+  </div> */}
 </div>
               ))}
           </div>

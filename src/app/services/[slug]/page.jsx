@@ -2,6 +2,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import styles from "../Services.module.css";
+import { request } from "http";
+import { useRef } from "react";
+
 
 const getSlug = (title) =>
   title
@@ -64,6 +67,15 @@ export default function ServicePage() {
   const { slug } = useParams();
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [otpSent, setOtpSent] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [pendingOtpData, setPendingOtpData] = useState(null);
+  const [otp, setOtp] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+
+
+
 
   useEffect(() => {
     const fetchService = async () => {
@@ -85,6 +97,83 @@ export default function ServicePage() {
     };
     fetchService();
   }, [slug]);
+
+  const orderIdRef = useRef(null); // at top of component
+  
+
+  const requestService = async () => {
+    if(service){
+
+      const response = await fetch("/api/request_service/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          service_type: service.category,
+          service_description: service.description,
+          otp_only: true, // Add a flag so backend knows to only send OTP
+        }),
+      });
+
+      setLoading(false);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP error! Status: ${response.status}, Message: ${errorText}`
+        );
+      }
+      const result = await response.json();
+      if (result.status === "otp_sent") {
+        // order_id = result.request_id
+        orderIdRef.current = result.request_id; 
+
+        // setPendingRequestData({ ...formData });
+        setShowOtpModal(true);
+        setOtpSent(true);
+      } else if (result.status === "error") {
+        alert(result.message);
+      }
+
+    }
+  };
+
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setOtpError("");
+    setLoading(true);
+
+    // Determine which data to use based on whether we're verifying a pending order or a new request
+    // const requestData = pendingOtpData || pendingRequestData;
+
+    // Verify OTP first
+    const response = await fetch("/api/verify_otp/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        otp,
+        order_id: orderIdRef.current, // Use the ref to get the order ID
+      }),
+    });
+    setLoading(false);
+    const result = await response.json();
+    if (!response.ok) {
+      setOtpError(result.error || "Failed to verify OTP. Try again.");
+      return;
+    }
+    if (result.status === "success") {
+      setShowOtpModal(false);
+      setShowPopup(true);
+      // Clear the pending OTP data if it was a pending order
+      if (pendingOtpData) {
+        setPendingOtpData(null);
+      }
+    } else {
+      setOtpError(result.error || "Invalid OTP. Try again.");
+    }
+  };
+
 
   if (loading) {
     return (
@@ -282,6 +371,59 @@ export default function ServicePage() {
         </div>
       </div>
 
+      {showOtpModal && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <h2>Enter 6-Digit OTP</h2>
+            <p>
+              {pendingOtpData
+                ? "Please enter the 6-digit code sent to your email to verify your pending service request:"
+                : "We sent a 6-digit code to your email. Please enter it below:"}
+            </p>
+            {pendingOtpData && (
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  padding: "1rem",
+                  borderRadius: "8px",
+                  marginBottom: "1rem",
+                  border: "1px solid #e9ecef",
+                }}
+              >
+                <strong>Service:</strong> {pendingOtpData.serviceType}
+                <br />
+                <strong>Description:</strong>{" "}
+                {pendingOtpData.serviceDescription}
+              </div>
+            )}
+            <form onSubmit={handleOtpSubmit} autoComplete="off">
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
+                }
+                maxLength={6}
+                className={styles.otpInput}
+                placeholder="------"
+                required
+                inputMode="numeric"
+                pattern="[0-9]{6}"
+                autoFocus
+              />
+              {otpError && <div className={styles.otpError}>{otpError}</div>}
+              <button
+                type="submit"
+                className={styles.button}
+                disabled={otp.length !== 6}
+              >
+                {pendingOtpData ? "Verify OTP" : "Submit"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Buttons at the bottom (optional, can be moved) */}
       <div style={{ display: "flex", gap: 16, marginTop: 48 }}>
         <a
@@ -300,8 +442,8 @@ export default function ServicePage() {
         >
           View All Services
         </a>
-        <a
-          href="/request-service"
+        <button
+          onClick={requestService}
           style={{
             background: "#5eb5e8",
             color: "#0e161b",
@@ -315,7 +457,7 @@ export default function ServicePage() {
           }}
         >
           Request this Service
-        </a>
+        </button>
       </div>
     </div>
   );

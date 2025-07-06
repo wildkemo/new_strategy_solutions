@@ -57,7 +57,6 @@ export default function Register() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    gender: "",
     companyName: "",
     phone: "",
     password: "",
@@ -225,20 +224,7 @@ export default function Register() {
                 required
               />
             </div>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Gender</label>
-              <select
-                className={styles.input}
-                name="gender"
-                value={form.gender}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </div>
+            
             <div className={styles.formGroup}>
               <label className={styles.label}>Phone</label>
               <input
