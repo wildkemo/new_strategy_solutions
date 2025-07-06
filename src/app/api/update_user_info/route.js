@@ -19,7 +19,7 @@ export async function PATCH(req) {
 
   
   try {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const token = cookieStore.get('auth_token')?.value
 
     if (!token) return NextResponse.json({ error: 'No auth token' }, { status: 401 })

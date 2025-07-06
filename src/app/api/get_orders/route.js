@@ -18,7 +18,7 @@ export async function GET() {
 
   
   // 1. Extract JWT token from cookies
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;
 
   if (!token) {

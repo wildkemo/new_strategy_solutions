@@ -32,7 +32,7 @@ export async function POST(req) {
       return NextResponse.json({ status: 'error', message: 'Invalid password' }, { status: 200 });
     }
 
-    console.log("user found:", user);
+    // console.log("user found:", user);
 
 
     let token = null;
@@ -68,7 +68,7 @@ export async function POST(req) {
 
     res.headers.set('Set-Cookie', cookie);
 
-    console.log("isAdmin", res.isAdmin);
+    // console.log("isAdmin", res.isAdmin);
     return res;
 
   } catch (error) {

@@ -18,8 +18,8 @@ export async function GET(request) {
 
   
   try {
-    const cookieStore = cookies();
-    const authToken = await cookieStore.get("auth_token");
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token");
 
     if (!authToken) {
       return NextResponse.json(

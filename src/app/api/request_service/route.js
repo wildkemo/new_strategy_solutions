@@ -18,7 +18,7 @@ export async function POST(request) {
   }
 
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const authToken = cookieStore.get("auth_token");
 
     if (!authToken) {

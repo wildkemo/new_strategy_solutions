@@ -5,7 +5,10 @@ import { cookies } from 'next/headers'
 const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export async function verifyUser() {
-  const token = await cookies().get('auth_token')?.value
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value
+
   if (!token) return null
 
   try {

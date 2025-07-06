@@ -42,7 +42,7 @@ export async function DELETE(req) {
 
     const order = existingRows[0];
 
-    if(order.status !== "pending") {
+    if(order.status !== "Pending") {
       return NextResponse.json(
         { message: 'Only pending orders can be deleted' },
         { status: 400 }

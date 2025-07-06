@@ -19,7 +19,7 @@ export async function POST(req) {
 
   
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
 
     if (!token) {
@@ -36,7 +36,7 @@ export async function POST(req) {
     } catch (err) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
-    console.log("Email:", email);
+    // console.log("Email:", email);
 
     const { otp, service_type, service_description, name, order_id } =
       await req.json();

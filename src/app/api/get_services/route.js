@@ -24,7 +24,7 @@ export async function GET() {
       );
     }
 
-    console.log(rows[0].features);
+    // console.log(rows[0].features);
     // 3. Return the services as JSON
     return NextResponse.json(rows, { status: 200 });
 
