@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
+import {verifyUser} from '../../../lib/session';
+
 
 export async function GET() {
   let connection;

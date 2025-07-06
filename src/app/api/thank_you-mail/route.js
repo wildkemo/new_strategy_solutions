@@ -1,8 +1,22 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import nodemailer from "nodemailer";
+import {verifyUser} from '../../../lib/session';
+
 
 export async function POST(req) {
+
+  
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+
   try {
     const body = await req.json();
     const { order_id } = body;

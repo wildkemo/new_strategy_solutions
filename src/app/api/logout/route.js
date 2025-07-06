@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
+import {verifyUser} from '../../../lib/session';
+
 
 export async function POST() {
   try {

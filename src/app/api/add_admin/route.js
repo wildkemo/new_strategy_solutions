@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
 
+import {verifyUser} from '../../../lib/session';
+
 // Database connection configuration
 const dbConfig = {
   host: process.env.DB_HOST,
@@ -12,6 +14,18 @@ const dbConfig = {
 };
 
 export async function POST(request) {
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+
+
   try {
     // Parse the incoming JSON data
     const { name, email, password } = await request.json();

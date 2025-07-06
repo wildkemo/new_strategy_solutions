@@ -3,8 +3,21 @@ import { cookies } from 'next/headers'
 import mysql from 'mysql2/promise'
 import { jwtVerify } from 'jose'
 import bcrypt from 'bcryptjs'
+import {verifyUser} from '../../../lib/session';
+
 
 export async function PATCH(req) {
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  
   try {
     const cookieStore = cookies()
     const token = cookieStore.get('auth_token')?.value

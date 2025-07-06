@@ -3,8 +3,21 @@ import mysql from "mysql2/promise";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import nodemailer from "nodemailer";
+import {verifyUser} from '../../../lib/session';
+
 
 export async function POST(req) {
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  
   try {
     const cookieStore = cookies();
     const token = cookieStore.get("auth_token")?.value;

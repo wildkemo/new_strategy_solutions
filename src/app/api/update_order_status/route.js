@@ -1,8 +1,21 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import nodemailer from "nodemailer";
+import {verifyUser} from '../../../lib/session';
+
 
 export async function PUT(req) {
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  
   try {
     const { id, status } = await req.json();
 

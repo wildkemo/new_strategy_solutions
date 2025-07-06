@@ -2,8 +2,21 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 import mysql from 'mysql2/promise';
+import {verifyUser} from '../../../lib/session';
+
 
 export async function GET() {
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  
   // 1. Extract JWT token from cookies
   const cookieStore = cookies();
   const token = cookieStore.get('auth_token')?.value;

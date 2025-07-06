@@ -3,8 +3,22 @@ import mysql from 'mysql2/promise';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 // import { mkdir } from 'fs/promises';
+import {verifyUser} from '../../../lib/session';
+
 
 export async function POST(req) {
+
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+
   try {
     const formData = await req.formData();
 

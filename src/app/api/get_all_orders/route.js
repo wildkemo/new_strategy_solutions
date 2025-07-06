@@ -1,7 +1,20 @@
 import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
+import {verifyUser} from '../../../lib/session';
+
 
 export async function GET() {
+
+  const validSession = verifyUser();
+
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  
   try {
     // Connect to the database
     const db = await mysql.createConnection({

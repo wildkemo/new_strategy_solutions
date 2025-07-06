@@ -3,6 +3,8 @@ import { serialize } from 'cookie';
 import jwt from 'jsonwebtoken';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
+import {verifyUser} from '../../../lib/session';
+
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,

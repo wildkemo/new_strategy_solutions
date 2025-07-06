@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import {verifyUser} from '../../../lib/session';
+
 
 export async function GET() {
   try {

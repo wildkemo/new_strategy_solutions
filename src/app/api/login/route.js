@@ -3,6 +3,8 @@ import { serialize } from 'cookie';
 import jwt from 'jsonwebtoken'; //for token generation
 import mysql from 'mysql2/promise'; //for database connection
 import bcrypt from 'bcryptjs'; //for password hashing
+import {verifyUser} from '../../../lib/session';
+
 
 // Create MySQL connection pool
 const pool = mysql.createPool({

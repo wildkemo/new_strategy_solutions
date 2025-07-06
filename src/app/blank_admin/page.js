@@ -644,6 +644,7 @@ export default function AdminDashboard() {
     try {
       const response = await fetch("/api/add_admin", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: newAdminForm.name,
