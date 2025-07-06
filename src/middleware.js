@@ -7,16 +7,25 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('auth_token')?.value
 
-
   const publicPaths = ['/', '/login', '/register', '/services', '/about', '/contact']
   const isPublicPath = publicPaths.includes(pathname)
-
   const isDashboard = pathname.startsWith('/blank_admin')
 
-  // Allow public pages
+  // ✅ If logged in and trying to access /login or /register → redirect to /services
+  if (token && (pathname === '/login' || pathname === '/register')) {
+    try {
+      await jwtVerify(token, secret)
+      return NextResponse.redirect(new URL('/services', request.url))
+    } catch {
+      // token is invalid → clear it and proceed
+      return NextResponse.next()
+    }
+  }
+
+  // ✅ Allow public pages
   if (isPublicPath) return NextResponse.next()
 
-  // If no token and trying to access a protected page
+  // ❌ No token, trying to access a protected page
   if (!token) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
@@ -24,15 +33,15 @@ export async function middleware(request) {
   try {
     const { payload } = await jwtVerify(token, secret)
 
-    // For /blank_admin only admins are allowed
+    // 🔒 /blank_admin requires admin
     if (isDashboard && !payload.admin) {
       return NextResponse.redirect(new URL('/services', request.url))
     }
 
-    // Token is valid
+    // ✅ Token is valid, allow access
     return NextResponse.next()
   } catch (err) {
-    // Invalid or expired token
+    // ❌ Invalid or expired token
     return NextResponse.redirect(new URL('/login', request.url))
   }
 }
