@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import SessionRefresher from "../app/components/SessionRefresher";
 
 export const metadata = {
   title: "Strategy Solution",
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <SessionRefresher />
         <Navbar />
         <main>{children}</main>
       </body>
