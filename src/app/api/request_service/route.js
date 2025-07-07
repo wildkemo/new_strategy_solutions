@@ -72,7 +72,7 @@ export async function POST(request) {
       // Insert into orders table
       const [result] = await connection.execute(
         "INSERT INTO orders (name, email, service_type, service_description, status, otp, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [name, email, service_type, service_description, "pending", otp, expiresAt]
+        [name, email, service_type, service_description, "Pending", otp, expiresAt]
       );
       
       const orderId = result.insertId;
