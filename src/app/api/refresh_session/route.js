@@ -9,13 +9,13 @@ export async function POST() {
   const token = cookieStore.get('auth_token')?.value
 
   if (!token) {
-    return NextResponse.json({ ok: false, error: 'Missing token' }, { status: 401 })
+    return NextResponse.json({ ok: false })
   }
 
   try {
     await jwtVerify(token, secret)
   } catch {
-    return NextResponse.json({ ok: false, error: 'Invalid or expired token' }, { status: 401 })
+    return NextResponse.json({ ok: false })
   }
 
   cookieStore.set('auth_token', token, {

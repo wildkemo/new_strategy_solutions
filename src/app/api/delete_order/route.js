@@ -15,7 +15,7 @@ export async function DELETE(req) {
   }
   
   try {
-    const { id } = await req.json();
+    const { id, isAdmin } = await req.json();
 
     if (!id) {
       return NextResponse.json({ error: 'Missing order ID' }, { status: 400 });
@@ -43,12 +43,30 @@ export async function DELETE(req) {
     const order = existingRows[0];
 
     if (order.status.toLowerCase() !== "pending") {
+
+      if(isAdmin === true){
+        
+        // Delete the order from database
+        await db.execute('DELETE FROM orders WHERE id = ?', [id]);
+        await db.end();
+
+        // Return the deleted row
+        return NextResponse.json(
+          {
+            status: 'success',
+            message: 'order deleted successfully',
+            order: order,
+          },
+          { status: 200 }
+        );
+
+      }
+
       return NextResponse.json(
         { message: 'Only pending orders can be deleted' },
         { status: 400 }
       );
     }
-    
     
     // Delete the order from database
     await db.execute('DELETE FROM orders WHERE id = ?', [id]);

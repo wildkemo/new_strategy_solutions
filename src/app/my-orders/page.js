@@ -45,7 +45,7 @@ export default function MyOrders({ userId }) {
       const response = await fetch("/api/delete_order", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: orderToDelete }),
+        body: JSON.stringify({ id: orderToDelete, isAdmin: false }),
       });
       const result = await response.json();
       if (result.status === "success") {

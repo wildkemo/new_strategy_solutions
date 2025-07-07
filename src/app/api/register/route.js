@@ -3,6 +3,7 @@ import { serialize } from 'cookie';
 import jwt from 'jsonwebtoken';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcryptjs';
+import nodemailer from "nodemailer";
 import {verifyUser} from '../../../lib/session';
 
 
@@ -17,76 +18,61 @@ const pool = mysql.createPool({
 });
 
 export async function POST(req) {
+  let conn;
+  conn = await pool.getConnection();
   try {
-    const { name, email, password, phone, company_name } = await req.json();
+    const { name, email } = await req.json();
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
-    const emailExists = await checkEmailExists(email);
-    if (emailExists) {
+    
+    const [rows] = await conn.query('SELECT 1 FROM customers WHERE email = ? LIMIT 1', [email]);
+
+    if( rows.length > 0) {
       return NextResponse.json({ message: 'Email already registered' }, { status: 409 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    await conn.query('DELETE FROM otps WHERE email = ? AND purpose = "register"', [email]);
 
-    const user = await createCustomer({
-      name,
-      email,
-      password: hashedPassword,
-      phone,
-      company_name,
-    });
+    // ✅ Generate OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      // const requestId = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
-    const token = jwt.sign(
-      { userId: user.id, email: user.email, name: user.name, admin: false },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
+    await conn.query('INSERT INTO otps (email, otp, purpose, expires_at) VALUES (?, ?, ?, ?)', [email, otp, 'register', expiresAt]);
 
-    const cookie = serialize('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60,
-      path: '/',
-    });
+    // ✅ Send OTP to user's email
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASS,
+            },
+          });
+    
+          await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Please confirm your Registration",
+            text: `Hello ${name},\n\nYour OTP to confirm the Registration process is: ${otp}\nIt will expire in 5 minutes.`,
+          });
 
-    const res = NextResponse.json(
-      {
-        status: 'success',
-        message: 'Registration successful',
-        user,
-      },
-      { status: 201 }
-    );
+    conn.release();
 
-    res.headers.set('Set-Cookie', cookie);
-    return res;
+
+
+    
+    return NextResponse.json({status: 'success', message: 'OTP sent to your email' }, {status: 200})
+
+
+    
+
+
+    
+
+    
   } catch (err) {
     console.error(err);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
 
-// Helpers
-async function checkEmailExists(email) {
-  const conn = await pool.getConnection();
-  try {
-    const [rows] = await conn.query('SELECT 1 FROM customers WHERE email = ? LIMIT 1', [email]);
-    return rows.length > 0;
-  } finally {
-    conn.release();
-  }
-}
-
-async function createCustomer({ name, email, password, phone, company_name }) {
-  const conn = await pool.getConnection();
-  try {
-    const [result] = await conn.query(
-      `INSERT INTO customers (name, email, password, phone, company_name)
-       VALUES (?, ?, ?, ?, ?)`,
-      [name, email, password, phone, company_name]
-    );
-    return { id: result.insertId, name, email, phone, company_name };
-  } finally {
-    conn.release();
-  }
-}

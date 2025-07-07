@@ -724,7 +724,7 @@ export default function AdminDashboard() {
       const response = await fetch("/api/delete_order", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: orderId }),
+        body: JSON.stringify({ id: orderId, isAdmin: true }),
       });
       const result = await response.json();
       if (result.status === "success") {
