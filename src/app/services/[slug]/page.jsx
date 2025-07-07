@@ -280,25 +280,11 @@ export default function ServicePage() {
       >
         {/* Left: Image */}
         {service.image && (
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <div className={styles.serviceImageCard}>
             <img
               src={service.image}
               alt={service.title}
-              style={{
-                width: "100%",
-                maxWidth: 340,
-                borderRadius: 16,
-                objectFit: "cover",
-                aspectRatio: "4/3",
-                background: "#f8fafb",
-              }}
+              className={styles["serviceImageCard-img"]}
             />
           </div>
         )}
