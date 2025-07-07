@@ -90,7 +90,8 @@ export default function ContactPage() {
               <h3 className={styles.contactTitle}>Call Us</h3>
               <p className={styles.contactText}>+20 123 456 7890</p>
               <p className={styles.contactDescription}>
-                Available Monday to Friday, 9 AM - 6 PM EET
+                Available Sunday to Thursday, 9 AM - 6 PM (GMT+3)
+
               </p>
             </div>
           </div>
