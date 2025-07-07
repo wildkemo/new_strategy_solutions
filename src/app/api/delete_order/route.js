@@ -42,12 +42,11 @@ export async function DELETE(req) {
 
     const order = existingRows[0];
 
-    if(order.status !== "Pending") {
+    if (order.status.toLowerCase() !== "pending") {
       return NextResponse.json(
         { message: 'Only pending orders can be deleted' },
         { status: 400 }
       );
-
     }
     
     
