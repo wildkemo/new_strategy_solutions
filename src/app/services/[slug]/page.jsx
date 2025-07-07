@@ -72,6 +72,7 @@ export default function ServicePage() {
   const [pendingOtpData, setPendingOtpData] = useState(null);
   const [otp, setOtp] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   const otpInputRefs = useRef([]);
 
@@ -99,6 +100,15 @@ export default function ServicePage() {
   const orderIdRef = useRef(null); // at top of component
 
   const requestService = async () => {
+    // Check if user is signed in
+    const userRes = await fetch("/api/get_current_user/", {
+      credentials: "include",
+    });
+    const userData = await userRes.json();
+    if (!userData.user) {
+      setShowSignInModal(true);
+      return;
+    }
     if (service) {
       const response = await fetch("/api/request_service/", {
         method: "POST",
@@ -107,10 +117,9 @@ export default function ServicePage() {
         body: JSON.stringify({
           service_type: service.category,
           service_description: service.description,
-          otp_only: true, // Add a flag so backend knows to only send OTP
+          otp_only: true,
         }),
       });
-
       setLoading(false);
       if (!response.ok) {
         const errorText = await response.text();
@@ -120,10 +129,7 @@ export default function ServicePage() {
       }
       const result = await response.json();
       if (result.status === "otp_sent") {
-        // order_id = result.request_id
         orderIdRef.current = result.request_id;
-
-        // setPendingRequestData({ ...formData });
         setShowOtpModal(true);
         setOtpSent(true);
       } else if (result.status === "error") {
@@ -323,27 +329,6 @@ export default function ServicePage() {
           >
             {service.description}
           </p>
-          <div style={{ marginTop: 18, width: "100%" }}>
-            <a
-              href="/request-service"
-              style={{
-                display: "inline-block",
-                background: "#4a90e2",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: 18,
-                padding: "14px 0",
-                borderRadius: 24,
-                textAlign: "center",
-                width: 320,
-                textDecoration: "none",
-                boxShadow: "0 2px 8px rgba(74,144,226,0.08)",
-                transition: "background 0.2s",
-              }}
-            >
-              Explore Services
-            </a>
-          </div>
         </div>
       </div>
 
@@ -494,6 +479,74 @@ export default function ServicePage() {
             <div style={{ fontSize: "1.1rem", color: "#222", marginBottom: 8 }}>
               Your service has been requested successfully. Stay tuned for our
               company's response.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSignInModal && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <button
+              onClick={() => setShowSignInModal(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 14,
+                background: "none",
+                border: "none",
+                fontSize: 22,
+                color: "#888",
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2 style={{ color: "#ef4444", marginBottom: 16 }}>
+              Sign In Required
+            </h2>
+            <div
+              style={{
+                fontSize: "1.1rem",
+                color: "#222",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              You must be signed in to request a service.
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                justifyContent: "center",
+                marginTop: 8,
+              }}
+            >
+              <button
+                className={styles.button}
+                style={{ background: "#4a90e2", color: "#fff", minWidth: 100 }}
+                onClick={() => {
+                  window.location.href = "/login";
+                }}
+              >
+                Sign In
+              </button>
+              <button
+                className={styles.button}
+                style={{
+                  background: "#f3f3f3",
+                  color: "#222",
+                  border: "1px solid #ddd",
+                  minWidth: 100,
+                }}
+                onClick={() => {
+                  window.location.href = "/services";
+                }}
+              >
+                View All Services
+              </button>
             </div>
           </div>
         </div>

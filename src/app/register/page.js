@@ -66,6 +66,9 @@ export default function Register() {
   const [formSuccess, setFormSuccess] = useState(false);
   const [showUserExists, setShowUserExists] = useState(false);
   const [userExistsMessage, setUserExistsMessage] = useState("");
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -141,7 +144,7 @@ export default function Register() {
       const registerResponse = await registerRequest.json();
 
       if (registerResponse.status == "success") {
-        window.location.href = "/?showSignIn=1";
+        setShowOtpModal(true);
       } else if (registerResponse.status == "error") {
         if (
           registerResponse.message &&
@@ -186,6 +189,79 @@ export default function Register() {
             onClose={() => setShowUserExists(false)}
           />
         )}
+        {showOtpModal && (
+          <div className={styles.otpModalOverlay}>
+            <div className={styles.otpModal}>
+              <button
+                onClick={() => setShowOtpModal(false)}
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  right: 14,
+                  background: "none",
+                  border: "none",
+                  fontSize: 22,
+                  color: "#888",
+                  cursor: "pointer",
+                }}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <h2 style={{ color: "#11c29b", marginBottom: 16 }}>
+                Enter 6-Digit OTP
+              </h2>
+              <div
+                style={{
+                  fontSize: "1.1rem",
+                  color: "#222",
+                  marginBottom: 18,
+                  textAlign: "center",
+                }}
+              >
+                We sent a 6-digit code to your email. Please enter it below to
+                verify your account.
+              </div>
+              <form autoComplete="off" style={{ width: "100%" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) =>
+                      setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
+                    }
+                    maxLength={6}
+                    className={styles.otpInput}
+                    placeholder="------"
+                    required
+                    inputMode="numeric"
+                    pattern="[0-9]{6}"
+                    autoFocus
+                    style={{ marginBottom: "1.2rem" }}
+                  />
+                  {otpError && (
+                    <div className={styles.otpError}>{otpError}</div>
+                  )}
+                  <button
+                    type="button"
+                    className={styles.button}
+                    disabled={otp.length !== 6}
+                    style={{ width: 160 }}
+                  >
+                    Verify OTP
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
         {formSuccess ? (
           <div className={styles.success}>
             Registration successful! You can now log in.
@@ -224,7 +300,7 @@ export default function Register() {
                 required
               />
             </div>
-            
+
             <div className={styles.formGroup}>
               <label className={styles.label}>Phone</label>
               <input

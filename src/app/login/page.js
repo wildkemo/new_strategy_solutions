@@ -98,7 +98,6 @@ export default function Login() {
         const loginResponse = await loginRequest.json();
 
         if (loginResponse.status === "success") {
-
           setFormError("");
           setFormSuccess(true);
 
@@ -124,6 +123,7 @@ export default function Login() {
 
   return (
     <div
+      className="loginPageRoot"
       style={{
         minHeight: "100vh",
         background: "#f3f1eb",
@@ -137,6 +137,7 @@ export default function Login() {
     >
       {/* Left side - Form */}
       <div
+        className="loginFormContainer"
         style={{
           flex: "1",
           display: "flex",
@@ -180,7 +181,7 @@ export default function Login() {
               <button type="submit" className={styles.button}>
                 Sign In
               </button>
-              
+
               <div style={{ textAlign: "center", marginTop: "1rem" }}>
                 <a
                   href="/register"
@@ -200,6 +201,7 @@ export default function Login() {
 
       {/* Right side - Image */}
       <div
+        className="loginLogoContainer"
         style={{
           flex: "1",
           display: "flex",
