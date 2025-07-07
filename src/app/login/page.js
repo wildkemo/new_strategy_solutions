@@ -221,6 +221,51 @@ export default function Login() {
           priority
         />
       </div>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .loginPageRoot {
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #f3f1eb !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+          }
+
+          .loginFormContainer {
+            width: 100vw !important;
+            height: 100vh !important;
+            flex: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+          }
+
+          .loginLogoContainer {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .loginPageRoot {
+            padding-top: 0 !important;
+          }
+
+          .loginFormContainer {
+            padding: 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

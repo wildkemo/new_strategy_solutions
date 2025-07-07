@@ -181,9 +181,45 @@ export default function Home() {
           <div className={styles.industriesGrid} style={{ marginBottom: 32 }}>
             <div className={styles.industryCard}>
               <div
-                className={styles.industryImage}
-                style={{ backgroundImage: 'url("/images/cloud service.png")' }}
-              ></div>
+                style={{
+                  background: "#fff",
+                  borderRadius: 20,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: 220,
+                  aspectRatio: "1 / 1",
+                  padding: 24,
+                  transition: "box-shadow 0.2s, transform 0.2s",
+                  border: "1px solid #f0f2f5",
+                  cursor: "pointer",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 24px rgba(0,0,0,0.13)";
+                  e.currentTarget.style.transform =
+                    "translateY(-4px) scale(1.03)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 16px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.transform = "none";
+                }}
+              >
+                <img
+                  src="/images/42fbcfb7-13be-4d1e-a997-029b1ea424dd.png"
+                  alt="Financial Services & Banking"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 12,
+                    display: "block",
+                  }}
+                />
+              </div>
               <div className={styles.industryContent}>
                 <h3 className={styles.industryTitle}>
                   Financial Services & Banking
@@ -195,23 +231,45 @@ export default function Home() {
             </div>
             <div className={styles.industryCard}>
               <div
-                className={styles.industryImage}
-                style={{ backgroundImage: 'url("/images/cyber services.png")' }}
-              ></div>
-              <div className={styles.industryContent}>
-                <h3 className={styles.industryTitle}>Healthcare</h3>
-                <p className={styles.industryDescription}>
-                  Secure data management, ERP for administration
-                </p>
-              </div>
-            </div>
-            <div className={styles.industryCard}>
-              <div
-                className={styles.industryImage}
                 style={{
-                  backgroundImage: 'url("/images/enterprise software img.png")',
+                  background: "#fff",
+                  borderRadius: 20,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: 220,
+                  aspectRatio: "1 / 1",
+                  padding: 24,
+                  transition: "box-shadow 0.2s, transform 0.2s",
+                  border: "1px solid #f0f2f5",
+                  cursor: "pointer",
                 }}
-              ></div>
+                onMouseOver={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 24px rgba(0,0,0,0.13)";
+                  e.currentTarget.style.transform =
+                    "translateY(-4px) scale(1.03)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 16px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.transform = "none";
+                }}
+              >
+                <img
+                  src="/images/enterprise software img.png"
+                  alt="Manufacturing & Logistics"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 12,
+                    display: "block",
+                  }}
+                />
+              </div>
               <div className={styles.industryContent}>
                 <h3 className={styles.industryTitle}>
                   Manufacturing & Logistics
@@ -226,23 +284,45 @@ export default function Home() {
           <div className={styles.industriesGrid}>
             <div className={styles.industryCard}>
               <div
-                className={styles.industryImage}
-                style={{ backgroundImage: 'url("/images/server1.png")' }}
-              ></div>
-              <div className={styles.industryContent}>
-                <h3 className={styles.industryTitle}>
-                  Government & Public Sector
-                </h3>
-                <p className={styles.industryDescription}>
-                  Cyber security, cloud migration, compliance
-                </p>
+                style={{
+                  background: "#fff",
+                  borderRadius: 20,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: 220,
+                  aspectRatio: "1 / 1",
+                  padding: 24,
+                  transition: "box-shadow 0.2s, transform 0.2s",
+                  border: "1px solid #f0f2f5",
+                  cursor: "pointer",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 24px rgba(0,0,0,0.13)";
+                  e.currentTarget.style.transform =
+                    "translateY(-4px) scale(1.03)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 16px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.transform = "none";
+                }}
+              >
+                <img
+                  src="/images/Gemini_Generated_Image_20ta1r20ta1r20ta.png"
+                  alt="Retail & E-Commerce"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 12,
+                    display: "block",
+                  }}
+                />
               </div>
-            </div>
-            <div className={styles.industryCard}>
-              <div
-                className={styles.industryImage}
-                style={{ backgroundImage: 'url("/images/Data1.png")' }}
-              ></div>
               <div className={styles.industryContent}>
                 <h3 className={styles.industryTitle}>Retail & E-Commerce</h3>
                 <p className={styles.industryDescription}>
@@ -252,9 +332,45 @@ export default function Home() {
             </div>
             <div className={styles.industryCard}>
               <div
-                className={styles.industryImage}
-                style={{ backgroundImage: 'url("/images/server3.png")' }}
-              ></div>
+                style={{
+                  background: "#fff",
+                  borderRadius: 20,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: 220,
+                  aspectRatio: "1 / 1",
+                  padding: 24,
+                  transition: "box-shadow 0.2s, transform 0.2s",
+                  border: "1px solid #f0f2f5",
+                  cursor: "pointer",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 24px rgba(0,0,0,0.13)";
+                  e.currentTarget.style.transform =
+                    "translateY(-4px) scale(1.03)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 16px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.transform = "none";
+                }}
+              >
+                <img
+                  src="/images/Gemini_Generated_Image_bl95hfbl95hfbl95.png"
+                  alt="Telecommunications"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 12,
+                    display: "block",
+                  }}
+                />
+              </div>
               <div className={styles.industryContent}>
                 <h3 className={styles.industryTitle}>Telecommunications</h3>
                 <p className={styles.industryDescription}>

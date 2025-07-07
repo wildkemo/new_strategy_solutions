@@ -232,47 +232,55 @@
 }
 
 @media (max-width: 768px) {
+  .servicesContent {
+    align-items: flex-start;
+    padding: 0;
+  }
+  .servicesGrid {
+    gap: 1rem;
+    width: 100%;
+  }
   .servicesTitle {
-    font-size: 2.5rem;
-    margin-bottom: 50px;
+    font-size: 2rem;
+    margin-bottom: 32px;
+    text-align: left;
+    padding-left: 2px;
   }
-
   .serviceBox {
-    flex: 1 1 100%;
-    padding: 2rem;
-  }
-
-  .servicesContainer {
-    padding: 80px 20px;
-  }
-
-  .serviceRow {
-    gap: 1.8rem;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+    border-radius: 10px !important;
+    font-size: 1rem !important;
+    min-height: 180px !important;
   }
 }
 
 @media (max-width: 480px) {
   .servicesContainer {
-    padding: 8px 1vw 8px 1vw;
+    padding: 8px 2vw 8px 2vw;
     min-height: 100vh;
+    margin-top: 50px;
   }
   .servicesTitle {
-    font-size: 1.6rem;
-    margin-bottom: 28px;
+    font-size: 1.2rem;
+    margin-bottom: 18px;
     text-align: left;
     padding-left: 2px;
   }
   .servicesGrid {
-    gap: 6px !important;
+    gap: 4px !important;
     width: 100% !important;
-  }
-  .serviceRow {
-    gap: 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .serviceBox {
-    padding: 0.5rem 0.3rem !important;
+    padding: 0.5rem 0.2rem !important;
     border-radius: 7px !important;
-    font-size: 0.89rem !important;
+    font-size: 0.92rem !important;
+    min-height: 120px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   .serviceBox h2 {
     font-size: 0.92rem !important;
@@ -335,6 +343,32 @@
     box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08) !important;
     text-align: center !important;
     letter-spacing: 0.2px !important;
+  }
+  /* Footer mobile styles */
+  .footer {
+    margin-top: 40px !important;
+    margin-bottom: 0 !important;
+    margin-left: -2vw !important;
+    margin-right: -2vw !important;
+    position: relative !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+  }
+  .footerContent {
+    padding: 20px 16px !important;
+    gap: 16px !important;
+  }
+  .footerLinks {
+    gap: 16px !important;
+    flex-direction: column !important;
+  }
+  .footerLink {
+    font-size: 14px !important;
+    min-width: auto !important;
+    text-align: center !important;
+  }
+  .footerCopyright {
+    font-size: 14px !important;
   }
 }
 

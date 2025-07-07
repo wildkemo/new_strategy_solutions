@@ -263,6 +263,7 @@ export default function ServicePage() {
     >
       {/* Hero Section */}
       <div
+        className="heroSection"
         style={{
           display: "flex",
           flexDirection: "row",
@@ -290,6 +291,7 @@ export default function ServicePage() {
         )}
         {/* Right: Title, Desc, Button */}
         <div
+          className="heroContent"
           style={{
             flex: 2,
             display: "flex",
@@ -300,6 +302,7 @@ export default function ServicePage() {
           }}
         >
           <h1
+            className="serviceTitle"
             style={{
               fontSize: 48,
               fontWeight: 800,
@@ -311,6 +314,7 @@ export default function ServicePage() {
             {service.title}
           </h1>
           <p
+            className="serviceDescription"
             style={{ color: "#507c95", fontSize: 18, margin: 0, maxWidth: 600 }}
           >
             {service.description}
@@ -319,8 +323,12 @@ export default function ServicePage() {
       </div>
 
       {/* Key Features Section */}
-      <div style={{ width: "100%", maxWidth: 1100, marginTop: 48 }}>
+      <div
+        className="featuresSection"
+        style={{ width: "100%", maxWidth: 1100, marginTop: 48 }}
+      >
         <h2
+          className="featuresTitle"
           style={{
             fontSize: 38,
             fontWeight: 800,
@@ -331,6 +339,7 @@ export default function ServicePage() {
           Key Features
         </h2>
         <div
+          className="featuresGrid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
@@ -342,6 +351,7 @@ export default function ServicePage() {
             service.features.map((feature, idx) => (
               <div
                 key={idx}
+                className="featureCard"
                 style={{
                   background: "#fff",
                   border: "1px solid #e0e0e0",
@@ -358,6 +368,7 @@ export default function ServicePage() {
                   {featureIcons[idx % featureIcons.length]}
                 </div>
                 <div
+                  className="featureName"
                   style={{
                     fontWeight: 700,
                     fontSize: 18,
@@ -367,13 +378,185 @@ export default function ServicePage() {
                 >
                   {feature.name}
                 </div>
-                <div style={{ color: "#507c95", fontSize: 15 }}>
+                <div
+                  className="featureDescription"
+                  style={{ color: "#507c95", fontSize: 15 }}
+                >
                   {feature.description}
                 </div>
               </div>
             ))}
         </div>
       </div>
+
+      {/* Buttons Section */}
+      <div
+        className="actionButtons"
+        style={{ display: "flex", gap: 16, marginTop: 48 }}
+      >
+        <a
+          href="/services"
+          style={{
+            background: "#f3f3f3",
+            color: "#0e161b",
+            padding: "12px 28px",
+            borderRadius: 8,
+            fontWeight: 500,
+            textDecoration: "none",
+            border: "1px solid #e0e0e0",
+            fontSize: 16,
+            transition: "background 0.2s",
+          }}
+        >
+          View All Services
+        </a>
+        <button
+          onClick={requestService}
+          style={{
+            background: "#5eb5e8",
+            color: "#0e161b",
+            padding: "12px 28px",
+            borderRadius: 8,
+            fontWeight: 600,
+            textDecoration: "none",
+            fontSize: 16,
+            border: "none",
+            transition: "background 0.2s",
+          }}
+        >
+          Request this Service
+        </button>
+      </div>
+
+      {/* Mobile-specific styles */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .heroSection {
+            flex-direction: column !important;
+            gap: 24px !important;
+            padding: 24px 16px !important;
+            margin-top: 20px !important;
+            min-height: auto !important;
+            border-radius: 16px !important;
+          }
+
+          .heroContent {
+            align-items: center !important;
+            text-align: center !important;
+            gap: 12px !important;
+          }
+
+          .serviceTitle {
+            font-size: 28px !important;
+            text-align: center !important;
+            line-height: 1.2 !important;
+          }
+
+          .serviceDescription {
+            font-size: 16px !important;
+            text-align: center !important;
+            max-width: 100% !important;
+          }
+
+          .featuresSection {
+            margin-top: 32px !important;
+            padding: 0 16px !important;
+          }
+
+          .featuresTitle {
+            font-size: 24px !important;
+            text-align: center !important;
+            margin-bottom: 16px !important;
+          }
+
+          .featuresGrid {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+          }
+
+          .featureCard {
+            padding: 20px 16px !important;
+            min-height: auto !important;
+            border-radius: 12px !important;
+          }
+
+          .featureName {
+            font-size: 16px !important;
+            margin-bottom: 8px !important;
+          }
+
+          .featureDescription {
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+          }
+
+          .actionButtons {
+            flex-direction: column !important;
+            gap: 12px !important;
+            margin-top: 32px !important;
+            padding: 0 16px !important;
+            width: 100% !important;
+          }
+
+          .actionButtons a,
+          .actionButtons button {
+            width: 100% !important;
+            text-align: center !important;
+            padding: 16px 24px !important;
+            font-size: 16px !important;
+            border-radius: 12px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .heroSection {
+            padding: 20px 12px !important;
+            margin-top: 16px !important;
+            border-radius: 12px !important;
+          }
+
+          .serviceTitle {
+            font-size: 24px !important;
+          }
+
+          .serviceDescription {
+            font-size: 15px !important;
+          }
+
+          .featuresSection {
+            margin-top: 24px !important;
+            padding: 0 12px !important;
+          }
+
+          .featuresTitle {
+            font-size: 20px !important;
+            margin-bottom: 12px !important;
+          }
+
+          .featureCard {
+            padding: 16px 12px !important;
+          }
+
+          .featureName {
+            font-size: 15px !important;
+          }
+
+          .featureDescription {
+            font-size: 13px !important;
+          }
+
+          .actionButtons {
+            margin-top: 24px !important;
+            padding: 0 12px !important;
+          }
+
+          .actionButtons a,
+          .actionButtons button {
+            padding: 14px 20px !important;
+            font-size: 15px !important;
+          }
+        }
+      `}</style>
 
       {showOtpModal && (
         <div className={styles.otpModalOverlay}>
@@ -537,42 +720,6 @@ export default function ServicePage() {
           </div>
         </div>
       )}
-
-      {/* Buttons at the bottom (optional, can be moved) */}
-      <div style={{ display: "flex", gap: 16, marginTop: 48 }}>
-        <a
-          href="/services"
-          style={{
-            background: "#f3f3f3",
-            color: "#0e161b",
-            padding: "12px 28px",
-            borderRadius: 8,
-            fontWeight: 500,
-            textDecoration: "none",
-            border: "1px solid #e0e0e0",
-            fontSize: 16,
-            transition: "background 0.2s",
-          }}
-        >
-          View All Services
-        </a>
-        <button
-          onClick={requestService}
-          style={{
-            background: "#5eb5e8",
-            color: "#0e161b",
-            padding: "12px 28px",
-            borderRadius: 8,
-            fontWeight: 600,
-            textDecoration: "none",
-            fontSize: 16,
-            border: "none",
-            transition: "background 0.2s",
-          }}
-        >
-          Request this Service
-        </button>
-      </div>
     </div>
   );
 }

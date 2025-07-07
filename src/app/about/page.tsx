@@ -51,7 +51,7 @@ export default function About() {
             }}
           >
             <Image
-              src="/images/circular diagram for the services in the main page.png"
+              src="/images/Gemini_Generated_Image_lyolodlyolodlyol.png"
               alt="Team Illustration"
               width={600}
               height={300}
