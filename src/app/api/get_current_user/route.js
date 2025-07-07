@@ -60,7 +60,7 @@ export async function GET() {
       const admin = adminRows[0];
       await db.end();
       return NextResponse.json(
-        {user: admin},
+        {user: { ...admin, isAdmin: true }},
         { status: 200 }
       );
     }
@@ -76,11 +76,11 @@ export async function GET() {
       return NextResponse.json({ user: null }, { status: 200 });
     }
 
-    let user = rows[0];
-    user.password = "";
+    const user = rows[0];
+    // user.password = "";
     
     return NextResponse.json(
-      { user: user },
+      { user: { ...user, isAdmin: false } },
       { status: 200 }
     );
   } catch (err) {
