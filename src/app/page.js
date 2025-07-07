@@ -61,6 +61,38 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Company Info Section */}
+        <section
+          style={{
+            maxWidth: 960,
+            margin: "32px auto 0 auto",
+            padding: "0 20px",
+          }}
+        >
+          <h2 className={styles.sectionTitle}>Strategy Solution</h2>
+          <p
+            className={styles.sectionDescription}
+            style={{ marginBottom: 16, marginTop: 16 }}
+          >
+            Strategy Solution is a distinguished provider of specialized
+            Information Technology talent outsourcing and consultancy services,
+            headquartered in Cairo, Egypt. With over two decades of experience
+            in the regional IT sector, our team possesses the expertise and
+            capabilities required to deliver a comprehensive suite of services.
+            We empower our clients by offering high-caliber resources in a
+            cost-efficient and operationally effective manner, supporting the
+            growth and success of their businesses and their customers.
+          </p>
+          <p className={styles.sectionDescription}>
+            Our service portfolio is underpinned by a long-standing commitment
+            to the development and enablement of Egyptian IT professionals. Over
+            the past 20 years, we have cultivated privileged access to Egypt's
+            extensive pool of technology talent, allowing us to deliver
+            customized solutions that align precisely with our clients'
+            strategic objectives.
+          </p>
+        </section>
+
         {/* Core Services Section */}
         <section className={styles.servicesSection}>
           <div className={styles.sectionHeader}>
@@ -145,23 +177,22 @@ export default function Home() {
               across various industries.
             </p>
           </div>
-          <div className={styles.industriesGrid}>
+          {/* First row of 3 cards */}
+          <div className={styles.industriesGrid} style={{ marginBottom: 32 }}>
             <div className={styles.industryCard}>
               <div
                 className={styles.industryImage}
-                style={{
-                  backgroundImage: 'url("/images/enterprise software img.png")',
-                }}
+                style={{ backgroundImage: 'url("/images/cloud service.png")' }}
               ></div>
               <div className={styles.industryContent}>
-                <h3 className={styles.industryTitle}>Manufacturing</h3>
+                <h3 className={styles.industryTitle}>
+                  Financial Services & Banking
+                </h3>
                 <p className={styles.industryDescription}>
-                  Streamlining operations and enhancing efficiency with tailored
-                  IT solutions.
+                  Data security, compliance, business continuity
                 </p>
               </div>
             </div>
-
             <div className={styles.industryCard}>
               <div
                 className={styles.industryImage}
@@ -170,22 +201,64 @@ export default function Home() {
               <div className={styles.industryContent}>
                 <h3 className={styles.industryTitle}>Healthcare</h3>
                 <p className={styles.industryDescription}>
-                  Improving patient care and data security with advanced
-                  technology.
+                  Secure data management, ERP for administration
                 </p>
               </div>
             </div>
-
             <div className={styles.industryCard}>
               <div
                 className={styles.industryImage}
-                style={{ backgroundImage: 'url("/images/cloud service.png")' }}
+                style={{
+                  backgroundImage: 'url("/images/enterprise software img.png")',
+                }}
               ></div>
               <div className={styles.industryContent}>
-                <h3 className={styles.industryTitle}>Finance</h3>
+                <h3 className={styles.industryTitle}>
+                  Manufacturing & Logistics
+                </h3>
                 <p className={styles.industryDescription}>
-                  Optimizing financial processes and ensuring regulatory
-                  compliance.
+                  ERP, supply chain, hardware infrastructure
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* Second row of 3 cards */}
+          <div className={styles.industriesGrid}>
+            <div className={styles.industryCard}>
+              <div
+                className={styles.industryImage}
+                style={{ backgroundImage: 'url("/images/server1.png")' }}
+              ></div>
+              <div className={styles.industryContent}>
+                <h3 className={styles.industryTitle}>
+                  Government & Public Sector
+                </h3>
+                <p className={styles.industryDescription}>
+                  Cyber security, cloud migration, compliance
+                </p>
+              </div>
+            </div>
+            <div className={styles.industryCard}>
+              <div
+                className={styles.industryImage}
+                style={{ backgroundImage: 'url("/images/Data1.png")' }}
+              ></div>
+              <div className={styles.industryContent}>
+                <h3 className={styles.industryTitle}>Retail & E-Commerce</h3>
+                <p className={styles.industryDescription}>
+                  Omnichannel platforms, data analytics
+                </p>
+              </div>
+            </div>
+            <div className={styles.industryCard}>
+              <div
+                className={styles.industryImage}
+                style={{ backgroundImage: 'url("/images/server3.png")' }}
+              ></div>
+              <div className={styles.industryContent}>
+                <h3 className={styles.industryTitle}>Telecommunications</h3>
+                <p className={styles.industryDescription}>
+                  High-availability systems, cloud scaling
                 </p>
               </div>
             </div>

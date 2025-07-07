@@ -491,25 +491,6 @@ export default function RequestService() {
           </p>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGroup}>
-              <label htmlFor="email" className={styles.label}>
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={`${styles.input} ${
-                  errors.email ? styles.error : ""
-                }`}
-              />
-              {errors.email && (
-                <span className={styles.error}>{errors.email}</span>
-              )}
-            </div>
-
-            <div className={styles.formGroup}>
               <label htmlFor="serviceType" className={styles.label}>
                 Service Type
               </label>
