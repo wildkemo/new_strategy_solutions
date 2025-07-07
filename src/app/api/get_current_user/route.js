@@ -60,14 +60,14 @@ export async function GET() {
       const admin = adminRows[0];
       await db.end();
       return NextResponse.json(
-        { user: { ...admin, isAdmin: true } },
+        {user: admin},
         { status: 200 }
       );
     }
 
     // If not admin, check customers
     const [rows] = await db.execute(
-      "SELECT id, email, name FROM customers WHERE email = ? LIMIT 1",
+      "SELECT * FROM customers WHERE email = ? LIMIT 1",
       [email]
     );
     await db.end();
@@ -76,9 +76,11 @@ export async function GET() {
       return NextResponse.json({ user: null }, { status: 200 });
     }
 
-    const user = rows[0];
+    let user = rows[0];
+    user.password = "";
+    
     return NextResponse.json(
-      { user: { ...user, isAdmin: false } },
+      { user: user },
       { status: 200 }
     );
   } catch (err) {
