@@ -21,30 +21,7 @@ export default function Profile({ userId }) {
   const [wrongPasswordPopup, setWrongPasswordPopup] = useState(false);
   const [samePasswordPopup, setSamePasswordPopup] = useState(false);
 
-  // const func = async () => {
-  //   const response = await fetch(
-  //         "http://localhost/strategy_solutions_backend/app/Controllers/get_current_user.php",
-  //         // "http://localhost/www/oop_project/php_backend/app/Controllers/get_current_user.php",
-  //         {
-  //           method: "POST",
-  //           headers: { "Content-Type": "application/json" },
-  //           credentials: "include",
-  //         }
-  //       );
-  //       if (!response.ok) throw new Error("Failed to fetch user data");
-  //       const data = await response.json();
-  //       setUser(data);
-  //       setFormData({
-  //         name: data.name || "",
-  //         phone: data.phone || "",
-  //         company_name: data.company_name || "",
-  //         currentPassword: "",
-  //         password: "",
-  //         confirmPassword: "",
-  //       });
-  // }
-  // func();
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -57,8 +34,8 @@ export default function Profile({ userId }) {
         );
         if (!response.ok) throw new Error("Failed to fetch user data");
         const data = await response.json();
-        console.log(data);
-        const userdata = data;
+        // console.log(data);
+        const userdata = data.user;
         setUser(userdata);
         setFormData({
           name: userdata.name,
