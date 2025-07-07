@@ -21,6 +21,7 @@ const Services = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [hoveredService, setHoveredService] = useState(null);
   const gridRef = useRef(null);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -66,6 +67,24 @@ const Services = () => {
       box.style.setProperty("--x", `${x}px`);
       box.style.setProperty("--y", `${y}px`);
     });
+  };
+
+  // Function to check if user is signed in
+  const handleRequestService = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/get_current_user/", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data && data.user) {
+        window.location.href = "/request-service";
+      } else {
+        setShowSignInModal(true);
+      }
+    } catch (err) {
+      setShowSignInModal(true);
+    }
   };
 
   return (
@@ -238,6 +257,193 @@ const Services = () => {
         </div>
       </div>
       {/* CTA Section */}
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "48px 0 32px 0",
+        }}
+      >
+        <div
+          style={{
+            background: "#fff",
+            borderRadius: 16,
+            boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+            padding: "36px 24px 32px 24px",
+            maxWidth: 600,
+            width: "100%",
+            margin: "0 auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 29,
+              fontWeight: 800,
+              color: "#111",
+              marginBottom: 18,
+              textAlign: "center",
+            }}
+          >
+            Ready to Get Started?
+          </h2>
+          <p
+            style={{
+              color: "#5a7d91",
+              fontSize: 18,
+              textAlign: "center",
+              marginBottom: 32,
+              maxWidth: 600,
+            }}
+          >
+            Let's discuss how our IT solutions can transform your business.
+            Request a Service Now.
+          </p>
+          <button
+            onClick={handleRequestService}
+            style={{
+              background: "#5eb5e8",
+              color: "#0e161b",
+              padding: "10px 22px",
+              borderRadius: 8,
+              fontWeight: 600,
+              fontSize: 16,
+              textDecoration: "none",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              transition: "background 0.2s",
+              textAlign: "center",
+              marginTop: 8,
+              marginBottom: 0,
+              display: "inline-block",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Request a Service
+          </button>
+        </div>
+      </div>
+
+      {/* Sign In Required Modal */}
+      {showSignInModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.18)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 24,
+              boxShadow: "0 8px 32px rgba(16, 30, 54, 0.13)",
+              padding: "2.5rem 2rem 2.5rem 2rem",
+              maxWidth: 370,
+              width: "100%",
+              textAlign: "center",
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <button
+              onClick={() => setShowSignInModal(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 16,
+                background: "none",
+                border: "none",
+                fontSize: 22,
+                color: "#888",
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <h2
+              style={{
+                fontSize: 38,
+                fontWeight: 800,
+                color: "#ff5a5a",
+                marginBottom: 16,
+                marginTop: 0,
+                letterSpacing: "-1px",
+              }}
+            >
+              Sign In Required
+            </h2>
+            <div
+              style={{
+                fontSize: "1.1rem",
+                color: "#222",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              You must be signed in to request a service.
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                justifyContent: "center",
+                marginTop: 8,
+              }}
+            >
+              <button
+                style={{
+                  background: "#4a90e2",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 20,
+                  padding: "0.5em 1.2em",
+                  fontWeight: 600,
+                  fontSize: 15,
+                  boxShadow: "0 2px 8px rgba(16, 30, 54, 0.1)",
+                  cursor: "pointer",
+                  transition: "background 0.18s",
+                }}
+                onClick={() => (window.location.href = "/login")}
+              >
+                Sign In
+              </button>
+              <button
+                style={{
+                  background: "#f3f3f3",
+                  color: "#222",
+                  border: "none",
+                  borderRadius: 20,
+                  padding: "0.5em 1.2em",
+                  fontWeight: 600,
+                  fontSize: 15,
+                  boxShadow: "0 2px 8px rgba(16, 30, 54, 0.1)",
+                  cursor: "pointer",
+                  transition: "background 0.18s",
+                }}
+                onClick={() => setShowSignInModal(false)}
+              >
+                View All Services
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className={styles.footer}>

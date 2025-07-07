@@ -127,7 +127,7 @@ export default function ContactPage() {
             <h2 className={styles.ctaTitle}>Ready to Get Started?</h2>
             <p className={styles.ctaDescription}>
               Let's discuss how our IT solutions can transform your business.
-              Contact us today for a free consultation.
+              Contact us Now.
             </p>
           </div>
           <a href="/services" className={styles.ctaButton}>
