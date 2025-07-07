@@ -20,8 +20,8 @@ export default function Profile({ userId }) {
   const messageTimeoutRef = useRef(null);
   const [wrongPasswordPopup, setWrongPasswordPopup] = useState(false);
   const [samePasswordPopup, setSamePasswordPopup] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -45,6 +45,21 @@ export default function Profile({ userId }) {
           password: "",
           confirmPassword: "",
         });
+        // Fetch admin list and check if user is admin
+        const adminRes = await fetch("/api/get_admins/", {
+          credentials: "include",
+        });
+        if (adminRes.ok) {
+          let admins = await adminRes.json();
+          console.log("Admin API response:", admins); // Debug log
+          if (Array.isArray(admins)) {
+            if (admins.some((a) => a.email === userdata.email))
+              setIsAdmin(true);
+          } else if (admins && Array.isArray(admins.admins)) {
+            if (admins.admins.some((a) => a.email === userdata.email))
+              setIsAdmin(true);
+          }
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -80,15 +95,12 @@ export default function Profile({ userId }) {
       return;
     }
     try {
-      const response = await fetch(
-        "/api/update_user_info/",
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch("/api/update_user_info/", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
       if (!response.ok) throw new Error("Failed to update user info");
       const result = await response.json();
       if (result.status === "success") {
@@ -251,6 +263,26 @@ export default function Profile({ userId }) {
           Update Profile
         </button>
       </form>
+      {isAdmin && (
+        <button
+          style={{
+            background: "#4a90e2",
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            padding: "12px 28px",
+            fontWeight: 700,
+            fontSize: 16,
+            cursor: "pointer",
+            marginBottom: 24,
+            marginTop: 8,
+            display: "block",
+          }}
+          onClick={() => (window.location.href = "/blank_admin")}
+        >
+          Return to Admin Dashboard
+        </button>
+      )}
     </div>
   );
 }
