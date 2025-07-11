@@ -36,10 +36,10 @@ export default function ForgotPassword() {
     setFormError("");
 
     try {
-      const response = await fetch("/api/send-otp", {
+      const response = await fetch("/api/send_otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email }),
+        body: JSON.stringify({ email: form.email, purpose: "Reset Password" }),
       });
 
       const data = await response.json();
@@ -85,13 +85,13 @@ export default function ForgotPassword() {
     setFormError("");
 
     try {
-      const response = await fetch("/api/reset-password", {
+      const response = await fetch("/api/reset_password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: form.email,
           otp: form.otp,
-          newPassword: form.newPassword,
+          password: form.newPassword,
         }),
       });
 

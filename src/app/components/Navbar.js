@@ -118,6 +118,35 @@ export default function Navbar({ className = "" }) {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  // Function to handle account deletion
+  const handleDeleteAccount = async () => {
+    // if (!user) return;
+
+    try {
+      const response = await fetch("/api/send_otp", {
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify({
+          purpose: "Delete Account",
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete account");
+      }
+
+      const data = await response.json();
+      if (data.status === "success") {
+        alert("OTP sent to your email. Please verify to delete your account.");
+        //TODO: Redirect to OTP verification page
+      } else {
+        throw new Error(data.message || "Account deletion failed");
+      }
+    } catch (err) {
+      console.error("Error deleting account:", err);
+      setError(err.message);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       const response = await fetch("/api/logout", {
@@ -362,7 +391,8 @@ export default function Navbar({ className = "" }) {
                       )
                     ) {
                       // TODO: Call delete account API here
-                      alert("Account deletion not implemented.");
+                      handleDeleteAccount();
+                      
                     }
                   }}
                 >
