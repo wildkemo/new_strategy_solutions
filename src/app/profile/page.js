@@ -161,7 +161,7 @@ export default function Profile({ userId }) {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className={styles.profileContainer}>
+    <div className={styles.profileContainer} style={{ position: "relative" }}>
       <h1>Manage My Profile</h1>
       {updateSuccess && updatedFieldsMessage && (
         <PopupNotification

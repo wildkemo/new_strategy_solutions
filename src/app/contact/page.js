@@ -91,7 +91,6 @@ export default function ContactPage() {
               <p className={styles.contactText}>+20 123 456 7890</p>
               <p className={styles.contactDescription}>
                 Available Sunday to Thursday, 9 AM - 6 PM (GMT+3)
-
               </p>
             </div>
           </div>

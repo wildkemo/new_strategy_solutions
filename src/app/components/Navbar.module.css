@@ -430,3 +430,23 @@
   color: #fff;
   box-shadow: 0 4px 16px rgba(96, 165, 250, 0.13);
 }
+
+.deleteAccountSidebarBtn {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.08);
+  transition: background 0.2s;
+  z-index: 10;
+}
+.deleteAccountSidebarBtn:hover {
+  background: #c0392b;
+}

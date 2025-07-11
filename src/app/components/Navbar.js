@@ -353,6 +353,21 @@ export default function Navbar({ className = "" }) {
                 >
                   Logout
                 </button>
+                <button
+                  className={styles.deleteAccountSidebarBtn}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete your account? This action cannot be undone."
+                      )
+                    ) {
+                      // TODO: Call delete account API here
+                      alert("Account deletion not implemented.");
+                    }
+                  }}
+                >
+                  Delete My Account
+                </button>
               </>
             )}
           </div>

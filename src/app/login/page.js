@@ -178,7 +178,11 @@ export default function Login() {
                 />
               </div>
               {formError && <div className={styles.error}>{formError}</div>}
-              <button type="submit" className={styles.button}>
+              <button
+                type="submit"
+                className={styles.button}
+                style={{ borderRadius: "4px" }}
+              >
                 Sign In
               </button>
 

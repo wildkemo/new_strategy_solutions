@@ -205,7 +205,7 @@ export default function ForgotPassword() {
                 className={styles.button}
                 disabled={isLoading}
                 onClick={handleSendOTP}
-                style={{ flex: 1 }}
+                style={{ flex: 1, borderRadius: "4px" }}
               >
                 {isLoading ? "Sending..." : "Send OTP to this email"}
               </button>
@@ -214,7 +214,7 @@ export default function ForgotPassword() {
                 type="submit"
                 className={styles.button}
                 disabled={isLoading}
-                style={{ flex: 1 }}
+                style={{ flex: 1, borderRadius: "4px" }}
               >
                 {isLoading ? "Resetting..." : "Reset Password"}
               </button>

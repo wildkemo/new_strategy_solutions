@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -77,76 +78,75 @@ export default function Register() {
   const handleOtpVerification = async () => {
     console.log("OTP Verification initiated with:", otp);
 
-  const verification = await fetch("/api/verify/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({
-      email: form.email,
-      otp: otp, // This is the user-entered OTP from state
-      purpose: "register",
-    }),
-  });
+    const verification = await fetch("/api/verify/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        email: form.email,
+        otp: otp, // This is the user-entered OTP from state
+        purpose: "register",
+      }),
+    });
 
-  if (verification.ok) {
-    const verificationResponse = await verification.json();
-    if (verificationResponse.status === "success") {
-      setFormSuccess(true);
-      setShowOtpModal(false);
-      setFormError("");
+    if (verification.ok) {
+      const verificationResponse = await verification.json();
+      if (verificationResponse.status === "success") {
+        setFormSuccess(true);
+        setShowOtpModal(false);
+        setFormError("");
 
-      const insertCustomer = await fetch("/api/insert_new_customer/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          company_name: form.companyName,
-          password: form.password, // Ensure this is hashed in the backend
-        }),
-      });
+        const insertCustomer = await fetch("/api/insert_new_customer/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            phone: form.phone,
+            company_name: form.companyName,
+            password: form.password, // Ensure this is hashed in the backend
+          }),
+        });
 
-      if (insertCustomer.ok) {
-        const insertResponse = await insertCustomer.json();
-        if (insertResponse.status === "success") {
-          // alert("Registration successful! You can now log in.");
-          setFormSuccess(true);
-          // Optionally redirect to login page
-          // window.location.href = "/login";
-          const loginCustomer = await fetch("/api/login/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              email: form.email,
-              password: form.password,
-            }),
-          });
+        if (insertCustomer.ok) {
+          const insertResponse = await insertCustomer.json();
+          if (insertResponse.status === "success") {
+            // alert("Registration successful! You can now log in.");
+            setFormSuccess(true);
+            // Optionally redirect to login page
+            // window.location.href = "/login";
+            const loginCustomer = await fetch("/api/login/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({
+                email: form.email,
+                password: form.password,
+              }),
+            });
 
-          if (loginCustomer.ok) {
-            const loginResponse = await loginCustomer.json();
-            if (loginResponse.status === "success") {
-              // Redirect to dashboard or home page
-              window.location.href = "/services";
-            } else {
-              alert(loginResponse.message || "Login failed. Please try again.");
+            if (loginCustomer.ok) {
+              const loginResponse = await loginCustomer.json();
+              if (loginResponse.status === "success") {
+                // Redirect to dashboard or home page
+                window.location.href = "/services";
+              } else {
+                alert(
+                  loginResponse.message || "Login failed. Please try again."
+                );
+              }
             }
+          } else {
+            setFormError(insertResponse.message || "Failed to register user.");
           }
-          
-        } else {
-          setFormError(insertResponse.message || "Failed to register user.");
         }
+      } else {
+        alert("OTP verification failed. Please try again.");
       }
-
-    }else{
-      alert("OTP verification failed. Please try again.");
     }
-    
-  }
-  // Handle response...
-};
+    // Handle response...
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -218,10 +218,8 @@ export default function Register() {
       const registerResponse = await registerRequest.json();
 
       if (registerResponse.status == "success") {
-
         setShowOtpModal(true);
-
-      } else{
+      } else {
         if (
           registerResponse.message &&
           registerResponse.message.toLowerCase().includes("already exists")
@@ -415,7 +413,11 @@ export default function Register() {
               />
             </div>
             {formError && <div className={styles.error}>{formError}</div>}
-            <button type="submit" className={styles.button}>
+            <button
+              type="submit"
+              className={styles.button}
+              style={{ borderRadius: "4px" }}
+            >
               Register
             </button>
           </form>
