@@ -1,21 +1,14 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import nodemailer from "nodemailer";
-import {verifyUser} from '../../../lib/session';
-
+import { verifyUser } from "../../../lib/session";
 
 export async function POST(req) {
-
-  
   const validSession = verifyUser();
 
-  if(!validSession){
-    return NextResponse.json(
-      { message: 'Unauthorized' },
-      { status: 401 }
-    );
+  if (!validSession) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
-
 
   try {
     const body = await req.json();
@@ -36,7 +29,7 @@ export async function POST(req) {
     });
 
     const [orders] = await db.execute(
-      'SELECT * FROM orders WHERE id = ? AND otp = "Confirmed" LIMIT 1',
+      'SELECT * FROM orders WHERE id = ? AND otp = "Confirmed" AND status = "Pending" LIMIT 1',
       [order_id]
     );
 
@@ -74,14 +67,16 @@ export async function POST(req) {
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h2 style="color: #0070f3; margin: 0;">Hello ${order.name},</h2>
+            <h2 style="color: #0070f3; margin: 0;">Hello ${
+              order.name
+            },Thanks for your request</h2>
           </div>
           
           <div style="background: #fff; padding: 20px; border: 1px solid #e9ecef; border-radius: 8px;">
             <p style="font-size: 16px; line-height: 1.6;">
               Great news! Your service request for <strong style="color: #0070f3;">${
                 order.service_type
-              }</strong> has been successfully approved.
+              }</strong> has been approved and is currently pending activation — we’ll be starting work on it shortly.
             </p>
             
             <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0;">
@@ -91,7 +86,7 @@ export async function POST(req) {
                 <li><strong>Description:</strong> ${
                   order.service_description
                 }</li>
-                <li><strong>Status:</strong> <span style="color: #28a745; font-weight: bold;">Active</span></li>
+                <li><strong>Status:</strong> Pending Activation</li>
                 <li><strong>Approval Date:</strong> ${new Date().toLocaleString()}</li>
               </ul>
             </div>

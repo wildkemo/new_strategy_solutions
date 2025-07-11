@@ -200,26 +200,30 @@ export default function Profile({ userId }) {
             required
           />
         </div>
-        <div className={styles.formGroup}>
-          <label>Company Name</label>
-          <input
-            type="text"
-            name="company_name"
-            value={formData.company_name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label>Phone Number</label>
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+        {!isAdmin && (
+          <div className={styles.formGroup}>
+            <label>Company Name</label>
+            <input
+              type="text"
+              name="company_name"
+              value={formData.company_name}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        )}
+        {!isAdmin && (
+          <div className={styles.formGroup}>
+            <label>Phone Number</label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        )}
         <div className={styles.formGroup}>
           <label>Current Password</label>
           <input

@@ -3,21 +3,15 @@ import mysql from "mysql2/promise";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import nodemailer from "nodemailer";
-import {verifyUser} from '../../../lib/session';
-
+import { verifyUser } from "../../../lib/session";
 
 export async function POST(req) {
-
   const validSession = verifyUser();
 
-  if(!validSession){
-    return NextResponse.json(
-      { message: 'Unauthorized' },
-      { status: 401 }
-    );
+  if (!validSession) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
@@ -69,17 +63,17 @@ export async function POST(req) {
         { status: 404 }
       );
     }
-    
+
     const otpRecord = rows[0];
     const now = new Date();
 
     if (otpRecord.otp !== "Confirmed") {
       if (new Date(otpRecord.expires_at) < now) {
         await connection.execute("DELETE FROM orders WHERE id = ?", [order_id]);
-      await connection.end();
+        await connection.end();
         return NextResponse.json({ error: "OTP expired" }, { status: 410 });
       }
-    
+
       if (otpRecord.otp !== otp) {
         await connection.end();
         return NextResponse.json({ error: "Incorrect OTP" }, { status: 401 });
@@ -92,7 +86,7 @@ export async function POST(req) {
 
         // await connection.execute('DELETE FROM otps WHERE id = ?', [order_id]);
         await connection.execute(
-          'UPDATE orders SET otp = "Confirmed", status = "approved" WHERE id = ?',
+          'UPDATE orders SET otp = "Confirmed", status = "Pending" WHERE id = ?',
           [order_id]
         );
         await connection.end();
@@ -187,14 +181,14 @@ export async function POST(req) {
     //       }
     //       else{
     //         reason = 'This is not the otp for the current order';
-            
+
     //       }
     //     }
     //     else{
     //       reason = 'Incorrect OTP';
     //     }
     //   }
-      
+
     //   return NextResponse.json({ status: "success" });
   } catch (err) {
     console.error(err);
