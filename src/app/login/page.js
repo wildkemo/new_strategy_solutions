@@ -193,6 +193,19 @@ export default function Login() {
                 >
                   Don't have an account? Register here
                 </a>
+                <br />
+                <a
+                  href="/forgot-password"
+                  style={{
+                    color: "#4a90e2",
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                    marginTop: "0.5rem",
+                    display: "inline-block",
+                  }}
+                >
+                  Forgot my password?
+                </a>
               </div>
             </form>
           )}
