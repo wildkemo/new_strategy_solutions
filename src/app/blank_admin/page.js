@@ -163,6 +163,47 @@ export default function AdminDashboard() {
   const [addAdminLoading, setAddAdminLoading] = useState(false);
   const [addAdminError, setAddAdminError] = useState("");
 
+  // Add sorting state for orders
+  const [orderSort, setOrderSort] = useState({
+    field: null,
+    direction: "asc",
+  });
+
+  // Sorting functions for orders
+  const handleOrderSort = (field) => {
+    setOrderSort((prev) => ({
+      field,
+      direction:
+        prev.field === field && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const sortOrders = (orders) => {
+    if (!orderSort.field) return orders;
+
+    return [...orders].sort((a, b) => {
+      let aValue, bValue;
+
+      if (orderSort.field === "date") {
+        // Sort by Date Requested
+        aValue = new Date(a.date || a.created_at || "");
+        bValue = new Date(b.date || b.created_at || "");
+      } else if (orderSort.field === "status") {
+        // Sort by Status
+        aValue = (a.status || "Pending").toLowerCase();
+        bValue = (b.status || "Pending").toLowerCase();
+      } else {
+        return 0;
+      }
+
+      if (orderSort.direction === "asc") {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
+
   const handleAddAdmin = () => {
     setAdminError("");
     setNewAdmin({
@@ -573,6 +614,9 @@ export default function AdminDashboard() {
     );
   });
 
+  // Apply sorting to filtered orders
+  const sortedServiceRequests = sortOrders(filteredServiceRequests);
+
   const filteredUsers = users.filter((user) => {
     if (!term) return true;
     return (
@@ -887,14 +931,38 @@ export default function AdminDashboard() {
                     <th>Company Name</th>
                     <th>Customer Email</th>
                     <th>Service</th>
-                    <th>Date Requested</th>
-                    <th>Status</th>
+                    <th
+                      className={`${styles.sortableHeader} ${
+                        orderSort.field === "date"
+                          ? styles[orderSort.direction]
+                          : ""
+                      }`}
+                      onClick={() => handleOrderSort("date")}
+                    >
+                      Date Requested
+                      {orderSort.field === "date" && (
+                        <span className={styles.sortIcon}></span>
+                      )}
+                    </th>
+                    <th
+                      className={`${styles.sortableHeader} ${
+                        orderSort.field === "status"
+                          ? styles[orderSort.direction]
+                          : ""
+                      }`}
+                      onClick={() => handleOrderSort("status")}
+                    >
+                      Status
+                      {orderSort.field === "status" && (
+                        <span className={styles.sortIcon}></span>
+                      )}
+                    </th>
                     <th>Verification</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredServiceRequests.map((request) => {
+                  {sortedServiceRequests.map((request) => {
                     const user = users.find((u) => u.email === request.email);
                     return (
                       <tr key={request.id}>

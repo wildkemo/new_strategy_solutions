@@ -822,3 +822,30 @@
   gap: 0.5em;
   align-items: center;
 }
+
+/* Sortable table headers */
+.sortableHeader {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.sortableHeader:hover {
+  background-color: #e3f2fd;
+}
+
+.sortableHeader .sortIcon {
+  margin-left: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.sortableHeader.asc .sortIcon::after {
+  content: "↑";
+}
+
+.sortableHeader.desc .sortIcon::after {
+  content: "↓";
+}

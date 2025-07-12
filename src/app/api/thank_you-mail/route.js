@@ -63,7 +63,7 @@ export async function POST(req) {
     await transporter.sendMail({
       from: `"Strategy Solutions" <${process.env.EMAIL_USER}>`,
       to: order.email,
-      subject: "Your Service Request Has Been Approved",
+      subject: "Your Service Request Has Been Received",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -86,7 +86,7 @@ export async function POST(req) {
                 <li><strong>Description:</strong> ${
                   order.service_description
                 }</li>
-                <li><strong>Status:</strong> Pending Activation</li>
+                <li><strong>Status:</strong> Pending</li>
                 <li><strong>Approval Date:</strong> ${new Date().toLocaleString()}</li>
               </ul>
             </div>
