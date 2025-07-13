@@ -17,6 +17,11 @@ export default function Navbar({ className = "" }) {
   const [hasMounted, setHasMounted] = useState(false);
   const [pendingOtpOrders, setPendingOtpOrders] = useState([]);
   const [hasPendingOtp, setHasPendingOtp] = useState(false);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState(null);
+  const [isFinalConfirmationOpen, setIsFinalConfirmationOpen] = useState(false);
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -131,19 +136,62 @@ export default function Navbar({ className = "" }) {
         }),
       });
       if (!response.ok) {
-        throw new Error("Failed to delete account");
+        throw new Error("Failed to send OTP");
       }
 
       const data = await response.json();
       if (data.status === "success") {
-        alert("OTP sent to your email. Please verify to delete your account.");
-        //TODO: Redirect to OTP verification page
+        setIsOtpModalOpen(true);
+        setSidebarOpen(false);
       } else {
-        throw new Error(data.message || "Account deletion failed");
+        throw new Error(data.message || "Failed to send OTP");
+      }
+    } catch (err) {
+      console.error("Error sending OTP:", err);
+      setError(err.message);
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    if (!otp) {
+      setOtpError("Please enter the OTP.");
+      return;
+    }
+    setIsOtpModalOpen(false);
+    setIsFinalConfirmationOpen(true);
+  };
+
+  const handleFinalDelete = async () => {
+    setIsFinalConfirmationOpen(false);
+
+    try {
+      const response = await fetch("/api/delete_account", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ otp, purpose: "Delete Account" }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message);
+        handleLogout();
+      } else {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { message: `Request failed with status: ${response.status}` };
+        }
+        setOtpError(errorData.message || "An error occurred.");
+        setIsOtpModalOpen(true);
       }
     } catch (err) {
       console.error("Error deleting account:", err);
-      setError(err.message);
+      setOtpError("A network error occurred. Please try again.");
+      setIsOtpModalOpen(true);
     }
   };
 
@@ -385,21 +433,99 @@ export default function Navbar({ className = "" }) {
                 <button
                   className={styles.deleteAccountSidebarBtn}
                   onClick={() => {
-                    if (
-                      window.confirm(
-                        "Are you sure you want to delete your account? This action cannot be undone."
-                      )
-                    ) {
-                      // TODO: Call delete account API here
-                      handleDeleteAccount();
-                      
-                    }
+                    setIsDeleteConfirmationOpen(true);
                   }}
                 >
                   Delete My Account
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {isOtpModalOpen && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <h3>Enter OTP</h3>
+            <p>An OTP has been sent to your email. Please enter it below to confirm account deletion.</p>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 6 && /^[0-9]*$/.test(value)) {
+                  setOtp(value);
+                }
+              }}
+              className={styles.otpInput}
+              placeholder="Enter 6-digit OTP"
+              maxLength="6"
+            />
+            {otpError && <p className={styles.otpError}>{otpError}</p>}
+            <div className={styles.otpActions}>
+              <button
+                className={`${styles.otpBtn} ${styles.confirm}`}
+                onClick={handleOtpSubmit}
+              >
+                Confirm
+              </button>
+              <button
+                className={`${styles.otpBtn} ${styles.cancel}`}
+                onClick={() => setIsOtpModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDeleteConfirmationOpen && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <h3>Delete Account</h3>
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <div className={styles.otpActions}>
+              <button
+                className={`${styles.otpBtn} ${styles.confirm}`}
+                onClick={() => {
+                  setIsDeleteConfirmationOpen(false);
+                  handleDeleteAccount();
+                }}
+              >
+                Send Confirmation Code
+              </button>
+              <button
+                className={`${styles.otpBtn} ${styles.cancel}`}
+                onClick={() => setIsDeleteConfirmationOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isFinalConfirmationOpen && (
+        <div className={styles.otpModalOverlay}>
+          <div className={styles.otpModal}>
+            <h3>Final Confirmation</h3>
+            <p>Are you sure you want to permanently delete your account? This action cannot be undone.</p>
+            <div className={styles.otpActions}>
+              <button
+                className={`${styles.otpBtn} ${styles.confirm}`}
+                onClick={handleFinalDelete}
+              >
+                Yes, Delete My Account
+              </button>
+              <button
+                className={`${styles.otpBtn} ${styles.cancel}`}
+                onClick={() => setIsFinalConfirmationOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

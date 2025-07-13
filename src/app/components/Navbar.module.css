@@ -450,3 +450,87 @@
 .deleteAccountSidebarBtn:hover {
   background: #c0392b;
 }
+
+.otpModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.otpModal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.otpModal h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.otpModal p {
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.otpInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.otpError {
+  color: #e74c3c;
+  margin-bottom: 1rem;
+}
+
+.otpActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.otpBtn {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.otpBtn.confirm {
+  background: #28a745;
+  color: #fff;
+}
+
+.otpBtn.confirm:hover {
+  background: #218838;
+}
+
+.otpBtn.cancel {
+  background: #ccc;
+  color: #333;
+}
+
+.otpBtn.cancel:hover {
+  background: #bbb;
+}
