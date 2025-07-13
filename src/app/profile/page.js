@@ -1,6 +1,7 @@
 "use client";
 import styles from "./profile.module.css";
 import { useEffect, useState, useRef } from "react";
+import { validateProfileUpdateForm } from "../../lib/formSanitizer";
 
 export default function Profile({ userId }) {
   const [user, setUser] = useState(null);
@@ -76,30 +77,25 @@ export default function Profile({ userId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setUpdateError("New passwords do not match");
+
+    // Validate and sanitize form data
+    const validation = validateProfileUpdateForm(formData);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      setUpdateError(firstError);
       return;
     }
-    if (formData.password && formData.password.length < 8) {
-      setUpdateError("New password must be at least 8 characters long");
-      return;
-    }
-    // Check if new password and old password are the same
-    if (
-      formData.password &&
-      formData.currentPassword &&
-      formData.password === formData.currentPassword
-    ) {
-      setSamePasswordPopup(true);
-      setUpdateError(null);
-      return;
-    }
+
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
     try {
       const response = await fetch("/api/update_user_info/", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sanitizedData),
       });
       if (!response.ok) throw new Error("Failed to update user info");
       const result = await response.json();

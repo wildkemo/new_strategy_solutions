@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "../request-service/RequestService.module.css";
 import Image from "next/image";
+import { validateLoginForm } from "../../lib/formSanitizer";
 
 function Popup({ message, onClose }) {
   return (
@@ -69,14 +70,18 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.email.trim() || !form.password.trim()) {
-      setFormError("All fields are required.");
+    // Validate and sanitize form data
+    const validation = validateLoginForm(form);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      setFormError(firstError);
       return;
     }
-    if (!/\S+@\S+\.\S+/.test(form.email)) {
-      setFormError("Invalid email address.");
-      return;
-    }
+
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
 
     try {
       const loginRequest = await fetch("/api/login", {
@@ -84,8 +89,8 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          email: form.email,
-          password: form.password,
+          email: sanitizedData.email,
+          password: sanitizedData.password,
         }),
       });
 

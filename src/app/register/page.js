@@ -1,8 +1,8 @@
-
 "use client";
 
 import { useState } from "react";
 import styles from "../request-service/RequestService.module.css";
+import { validateRegistrationForm } from "../../lib/formSanitizer";
 
 function Popup({ message, onClose }) {
   return (
@@ -150,29 +150,19 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !form.name.trim() ||
-      !form.email.trim() ||
-      !form.companyName.trim() ||
-      !form.phone.trim() ||
-      !form.password.trim() ||
-      !form.confirmPassword.trim()
-    ) {
-      setFormError("All fields are required.");
+
+    // Validate and sanitize form data
+    const validation = validateRegistrationForm(form);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      setFormError(firstError);
       return;
     }
-    if (!/\S+@\S+\.\S+/.test(form.email)) {
-      setFormError("Invalid email address.");
-      return;
-    }
-    if (form.password.length < 8) {
-      setFormError("Password must be at least 8 characters.");
-      return;
-    }
-    if (form.password !== form.confirmPassword) {
-      setFormError("Passwords do not match.");
-      return;
-    }
+
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
 
     const registerRequest = await fetch(
       "/api/register/",
@@ -182,11 +172,11 @@ export default function Register() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          password: form.password,
-          company_name: form.companyName,
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          phone: sanitizedData.phone,
+          password: sanitizedData.password,
+          company_name: sanitizedData.companyName,
         }),
       }
     );

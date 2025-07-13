@@ -3,6 +3,10 @@
 import { useState } from "react";
 import styles from "../request-service/RequestService.module.css";
 import Image from "next/image";
+import {
+  validatePasswordResetForm,
+  validateEmail,
+} from "../../lib/formSanitizer";
 
 export default function ForgotPassword() {
   const [form, setForm] = useState({
@@ -23,12 +27,10 @@ export default function ForgotPassword() {
   const handleSendOTP = async (e) => {
     e.preventDefault();
 
-    if (!form.email.trim()) {
-      setFormError("Email is required.");
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(form.email)) {
-      setFormError("Invalid email address.");
+    // Validate email
+    const emailValidation = validateEmail(form.email);
+    if (!emailValidation.isValid) {
+      setFormError(emailValidation.error);
       return;
     }
 
@@ -62,24 +64,18 @@ export default function ForgotPassword() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    if (
-      !form.otp.trim() ||
-      !form.newPassword.trim() ||
-      !form.confirmPassword.trim()
-    ) {
-      setFormError("All fields are required.");
+    // Validate and sanitize form data
+    const validation = validatePasswordResetForm(form);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      setFormError(firstError);
       return;
     }
 
-    if (form.newPassword !== form.confirmPassword) {
-      setFormError("Passwords do not match.");
-      return;
-    }
-
-    if (form.newPassword.length < 6) {
-      setFormError("Password must be at least 6 characters long.");
-      return;
-    }
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
 
     setIsLoading(true);
     setFormError("");
@@ -89,9 +85,9 @@ export default function ForgotPassword() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: form.email,
-          otp: form.otp,
-          password: form.newPassword,
+          email: sanitizedData.email,
+          otp: sanitizedData.otp,
+          password: sanitizedData.newPassword,
         }),
       });
 

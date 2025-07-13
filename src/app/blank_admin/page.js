@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./admin.module.css";
 import Navbar from "../components/Navbar";
+import { validateAdminForm, sanitizeFormData } from "../../lib/formSanitizer";
 
 const validateSession = async () => {
   // // const response2 = await fetch(
@@ -226,25 +227,27 @@ export default function AdminDashboard() {
   const handleAdminSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
-    if (newAdmin.password !== newAdmin.confirmPassword) {
-      setAdminError("Passwords do not match");
+    // Validate and sanitize form data
+    const validation = validateAdminForm(newAdmin);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      setAdminError(firstError);
       return;
     }
 
-    if (newAdmin.password.length < 6) {
-      setAdminError("Password must be at least 6 characters");
-      return;
-    }
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
 
     try {
       const response = await fetch("/api/add_admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: newAdmin.name,
-          email: newAdmin.email,
-          password: newAdmin.password,
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          password: sanitizedData.password,
         }),
       });
 
@@ -470,6 +473,32 @@ export default function AdminDashboard() {
 
   const handleServiceSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation for service form
+    if (!newService.title || !newService.title.trim()) {
+      setError("Service title is required");
+      return;
+    }
+
+    if (!newService.description || !newService.description.trim()) {
+      setError("Service description is required");
+      return;
+    }
+
+    if (!newService.category || !newService.category.trim()) {
+      setError("Service category is required");
+      return;
+    }
+
+    // Sanitize text inputs
+    const sanitizedTitle = sanitizeFormData({ title: newService.title }).title;
+    const sanitizedDescription = sanitizeFormData({
+      description: newService.description,
+    }).description;
+    const sanitizedCategory = sanitizeFormData({
+      category: newService.category,
+    }).category;
+
     try {
       let url = "/api/add_service";
       let method = "POST";
@@ -483,9 +512,9 @@ export default function AdminDashboard() {
 
       const features = normalizeFeatures(newService.features); // assuming this is defined
       const formData = new FormData();
-      formData.append("title", newService.title);
-      formData.append("description", newService.description);
-      formData.append("category", newService.category);
+      formData.append("title", sanitizedTitle);
+      formData.append("description", sanitizedDescription);
+      formData.append("category", sanitizedCategory);
       formData.append("icon", newService.icon);
       formData.append("features", JSON.stringify(features));
       if (editingService) formData.append("id", editingService.id);
@@ -676,14 +705,19 @@ export default function AdminDashboard() {
   const handleAddAdminSubmit = async (e) => {
     e.preventDefault();
     setAddAdminError("");
-    if (newAdminForm.password !== newAdminForm.confirmPassword) {
-      setAddAdminError("Passwords do not match");
+
+    // Validate and sanitize form data
+    const validation = validateAdminForm(newAdminForm);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      setAddAdminError(firstError);
       return;
     }
-    if (newAdminForm.password.length < 6) {
-      setAddAdminError("Password must be at least 6 characters");
-      return;
-    }
+
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
     setAddAdminLoading(true);
     try {
       const response = await fetch("/api/add_admin", {
@@ -691,9 +725,9 @@ export default function AdminDashboard() {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: newAdminForm.name,
-          email: newAdminForm.email,
-          password: newAdminForm.password,
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          password: sanitizedData.password,
         }),
       });
       const result = await response.json();

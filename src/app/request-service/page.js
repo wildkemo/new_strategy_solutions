@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
 import { useRef } from "react";
+import { validateServiceRequestForm } from "../../lib/formSanitizer";
 
 const validateSession = async () => {
   // const response2 = await fetch(
@@ -212,6 +213,20 @@ export default function RequestService() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate and sanitize form data
+    const validation = validateServiceRequestForm(formData);
+
+    if (!validation.isValid) {
+      // Show first error found
+      const firstError = Object.values(validation.errors)[0];
+      alert(firstError);
+      return;
+    }
+
+    // Use sanitized data
+    const sanitizedData = validation.sanitized;
+
     setLoading(true);
     // Send OTP only, do not submit the service request yet
     const response = await fetch("/api/request_service/", {
@@ -219,11 +234,11 @@ export default function RequestService() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        email: formData.email,
-        name: formData.name,
-        phone: formData.phone,
-        service_type: formData.serviceType,
-        service_description: formData.description,
+        email: sanitizedData.email,
+        name: sanitizedData.name,
+        phone: sanitizedData.phone,
+        service_type: sanitizedData.serviceType,
+        service_description: sanitizedData.description,
         otp_only: true, // Add a flag so backend knows to only send OTP
       }),
     });
