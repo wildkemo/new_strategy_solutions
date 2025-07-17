@@ -3,7 +3,7 @@ import styles from "./profile.module.css";
 import { useEffect, useState, useRef } from "react";
 import { validateProfileUpdateForm } from "../../lib/formSanitizer";
 
-export default function Profile({ userId }) {
+export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

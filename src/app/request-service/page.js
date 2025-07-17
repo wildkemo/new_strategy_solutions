@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./RequestService.module.css";
 import LoadingScreen from "../components/LoadingScreen";
@@ -76,7 +76,7 @@ function PopupNotification({ message, onClose, error }) {
   );
 }
 
-export default function RequestService() {
+function RequestService() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -574,5 +574,13 @@ export default function RequestService() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RequestServicePage() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <RequestService />
+    </Suspense>
   );
 }

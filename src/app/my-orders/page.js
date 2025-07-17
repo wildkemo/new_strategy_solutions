@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import React from "react";
 
-export default function MyOrders({ userId }) {
+export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ export default function MyOrders({ userId }) {
       }
     };
     fetchOrders();
-  }, [userId]);
+  }, []);
 
   const handleDeleteOrder = async (orderId) => {
     setOrderToDelete(orderId);

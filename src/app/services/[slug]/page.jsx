@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import styles from "../Services.module.css";
-import { request } from "http";
+
 import { useRef } from "react";
 
 const getSlug = (title) =>

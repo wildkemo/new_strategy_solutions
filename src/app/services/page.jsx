@@ -466,4 +466,3 @@ const Services = () => {
 };
 
 export default Services;
-export { data };
