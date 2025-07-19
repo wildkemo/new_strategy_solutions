@@ -73,19 +73,29 @@ export async function POST(req) {
 
     // ✅ Send OTP to user's email
     const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true only for port 465
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
 
-    await transporter.sendMail({
+    try{
+      await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: sanitizedEmail,
       subject: "Please confirm your Registration",
       text: `Hello ${sanitizedName},\n\nYour OTP to confirm the Registration process is: ${otp}\nIt will expire in 5 minutes.`,
     });
+    }catch (emailError) {
+      // console.error("Error sending email:", emailError);
+      return NextResponse.json(
+        { message: "Failed to send OTP email" },
+        { status: 500 }
+      );
+    }
 
     conn.release();
 
