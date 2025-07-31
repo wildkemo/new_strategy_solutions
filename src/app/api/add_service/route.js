@@ -9,14 +9,14 @@ import {verifyUser} from '../../../lib/session';
 export async function POST(req) {
 
 
-  // const validSession = verifyUser();
+  const validSession = verifyUser();
 
-  // if(!validSession){
-  //   return NextResponse.json(
-  //     { message: 'Unauthorized' },
-  //     { status: 401 }
-  //   );
-  // }
+  if(!validSession){
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
 
 
   try {
@@ -30,6 +30,7 @@ export async function POST(req) {
     const image = formData.get('image');
 
     if (!title || !description || !category || !icon || !Array.isArray(features) || !image || typeof image.arrayBuffer !== 'function') {
+      console.log('Missing or invalid fields')
       return NextResponse.json(
         { status: 'error', message: 'Missing fields or invalid data' },
         { status: 400 }
@@ -47,7 +48,7 @@ export async function POST(req) {
     const imagePath = `/uploads/${filename}`; // public URL
     }
     catch(err){
-      console.error('Error saving image:', err);
+      console.log('Error saving image:', err);
       return NextResponse.json(
         { status: 'error', message: 'Failed to save image' },
         { status: 500 }
@@ -75,7 +76,7 @@ export async function POST(req) {
 
     return NextResponse.json({ status: 'success', service }, { status: 200 });
   } catch (err) {
-    console.error('Add Service API Error:', err);
+    console.log('Add Service API Error:', err);
     return NextResponse.json(
       { status: 'error', message: 'Server error', details: err.message },
       { status: 500 }
