@@ -36,7 +36,8 @@ export async function POST(req) {
       );
     }
 
-    // Save image to /public/uploads
+    try{
+      // Save image to /public/uploads
     const buffer = Buffer.from(await image.arrayBuffer());
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     // await mkdir(uploadDir, { recursive: true });
@@ -44,6 +45,14 @@ export async function POST(req) {
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
     const imagePath = `/uploads/${filename}`; // public URL
+    }
+    catch(err){
+      console.error('Error saving image:', err);
+      return NextResponse.json(
+        { status: 'error', message: 'Failed to save image' },
+        { status: 500 }
+      );
+    }
 
     // DB connection
     const db = await mysql.createConnection({

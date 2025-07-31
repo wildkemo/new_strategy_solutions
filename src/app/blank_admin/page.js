@@ -528,7 +528,7 @@ export default function AdminDashboard() {
       if (!response.ok) {
         const errorDetails = await response.text();
         console.error("Failed request:", errorDetails);
-        throw new Error("Failed to save service");
+        throw new Error(errorDetails);
       }
 
       const result = await response.json();
