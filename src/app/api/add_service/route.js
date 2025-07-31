@@ -18,7 +18,7 @@ export async function POST(req) {
     );
   }
 
-
+  let imagePath = '';
   try {
     const formData = await req.formData();
 
@@ -45,7 +45,7 @@ export async function POST(req) {
     const filename = `${title.replace(/\s+/g, '_')}${path.extname(image.name)}`;
     const filepath = path.join(uploadDir, filename);
     await writeFile(filepath, buffer);
-    const imagePath = `/uploads/${filename}`; // public URL
+    imagePath = `/uploads/${filename}`; // public URL
     
 
     // DB connection
