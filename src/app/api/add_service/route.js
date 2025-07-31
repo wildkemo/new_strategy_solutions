@@ -9,14 +9,14 @@ import {verifyUser} from '../../../lib/session';
 export async function POST(req) {
 
 
-  const validSession = verifyUser();
+  // const validSession = verifyUser();
 
-  if(!validSession){
-    return NextResponse.json(
-      { message: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
+  // if(!validSession){
+  //   return NextResponse.json(
+  //     { message: 'Unauthorized' },
+  //     { status: 401 }
+  //   );
+  // }
 
 
   try {
