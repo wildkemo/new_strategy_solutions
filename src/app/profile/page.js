@@ -35,7 +35,7 @@ export default function Profile() {
         );
         if (!response.ok) throw new Error("Failed to fetch user data");
         const data = await response.json();
-        // console.log(data);
+        // // console.log(data);
         const userdata = data.user;
         setUser(userdata);
         setFormData({
@@ -52,7 +52,7 @@ export default function Profile() {
         });
         if (adminRes.ok) {
           let admins = await adminRes.json();
-          console.log("Admin API response:", admins); // Debug log
+          // console.log("Admin API response:", admins); // Debug log
           if (Array.isArray(admins)) {
             if (admins.some((a) => a.email === userdata.email))
               setIsAdmin(true);

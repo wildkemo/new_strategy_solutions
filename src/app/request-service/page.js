@@ -200,7 +200,7 @@ function RequestService() {
         setShowOtpModal(true);
       }
     } catch (err) {
-      console.error("Error fetching pending OTP orders:", err);
+      // console.error("Error fetching pending OTP orders:", err);
     }
   };
 

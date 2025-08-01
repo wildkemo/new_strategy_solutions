@@ -54,14 +54,14 @@ export default function Navbar({ className = "" }) {
         }
 
         const userData = await response.json();
-        console.log("User data fetched:", userData);
+        // console.log("User data fetched:", userData);
         if (userData.user) {
           setUser(userData.user);
         } else {
           setUser(null);
         }
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        // console.error("Error fetching user data:", err);
         setError(err.message);
       } finally {
         setIsLoading(false);

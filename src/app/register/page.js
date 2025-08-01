@@ -76,7 +76,7 @@ export default function Register() {
   };
 
   const handleOtpVerification = async () => {
-    console.log("OTP Verification initiated with:", otp);
+    // console.log("OTP Verification initiated with:", otp);
 
     const verification = await fetch("/api/verify/", {
       method: "POST",
