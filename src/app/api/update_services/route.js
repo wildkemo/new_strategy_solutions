@@ -2,21 +2,15 @@ import { NextResponse } from 'next/server';
 import mysql from 'mysql2/promise';
 import { writeFile, unlink } from 'fs/promises';
 import path from 'path';
-import {verifyUser} from '../../../lib/session';
-
+import { verifyUser } from '../../../lib/session';
 
 export async function PUT(req) {
-
   const validSession = verifyUser();
 
-  if(!validSession){
-    return NextResponse.json(
-      { message: 'Unauthorized' },
-      { status: 401 }
-    );
+  if (!validSession) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  
   try {
     const formData = await req.formData();
 
@@ -53,6 +47,7 @@ export async function PUT(req) {
     });
 
     const [existing] = await db.execute('SELECT * FROM services WHERE id = ?', [id]);
+
     if (existing.length === 0) {
       await db.end();
       return NextResponse.json(
@@ -61,35 +56,37 @@ export async function PUT(req) {
       );
     }
 
-    let imagePath = existing[0].image; // default: keep old image
+    let imagePath = existing[0].image;
 
-    // Only replace image if a new file was actually sent
     if (
       image &&
       typeof image.arrayBuffer === 'function' &&
       image.size > 0 &&
-      image.name // if empty, name is usually ""
+      image.name
     ) {
-      // Delete old image if exists
-      if (imagePath) {
-        const oldPath = path.join(process.cwd(), 'public', imagePath);
+      // Delete old image if it exists and has correct path
+      if (imagePath && imagePath.startsWith('/api/image/')) {
+        const oldFilename = path.basename(imagePath); // e.g., banner.jpg
+        const oldPath = path.join(process.cwd(), 'uploads', oldFilename);
         try {
           await unlink(oldPath);
         } catch (err) {
-          console.warn('Failed to delete old image:', err.message);
+          if (err.code !== 'ENOENT') {
+            console.warn('Failed to delete old image:', err.message);
+          }
         }
       }
 
       // Save new image
       const buffer = Buffer.from(await image.arrayBuffer());
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      const uploadDir = path.join(process.cwd(), 'uploads');
       const filename = `${title.replace(/\s+/g, '_')}${path.extname(image.name)}`;
       const filepath = path.join(uploadDir, filename);
       await writeFile(filepath, buffer);
-      imagePath = `/uploads/${filename}`;
+
+      imagePath = `/api/image/${filename}`;
     }
 
-    // Update DB
     await db.execute(
       `UPDATE services 
        SET title = ?, description = ?, features = ?, category = ?, icon = ?, image = ?
@@ -104,6 +101,7 @@ export async function PUT(req) {
     updatedService.features = JSON.parse(updatedService.features || '[]');
 
     return NextResponse.json({ status: 'success', service: updatedService }, { status: 200 });
+
   } catch (err) {
     console.error('Update Service Error:', err);
     return NextResponse.json(
