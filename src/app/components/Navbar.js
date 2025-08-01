@@ -21,7 +21,8 @@ export default function Navbar({ className = "" }) {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState(null);
   const [isFinalConfirmationOpen, setIsFinalConfirmationOpen] = useState(false);
-  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
+    useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -123,6 +124,11 @@ export default function Navbar({ className = "" }) {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  // Function to close menu when navigation link is clicked
+  const handleNavLinkClick = () => {
+    setIsMenuOpen(false);
+  };
+
   // Function to handle account deletion
   const handleDeleteAccount = async () => {
     // if (!user) return;
@@ -183,7 +189,9 @@ export default function Navbar({ className = "" }) {
         try {
           errorData = await response.json();
         } catch (e) {
-          errorData = { message: `Request failed with status: ${response.status}` };
+          errorData = {
+            message: `Request failed with status: ${response.status}`,
+          };
         }
         setOtpError(errorData.message || "An error occurred.");
         setIsOtpModalOpen(true);
@@ -243,8 +251,8 @@ export default function Navbar({ className = "" }) {
   const navbarClass = isSolidNavbarPage
     ? `${styles.navbar} ${styles.scrolled}`
     : hasMounted
-    ? `${styles.navbar} ${scrolled ? styles.scrolled : ""}`
-    : styles.navbar;
+      ? `${styles.navbar} ${scrolled ? styles.scrolled : ""}`
+      : styles.navbar;
 
   const mergedNavbarClass = `${navbarClass} ${className}`.trim();
 
@@ -281,26 +289,50 @@ export default function Navbar({ className = "" }) {
         <div
           className={`${styles.navLinks} ${isMenuOpen ? styles.active : ""}`}
         >
-          <Link href="/" className={styles.navLink}>
+          <Link
+            href="/"
+            className={styles.navLink}
+            onClick={handleNavLinkClick}
+          >
             Home
           </Link>
-          <Link href="/services" className={styles.navLink}>
+          <Link
+            href="/services"
+            className={styles.navLink}
+            onClick={handleNavLinkClick}
+          >
             Services
           </Link>
           {!isLoading && user && (
-            <Link href="/request-service" className={styles.navLink}>
+            <Link
+              href="/request-service"
+              className={styles.navLink}
+              onClick={handleNavLinkClick}
+            >
               Request Service
             </Link>
           )}
-          <Link href="/about" className={styles.navLink}>
+          <Link
+            href="/about"
+            className={styles.navLink}
+            onClick={handleNavLinkClick}
+          >
             About
           </Link>
-          <Link href="/contact" className={styles.navLink}>
+          <Link
+            href="/contact"
+            className={styles.navLink}
+            onClick={handleNavLinkClick}
+          >
             Contact
           </Link>
           {/* Add Login/Sign Up button if not signed in */}
           {!isLoading && !user && (
-            <Link href="/login" className={styles.loginBtn}>
+            <Link
+              href="/login"
+              className={styles.loginBtn}
+              onClick={handleNavLinkClick}
+            >
               Login / Sign Up
             </Link>
           )}
@@ -448,7 +480,10 @@ export default function Navbar({ className = "" }) {
         <div className={styles.otpModalOverlay}>
           <div className={styles.otpModal}>
             <h3>Enter OTP</h3>
-            <p>An OTP has been sent to your email. Please enter it below to confirm account deletion.</p>
+            <p>
+              An OTP has been sent to your email. Please enter it below to
+              confirm account deletion.
+            </p>
             <input
               type="text"
               value={otp}
@@ -485,7 +520,10 @@ export default function Navbar({ className = "" }) {
         <div className={styles.otpModalOverlay}>
           <div className={styles.otpModal}>
             <h3>Delete Account</h3>
-            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <p>
+              Are you sure you want to delete your account? This action cannot
+              be undone.
+            </p>
             <div className={styles.otpActions}>
               <button
                 className={`${styles.otpBtn} ${styles.confirm}`}
@@ -511,7 +549,10 @@ export default function Navbar({ className = "" }) {
         <div className={styles.otpModalOverlay}>
           <div className={styles.otpModal}>
             <h3>Final Confirmation</h3>
-            <p>Are you sure you want to permanently delete your account? This action cannot be undone.</p>
+            <p>
+              Are you sure you want to permanently delete your account? This
+              action cannot be undone.
+            </p>
             <div className={styles.otpActions}>
               <button
                 className={`${styles.otpBtn} ${styles.confirm}`}
