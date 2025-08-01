@@ -2,7 +2,9 @@ import path from 'path';
 import fs from 'fs/promises';
 import { NextResponse } from 'next/server';
 
-export async function GET(req, { params }) {
+export async function GET(req, context) {
+  const params = await context.params; // await this!
+
   const filePath = path.join(process.cwd(), 'uploads', params.filename);
 
   try {
@@ -17,7 +19,10 @@ export async function GET(req, { params }) {
 
     return new NextResponse(file, {
       status: 200,
-      headers: { 'Content-Type': type },
+      headers: {
+        'Content-Type': type,
+        'Cache-Control': 'public, max-age=31536000, immutable',
+      },
     });
   } catch (err) {
     return NextResponse.json({ error: 'File not found' }, { status: 404 });

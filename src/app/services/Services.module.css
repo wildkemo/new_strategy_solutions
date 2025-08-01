@@ -440,7 +440,7 @@
 .footer {
   display: flex;
   justify-content: center;
-  background: rgb(0, 0, 0);
+  background: rgb(238, 238, 238);
   border-top: 1px solid #e8eff3;
   margin-top: 60px;
   margin-bottom: -70px;
