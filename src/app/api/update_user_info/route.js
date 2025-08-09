@@ -46,7 +46,7 @@ export async function PATCH(req) {
     if (!passwordMatch) return NextResponse.json({ error: 'Wrong password' }, { status: 403 })
 
     // Update logic
-    if (password !== '') {
+    if (password && password !== '') {
       const hashedNewPassword = await bcrypt.hash(password, 10)
       await db.execute(
         'UPDATE customers SET name = ?, phone = ?, password = ?, company_name = ? WHERE email = ?',

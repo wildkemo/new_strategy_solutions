@@ -97,7 +97,10 @@ export default function Profile() {
         credentials: "include",
         body: JSON.stringify(sanitizedData),
       });
-      if (!response.ok) throw new Error("Failed to update user info");
+       if (!response.ok) {
+      const errorData = await response.json(); // parse the API's error
+      throw new Error(errorData.error || "Unknown error from server");
+  }
       const result = await response.json();
       if (result.status === "success") {
         // Determine which fields were updated
