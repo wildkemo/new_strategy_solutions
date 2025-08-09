@@ -99,7 +99,7 @@ export default function Profile() {
       });
        if (!response.ok) {
       const errorData = await response.json(); // parse the API's error
-      throw new Error(errorData || "Unknown error from server");
+      throw new Error(`${errorData.message} AND ${errorData.error}`);
   }
       const result = await response.json();
       if (result.status === "success") {
