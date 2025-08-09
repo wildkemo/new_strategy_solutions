@@ -99,7 +99,7 @@ export default function Profile() {
       });
        if (!response.ok) {
       const errorData = await response.json(); // parse the API's error
-      throw new Error(`${errorData.message} AND ${errorData.error}`);
+      throw new Error(errorData.error || "Unknown Error");
   }
       const result = await response.json();
       if (result.status === "success") {
@@ -119,6 +119,7 @@ export default function Profile() {
         setUpdatedFieldsMessage(message);
         setUpdateSuccess(true);
         setUpdateError(null);
+        // fetchUserData();
         // Refresh user data
         const userResponse = await fetch(
           "/api/get_current_user/", // Adjust this path based on your API route
@@ -129,7 +130,7 @@ export default function Profile() {
         );
         if (userResponse.ok) {
           const data = await userResponse.json();
-          const userdata = data;
+          const userdata = data.user;
           setUser(userdata);
           setFormData({
             name: userdata.name || "",
