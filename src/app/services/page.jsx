@@ -468,11 +468,14 @@ const Services = () => {
               rel="noopener noreferrer"
               className={styles.vortexLogoLink}
             >
-              <img
-                src="/uploads/Vortex6_logo-removebg-preview.png"
-                alt="Vortex Logo"
-                className={styles.vortexLogo}
-              />
+              <div className={styles.vortexLogoFrame}>
+                <img
+                  src="/uploads/Vortex6_logo-removebg-preview.png"
+                  alt="Vortex Logo"
+                  className={styles.vortexLogo}
+                />
+                <p className={styles.developedByText}>Developed by Vortex</p>
+              </div>
             </a>
           </div>
         </div>

@@ -208,11 +208,14 @@ export default function About() {
               rel="noopener noreferrer"
               className={homeStyles.vortexLogoLink}
             >
-              <img
-                src="/uploads/Vortex6_logo-removebg-preview.png"
-                alt="Vortex Logo"
-                className={homeStyles.vortexLogo}
-              />
+              <div className={homeStyles.vortexLogoFrame}>
+                <img
+                  src="/uploads/Vortex6_logo-removebg-preview.png"
+                  alt="Vortex Logo"
+                  className={homeStyles.vortexLogo}
+                />
+                <p className={homeStyles.developedByText}>Developed by Vortex</p>
+              </div>
             </a>
           </div>
         </div>
