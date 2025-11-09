@@ -208,11 +208,9 @@ export default function About() {
               rel="noopener noreferrer"
               className={homeStyles.vortexLogoLink}
             >
-              <Image
+              <img
                 src="/uploads/Vortex6_logo-removebg-preview.png"
                 alt="Vortex Logo"
-                width={280}
-                height={94}
                 className={homeStyles.vortexLogo}
               />
             </a>
