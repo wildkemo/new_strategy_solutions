@@ -403,17 +403,35 @@ export default function Home() {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerContent}>
-          <div className={styles.footerLinks}>
-            <a className={styles.footerLink} href="/privacy">
-              Privacy Policy
-            </a>
-            <a className={styles.footerLink} href="/terms">
-              Terms of Service
+          <div className={styles.footerLeft}>
+            <div className={styles.footerLinks}>
+              <a className={styles.footerLink} href="/privacy">
+                Privacy Policy
+              </a>
+              <a className={styles.footerLink} href="/terms">
+                Terms of Service
+              </a>
+            </div>
+            <p className={styles.footerCopyright}>
+              © 2025 Strategy Solutions. All rights reserved.
+            </p>
+          </div>
+          <div className={styles.footerRight}>
+            <a
+              href="https://www.linkedin.com/company/vortex-itdev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.vortexLogoLink}
+            >
+              <Image
+                src="/uploads/Vortex6_logo-removebg-preview.png"
+                alt="Vortex Logo"
+                width={280}
+                height={94}
+                className={styles.vortexLogo}
+              />
             </a>
           </div>
-          <p className={styles.footerCopyright}>
-            © 2025 Strategy Solutions. All rights reserved.
-          </p>
         </div>
       </footer>
     </>

@@ -13,7 +13,8 @@
   justify-content: center;
   padding: 20px 40px;
   min-height: 480px;
-  background: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%),
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%),
     url("/images/Gemini_Generated_Image_td48adtd48adtd48.png") center center /
       cover no-repeat;
   border-radius: 8px;
@@ -102,7 +103,9 @@
   padding: 32px 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   border: 1px solid #e8eff3;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -248,19 +251,39 @@
 
 .footerContent {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 24px;
   padding: 40px 20px;
   max-width: 960px;
   width: 100%;
-  text-align: center;
+}
+
+.footerLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.footerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.footerRight .vortexLogoLink {
+  display: block;
+  text-align: right;
 }
 
 .footerLinks {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 24px;
 }
 
@@ -281,6 +304,31 @@
   font-size: 16px;
   font-weight: normal;
   line-height: 1.5;
+}
+
+.vortexLogoLink {
+  display: inline-block;
+  transition: opacity 0.2s ease;
+}
+
+.vortexLogoLink:hover {
+  opacity: 0.8;
+}
+
+.vortexLogo {
+  height: auto;
+  max-width: 280px;
+  width: auto;
+}
+
+.builtByText {
+  color: #507c95;
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0;
+  line-height: 1.5;
+  text-align: right;
+  max-width: 200px;
 }
 
 /* Responsive Design */
@@ -415,10 +463,22 @@
   }
 
   .footerContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     padding: 24px 16px;
   }
 
+  .footerLeft {
+    align-items: center;
+  }
+
+  .footerRight {
+    align-items: center;
+  }
+
   .footerLinks {
+    justify-content: center;
     gap: 16px;
   }
 
