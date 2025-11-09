@@ -3,6 +3,7 @@
 /uploads
 
 /public/uploads
+!/public/uploads/Vortex6_logo-removebg-preview.png
 
 # dependencies
 /node_modules
