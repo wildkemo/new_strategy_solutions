@@ -40,7 +40,7 @@ export async function POST(req) {
     
       // Save image to /public/uploads
     const buffer = Buffer.from(await image.arrayBuffer());
-    const uploadDir = path.join(process.cwd(), 'uploads');
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     // await mkdir(uploadDir, { recursive: true });
     const filename = `${title.replace(/\s+/g, '_')}${path.extname(image.name)}`;
     const filepath = path.join(uploadDir, filename);
