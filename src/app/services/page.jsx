@@ -25,23 +25,25 @@ const Services = () => {
 
   useEffect(() => {
     const fetchServices = async () => {
-      try {
-        const response = await fetch("/api/get_services/", { method: "GET" });
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        let data = await response.json();
-        data = data.map((service) => ({
-          ...service,
-          features: service.features ? JSON.parse(service.features) : [],
-        }));
-        setServices(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  try {
+    const response = await fetch("/api/get_services/", { method: "GET" });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    let data = await response.json();
+    data = data.map((service) => ({
+      ...service,
+      features: service.features ? JSON.parse(service.features) : [],
+      image: service.image ? service.image.replace('/uploads/', '') : null,
+    }));
+    console.log(data[0])
+    setServices(data);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
     fetchServices();
   }, []);
 
@@ -192,7 +194,7 @@ const Services = () => {
                           borderRadius: 8,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
-                          backgroundImage: `url(${service.image})`,
+                          backgroundImage: `url(/api/image/${service.image})`,
                         }}
                       />
                     )}

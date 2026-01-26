@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import styles from "../Services.module.css";
-
 import { useRef } from "react";
 
 const getSlug = (title) =>
@@ -15,7 +14,6 @@ const getSlug = (title) =>
     .replace(/-+$/, "");
 
 const featureIcons = [
-  // Simple SVG icons for demo, you can replace with your own
   <svg
     width="28"
     height="28"
@@ -84,6 +82,10 @@ export default function ServicePage() {
         let found = services.find((s) => getSlug(s.title) === slug);
         if (found) {
           found.features = JSON.parse(found.features || "[]");
+          // Modify image path to use API route
+          if (found.image) {
+            found.image = `/api/image/${found.image.replace('/uploads/', '')}`;
+          }
           setService(found);
         } else {
           setService(null);
@@ -97,10 +99,9 @@ export default function ServicePage() {
     fetchService();
   }, [slug]);
 
-  const orderIdRef = useRef(null); // at top of component
+  const orderIdRef = useRef(null);
 
   const requestService = async () => {
-    // Check if user is signed in
     const userRes = await fetch("/api/get_current_user/", {
       credentials: "include",
     });
@@ -143,17 +144,13 @@ export default function ServicePage() {
     setOtpError("");
     setLoading(true);
 
-    // Determine which data to use based on whether we're verifying a pending order or a new request
-    // const requestData = pendingOtpData || pendingRequestData;
-
-    // Verify OTP first
     const response = await fetch("/api/verify_otp/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
         otp,
-        order_id: orderIdRef.current, // Use the ref to get the order ID
+        order_id: orderIdRef.current,
       }),
     });
     setLoading(false);
@@ -165,7 +162,6 @@ export default function ServicePage() {
     if (result.status === "success") {
       setShowOtpModal(false);
       setShowPopup(true);
-      // Clear the pending OTP data if it was a pending order
       if (pendingOtpData) {
         setPendingOtpData(null);
       }
@@ -180,7 +176,6 @@ export default function ServicePage() {
     let newOtp = otp.split("");
     newOtp[idx] = val;
     setOtp(newOtp.join("").slice(0, 6));
-    // Move focus to next input
     if (val && idx < 5) {
       otpInputRefs.current[idx + 1]?.focus();
     }
@@ -208,7 +203,6 @@ export default function ServicePage() {
       .slice(0, 6);
     if (paste.length === 6) {
       setOtp(paste);
-      // Focus last input
       setTimeout(() => otpInputRefs.current[5]?.focus(), 0);
     }
     e.preventDefault();
@@ -261,7 +255,6 @@ export default function ServicePage() {
         justifyContent: "flex-start",
       }}
     >
-      {/* Hero Section */}
       <div
         className="heroSection"
         style={{
@@ -279,7 +272,6 @@ export default function ServicePage() {
           minHeight: 320,
         }}
       >
-        {/* Left: Image */}
         {service.image && (
           <div className={styles.serviceImageCard}>
             <img
@@ -289,7 +281,6 @@ export default function ServicePage() {
             />
           </div>
         )}
-        {/* Right: Title, Desc, Button */}
         <div
           className="heroContent"
           style={{
@@ -322,7 +313,6 @@ export default function ServicePage() {
         </div>
       </div>
 
-      {/* Key Features Section */}
       <div
         className="featuresSection"
         style={{ width: "100%", maxWidth: 1100, marginTop: 48 }}
@@ -389,7 +379,6 @@ export default function ServicePage() {
         </div>
       </div>
 
-      {/* Buttons Section */}
       <div
         className="actionButtons"
         style={{ display: "flex", gap: 16, marginTop: 48 }}
@@ -428,7 +417,6 @@ export default function ServicePage() {
         </button>
       </div>
 
-      {/* Mobile-specific styles */}
       <style jsx>{`
         @media (max-width: 768px) {
           .heroSection {

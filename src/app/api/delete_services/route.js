@@ -48,7 +48,7 @@ export async function DELETE(req) {
     // Delete the image file if it exists
     if (service.image) {
       try {
-        const imagePath = path.join(process.cwd(), 'public', service.image);
+        const imagePath = path.join(process.cwd(), service.image);
         await fs.unlink(imagePath);
       } catch (err) {
         console.error('Error deleting image file:', err);
